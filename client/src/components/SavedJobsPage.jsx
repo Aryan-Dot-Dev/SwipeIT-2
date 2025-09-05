@@ -117,10 +117,10 @@ function DetailsModal({ job, onClose }) {
 
         {/* Desktop: original two-column modal */}
         <section className="hidden md:flex items-center justify-center w-full">
-          <div className="relative z-30 bg-[color:var(--card)] rounded-lg shadow-2xl w-full max-w-5xl p-0" style={{ border: '1px solid var(--border)', maxHeight: '80vh' }}>
-            <div className="flex h-full">
+          <div className="relative z-30 bg-[color:var(--card)] rounded-lg shadow-2xl w-full max-w-5xl p-0 overflow-hidden" style={{ border: '1px solid var(--border)', maxHeight: '80vh', height: '80vh' }}>
+            <div className="flex h-full min-h-0">
               {/* Left summary */}
-              <div className="w-1/3 p-6 flex flex-col gap-4" style={{ borderRight: '1px solid var(--border)', backgroundColor: 'var(--card)' }}>
+              <div className="w-1/3 p-6 flex flex-col gap-4 min-h-0" style={{ borderRight: '1px solid var(--border)', backgroundColor: 'var(--card)' }}>
                 {job.company_logo ? (
                   <img src={job.company_logo} alt={job.company_name} className="w-20 h-20 object-cover rounded-lg shadow-sm" />
                 ) : (
@@ -166,7 +166,7 @@ function DetailsModal({ job, onClose }) {
               </div>
 
               {/* Right details */}
-              <div className="w-2/3 p-6 overflow-auto">
+              <div className="w-2/3 p-6 overflow-auto min-h-0" style={{ maxHeight: 'calc(80vh - 96px)' }}>
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h4 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>Job Details</h4>

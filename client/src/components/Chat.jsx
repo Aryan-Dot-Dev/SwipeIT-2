@@ -334,14 +334,109 @@ export default function Chat({ currentUser }) {
 
   // Normalize server messages into the UI shape and compute `fromMe` by comparing
   // the message sender id to the current user's id. Accept common sender fields.
+  // Helper: extract human-readable string from various server message shapes
+  function extractText(msg) {
+    if (msg == null) return ''
+    if (typeof msg === 'string') return msg
+    // If msg is the whole message object, try common fields
+    const cand = msg.content || msg.text || msg.message || msg.body || msg.html || null
+    if (typeof cand === 'string') {
+      // If HTML, try to extract hrefs first (so <a href=> links are preserved).
+      if (msg.html) {
+        const html = String(msg.html)
+        const hrefs = []
+        const hrefRe = /href=["']([^"']+)["']/gi
+        let hm
+        // collect href values
+        while ((hm = hrefRe.exec(html)) !== null) hrefs.push(hm[1])
+        if (hrefs.length) return hrefs.join(' ')
+        // fallback: strip tags
+        return html.replace(/<[^>]+>/g, ' ')
+      }
+      return String(cand)
+    }
+    // Entities (common in rich payloads)
+    if (Array.isArray(msg.entities) && msg.entities.length > 0) {
+      const urls = msg.entities.map(e => e.url || e.href).filter(Boolean)
+      if (urls.length) return urls.join(' ')
+    }
+    // Blocks (editor-like payloads)
+    if (Array.isArray(msg.blocks) && msg.blocks.length > 0) {
+      const texts = msg.blocks.map(b => b.text || b.body || '').filter(Boolean)
+      if (texts.length) return texts.join(' ')
+    }
+    // Fallback: gather any string values nested inside the object
+    try {
+      const collected = []
+      const walk = (obj) => {
+        if (obj == null) return
+        if (typeof obj === 'string') { collected.push(obj); return }
+        if (Array.isArray(obj)) { obj.forEach(walk); return }
+        if (typeof obj === 'object') { Object.values(obj).forEach(walk); return }
+      }
+      walk(msg)
+      if (collected.length) return collected.join(' ')
+    } catch { /* ignore */ }
+    return ''
+  }
+
   const displayMessages = (serverMessages && serverMessages.length > 0 ? serverMessages : (current?.messages || [])).map((m) => {
     // preserve existing fromMe if present
     if (typeof m.fromMe === 'boolean') return m
     const currentUserId = currentUser?.id || currentUser?.user_id || null
     const senderId = m.sender_id || m.user_id || m.from_user || m.from || m.created_by || null
     const fromMe = currentUserId && senderId ? String(senderId) === String(currentUserId) : !!m.from_me || false
-    return { ...m, fromMe }
+  // attach a normalized displayText useful for rendering and linkifying
+  const displayText = extractText(m)
+  return { ...m, fromMe, displayText }
   })
+
+  // Debug: log recruiter-side messages once so we can inspect server payload shapes
+  const _loggedRef = useRef(new Set())
+  useEffect(() => {
+    try {
+      for (const msg of displayMessages) {
+        if (!msg) continue
+        if (msg.fromMe) continue
+        const id = msg.id || msg._id || `${msg.created_at || ''}-${Math.random()}`
+        if (_loggedRef.current.has(id)) continue
+        // Log a concise payload to devtools; user can paste this for debugging
+  console.debug('Chat: recruiter message payload for debugging', { id, matchId: current?.matchId, msg })
+        _loggedRef.current.add(id)
+      }
+  } catch { /* ignore */ }
+  }, [displayMessages, current?.matchId])
+
+  // Convert plain text with URLs into an array of React nodes with clickable anchors.
+  // Keeps plain text otherwise. Handles http(s):// and www. prefixes.
+  function linkify(text, fromMe = false) {
+    if (text == null) return null
+    // If message content is an object/array (some server shapes), stringify so URLs inside are preserved.
+    const str = (typeof text === 'string') ? text : JSON.stringify(text)
+    // split and keep URLs in the result
+  const parts = str.split(/(\b(?:https?:\/\/|www\.)[^\s"'<>\s]+)/g)
+    const linkClass = fromMe ? 'text-white underline' : 'text-[color:var(--primary)] underline'
+    return parts.map((part, idx) => {
+      if (!part) return null
+      const isUrl = /^(?:https?:\/\/|www\.)/i.test(part)
+      if (isUrl) {
+        const href = /^https?:\/\//i.test(part) ? part : `http://${part}`
+        return (
+          <a
+            key={idx}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={linkClass}
+            style={{ pointerEvents: 'auto', cursor: 'pointer', display: 'inline' }}
+          >
+            {part}
+          </a>
+        )
+      }
+      return <span key={idx}>{part}</span>
+    })
+  }
 
   // Keep server-fetched messages stored on the matching convo so the left convo list
   // shows accurate `last` and message preview and so messages persist when switching.
@@ -349,7 +444,7 @@ export default function Chat({ currentUser }) {
     try {
       if (!serverMessages || serverMessages.length === 0) return
       const latest = serverMessages[serverMessages.length - 1]
-      const latestText = latest?.content || latest?.text || latest?.message || latest?.body || ''
+  const latestText = extractText(latest) || ''
       const latestTime = latest?.created_at || latest?.time || null
       setConvos(prev => prev.map(c => {
         if (!c.matchId || !current?.matchId) return c
@@ -558,34 +653,41 @@ export default function Chat({ currentUser }) {
 
           <div className="flex-1 overflow-y-auto py-4 md:py-6 px-0 pb-28 md:pb-20" style={{ background: 'linear-gradient(180deg, var(--card), var(--muted))' }}>
             <div className="w-full max-w-full md:max-w-4xl md:mx-auto space-y-3 md:space-y-4 px-3 md:px-0">
-              {displayMessages.map(m => (
-                <div key={m.id} className="flex w-full px-2 md:px-4">
-                  <div className={`flex w-full ${m.fromMe ? 'justify-end' : 'justify-start'}`}>
-                    <div
-                      className={`p-3 rounded-xl shadow-sm max-w-[95%] md:max-w-[70%] ${
-                        m.fromMe ? 'rounded-br-sm' : 'rounded-bl-sm'
-                      }`}
-                      style={{
-                        wordBreak: 'break-word',
-                        ...(m.fromMe ? {
-                          background: 'var(--primary)',
-                          color: 'var(--primary-foreground)',
-                          border: '1px solid rgba(255,255,255,0.06)'
-                        } : {
-                          background: 'var(--card)',
-                          color: 'var(--foreground)',
-                          border: '1px solid var(--border)'
-                        })
-                      }}
-                    >
-                      <div className="text-sm md:text-base">{m.content || m.text}</div>
-                      <div className="text-xs text-gray-200 mt-1 text-right">
-                        {(m.created_at && new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })) || m.time}
+              {displayMessages.map(m => {
+                const renderedText = m.displayText || m.content || m.text || m.message || m.body || ''
+                const containsUrl = /(?:https?:\/\/|www\.)/i.test(String(renderedText))
+                // debug log for quick inspection
+                if (!m.fromMe && containsUrl) console.debug('Chat: detected URL in recruiter message', { id: m.id, renderedText })
+                return (
+                  <div key={m.id} className="flex w-full px-2 md:px-4">
+                    <div className={`flex w-full ${m.fromMe ? 'justify-end' : 'justify-start'}`}>
+                      <div
+                        className={`p-3 rounded-xl shadow-sm max-w-[95%] md:max-w-[70%] ${
+                          m.fromMe ? 'rounded-br-sm' : 'rounded-bl-sm'
+                        }`}
+                        data-has-url={containsUrl}
+                        style={{
+                          wordBreak: 'break-word',
+                          ...(m.fromMe ? {
+                            background: 'var(--primary)',
+                            color: 'var(--primary-foreground)',
+                            border: '1px solid rgba(255,255,255,0.06)'
+                          } : {
+                            background: 'var(--card)',
+                            color: 'var(--foreground)',
+                            border: '1px solid var(--border)'
+                          })
+                        }}
+                      >
+                        <div className="text-sm md:text-base">{linkify(renderedText, m.fromMe)}</div>
+                        <div className="text-xs text-gray-200 mt-1 text-right">
+                          {(m.created_at && new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })) || m.time}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
               <div ref={messagesEnd} />
             </div>
           </div>
