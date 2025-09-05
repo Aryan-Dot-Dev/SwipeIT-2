@@ -59,11 +59,10 @@ const Header = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="flex items-center justify-between min-w-0">
           {/* Logo/Brand Section */}
-          <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
-            <img src={userType === 'guest' ? '/logo_bg_removed.png' : '/logo.png'} alt="SwipeIT" className="w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 object-contain" />
-            <img src="/logo_bg_removed.png" alt="SwipeIT" className="hidden sm:inline-block ml-1 h-4 md:h-5 lg:h-6 object-contain" />
+          <a href="/" className="flex items-center gap-3 flex-shrink-0">
+            <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 object-contain" />
             <span className="sr-only">SwipeIT</span>
-          </div>
+          </a>
 
           {/* User Info for Dashboard Users */}
           {(userType === 'candidate' || userType === 'recruiter') && (

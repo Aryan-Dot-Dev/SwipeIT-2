@@ -80,8 +80,10 @@ export default function FaqPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 md:gap-3">
-              <div className="w-8 h-8 md:w-11 md:h-11 rounded-md bg-[color:var(--primary)] flex items-center justify-center text-white font-bold text-sm md:text-base">SI</div>
-              <div className="text-base md:text-lg font-semibold">SwipeIT</div>
+              <a href="/" className="flex items-center gap-3">
+                <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-12 h-12 md:w-16 md:h-16 object-contain" />
+                <span className="sr-only">SwipeIT</span>
+              </a>
             </div>
             <nav className="hidden md:flex items-center gap-4">
               <a href="/" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Home</a>
