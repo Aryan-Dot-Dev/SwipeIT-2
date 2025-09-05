@@ -53,10 +53,10 @@ export default function NewsletterPage() {
     <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(180deg, var(--background), #fbfdff)' }}>
       <header className="w-full py-6">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-md bg-[color:var(--primary)] flex items-center justify-center text-white font-bold">SI</div>
-            <div className="text-lg font-semibold">SwipeIT</div>
-          </div>
+          <a href="/" className="flex items-center gap-3">
+            <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-12 h-12 md:w-16 md:h-16 object-contain" />
+            <span className="sr-only">SwipeIT</span>
+          </a>
           <nav className="flex items-center gap-4">
             <a href="/" className="text-sm text-[color:var(--muted-foreground)]">Home</a>
             <a href="/about" className="text-sm text-[color:var(--muted-foreground)]">About</a>
