@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 const SUPABASE_URL = "https://guzggqrlaexecpzyesxm.supabase.co";
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+export { SUPABASE_ANON_KEY };
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 	auth: {
 		// Try to initialize auth from cookies if available (access_token/refresh_token)
@@ -31,7 +33,7 @@ export async function initSessionFromCookies() {
 			await supabase.auth.setSession({ access_token, refresh_token })
 			return true
 		}
-	} catch (e) {
+	} catch {
 		// ignore
 	}
 	return false
@@ -40,8 +42,8 @@ export async function initSessionFromCookies() {
 export async function getCurrentUser() {
 	try {
 		// prefer cookies-based session
-		const ok = await initSessionFromCookies()
-		const { data } = await supabase.auth.getUser()
+	await initSessionFromCookies()
+	const { data } = await supabase.auth.getUser()
 		return data?.user || null
 	} catch {
 		try {

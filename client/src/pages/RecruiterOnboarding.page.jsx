@@ -37,6 +37,27 @@ export default function RecruiterOnboarding() {
   function next() { setStep(s => Math.min(5, s + 1)) }
   function prev() { setStep(s => Math.max(0, s - 1)) }
 
+  // Per-step validation for recruiter onboarding
+  function canProceedRecruiter(s) {
+    try {
+      if (s === 1) {
+        if (!data.company_name || !String(data.company_name).trim()) return { ok: false, msg: 'Please enter your company name before continuing.' }
+      }
+      if (s === 2) {
+        // require a contact email before moving on
+        if (!data.contact_email || !String(data.contact_email).trim()) return { ok: false, msg: 'Please provide a contact email before continuing.' }
+      }
+      if (s === 3) {
+        // when creating a job opening, require a title if any job-related fields are filled
+        const anyJobField = (data.job_title || data.job_description || (data.job_required_skills && data.job_required_skills.length))
+        if (anyJobField && (!data.job_title || !String(data.job_title).trim())) return { ok: false, msg: 'Please provide a job title for the job opening before continuing.' }
+      }
+      return { ok: true }
+    } catch {
+      return { ok: true }
+    }
+  }
+
   // hiring_roles removed in favor of explicit job creation UI
   function addJobSkill() { const v = (jobSkillInput || '').trim(); if (!v) return; const skills = data.job_required_skills || []; if (!skills.includes(v)) setData({ ...data, job_required_skills: [...skills, v] }); setJobSkillInput('') }
   function removeJobSkill(r) { const skills = data.job_required_skills || []; setData({ ...data, job_required_skills: skills.filter(x => x !== r) }) }
@@ -566,7 +587,7 @@ export default function RecruiterOnboarding() {
                   {step === 0 ? (<Button type="button" onClick={() => navigate('/dashboard')} className="bg-white border text-black hover:text-white text-sm sm:text-base font-medium px-3 sm:px-4 py-2 sm:py-3 w-full sm:w-auto">Skip</Button>) : (<Button type="button" onClick={prev} className="bg-white border text-black hover:text-white text-sm sm:text-base font-medium px-3 sm:px-4 py-2 sm:py-3 w-full sm:w-auto">Back</Button>)}
                 </div>
                 <div className="flex justify-end">
-                  {step < 5 ? (<Button type="button" onClick={() => { if (step === 0) { next(); return } else { next() } }} className="text-white shadow-md text-sm sm:text-base font-medium px-3 sm:px-4 py-2 sm:py-3 w-full sm:w-auto" style={{ background: 'linear-gradient(90deg, var(--secondary), var(--primary))' }}>Next</Button>) : (<div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto"><Button type="button" onClick={copyPayloadToClipboard} className="bg-white border text-black text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 order-2 sm:order-1">Copy JSON</Button><Button type="button" onClick={submitProfile} className="text-white shadow-md text-sm sm:text-base font-medium px-3 sm:px-4 py-2 sm:py-3 order-1 sm:order-2" style={{ background: 'linear-gradient(90deg, var(--secondary), var(--primary))' }} disabled={saving}>{saving ? 'Saving...' : 'Save and go to dashboard'}</Button></div>)}
+                  {step < 5 ? (<Button type="button" onClick={() => { if (step === 0) { next(); return } const allowed = canProceedRecruiter(step); if (!allowed.ok) { alert(allowed.msg); return } next() }} className="text-white shadow-md text-sm sm:text-base font-medium px-3 sm:px-4 py-2 sm:py-3 w-full sm:w-auto" style={{ background: 'linear-gradient(90deg, var(--secondary), var(--primary))' }}>Next</Button>) : (<div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto"><Button type="button" onClick={copyPayloadToClipboard} className="bg-white border text-black text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 order-2 sm:order-1">Copy JSON</Button><Button type="button" onClick={submitProfile} className="text-white shadow-md text-sm sm:text-base font-medium px-3 sm:px-4 py-2 sm:py-3 order-1 sm:order-2" style={{ background: 'linear-gradient(90deg, var(--secondary), var(--primary))' }} disabled={saving}>{saving ? 'Saving...' : 'Save and go to dashboard'}</Button></div>)}
                 </div>
               </div>
             </div>

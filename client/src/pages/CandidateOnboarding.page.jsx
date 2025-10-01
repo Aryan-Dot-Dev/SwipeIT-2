@@ -52,6 +52,27 @@ export default function CandidateOnboarding() {
   function next() { setStep(s => Math.min(5, s + 1)) }
   function prev() { setStep(s => Math.max(0, s - 1)) }
 
+  // Validate required fields per step before allowing progression
+  function canProceedCandidate(s) {
+    try {
+      if (s === 2) {
+        const hasSkills = Array.isArray(data.skills) && data.skills.length > 0
+        const hasExperience = data.experienceYears !== undefined && data.experienceYears !== '' && data.experienceYears !== null
+        if (!hasSkills && !hasExperience) return { ok: false, msg: 'Please add at least one skill or provide your years of experience before continuing.' }
+      }
+      if (s === 3) {
+        const hasResume = Array.isArray(data.resumes) && data.resumes.length > 0
+        const hasWorkHistory = data.workHistory && String(data.workHistory).trim().length > 0
+        const hasSkills = Array.isArray(data.skills) && data.skills.length > 0
+        if (!hasResume && !hasWorkHistory && !hasSkills) return { ok: false, msg: 'Please upload a resume or add skills / work history before continuing.' }
+      }
+      // no strict requirements for other steps
+      return { ok: true }
+    } catch {
+      return { ok: true }
+    }
+  }
+
   function addSkill() { const v = (skillInput || '').trim(); if (!v) return; if (!data.skills.includes(v)) setData({ ...data, skills: [...data.skills, v] }); setSkillInput('') }
   function removeSkill(skill) { setData({ ...data, skills: data.skills.filter(s => s !== skill) }) }
 
@@ -771,7 +792,13 @@ export default function CandidateOnboarding() {
                   {step === 0 ? (!skipHidden && (<Button type="button" onClick={() => navigate('/dashboard')} className="bg-white border text-black hover:text-white text-sm sm:text-base font-medium px-3 sm:px-4 py-2 w-full sm:w-auto">Skip</Button>)) : (<Button type="button" onClick={prev} className="bg-white border text-black hover:text-white text-sm sm:text-base font-medium px-3 sm:px-4 py-2 w-full sm:w-auto">Back</Button>)}
                 </div>
                 <div className="order-1 sm:order-2">
-                  {step < 5 ? (<Button type="button" onClick={() => { if (step === 0) { setSkipHidden(true); next(); return } if (step === 1) { handleSubmit(handleFormSubmit)() } else { next() } }} className="text-white shadow-md text-sm sm:text-base font-medium px-3 sm:px-4 py-2 w-full sm:w-auto" style={{ background: 'linear-gradient(90deg, var(--secondary), rgba(249,115,22,0.85))' }}>Next</Button>) : (<Button type="button" onClick={submitProfile} className="text-white shadow-md text-sm sm:text-base font-medium px-3 sm:px-4 py-2 w-full sm:w-auto" style={{ background: 'linear-gradient(90deg, var(--secondary), rgba(249,115,22,0.85))' }} disabled={saving}>{saving ? 'Finishing...' : 'Finish and go to dashboard'}</Button>)}
+                  {step < 5 ? (<Button type="button" onClick={() => {
+                    if (step === 0) { setSkipHidden(true); next(); return }
+                    if (step === 1) { handleSubmit(handleFormSubmit)(); return }
+                    const allowed = canProceedCandidate(step)
+                    if (!allowed.ok) { alert(allowed.msg); return }
+                    next()
+                  }} className="text-white shadow-md text-sm sm:text-base font-medium px-3 sm:px-4 py-2 w-full sm:w-auto" style={{ background: 'linear-gradient(90deg, var(--secondary), rgba(249,115,22,0.85))' }}>Next</Button>) : (<Button type="button" onClick={submitProfile} className="text-white shadow-md text-sm sm:text-base font-medium px-3 sm:px-4 py-2 w-full sm:w-auto" style={{ background: 'linear-gradient(90deg, var(--secondary), rgba(249,115,22,0.85))' }} disabled={saving}>{saving ? 'Finishing...' : 'Finish and go to dashboard'}</Button>)}
                 </div>
               </div>
             </div>

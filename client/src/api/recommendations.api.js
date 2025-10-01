@@ -47,6 +47,7 @@ export async function getCandidateDetails() {
   if (error) {
     throw new Error("Failed to fetch candidate details");
   }
+  console.log({ candidate_profile: data[0].candidate_profile })
   return data;
 }
 

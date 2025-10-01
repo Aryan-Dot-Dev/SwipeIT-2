@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { getCandidateDetails, getRecruiterShortlisted } from '@/api/recommendations.api'
 import CandidateStack from '@/components/CandidateStack'
+import CandidateFilters from '@/components/CandidateFilters'
+import AttitudeRadar from '@/components/AttitudeRadar'
+import { getRecruiterData } from '@/api/details.api'
 
 import { startConversation, checkConversationExists } from '@/api/chatting.api'
 import { getAllMyJobs } from '@/api/recruiter.api.js'
@@ -95,6 +98,9 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
   const [jobsLoading, setJobsLoading] = useState(false)
   const [jobsSearchQuery, setJobsSearchQuery] = useState('')
   const [expandedJobs, setExpandedJobs] = useState(new Set())
+  const [candidateFilters, setCandidateFilters] = useState({})
+  const [filteredCandidates, setFilteredCandidates] = useState([])
+  const [recruiterAttitudes, setRecruiterAttitudes] = useState({})
 
   useEffect(() => {
     let mounted = true
@@ -148,6 +154,53 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
     return () => { mounted = false }
   }, [view])
 
+  // Filter candidates based on filters
+  useEffect(() => {
+    let filtered = [...candidates]
+
+    if (candidateFilters.skills && candidateFilters.skills.length > 0) {
+      filtered = filtered.filter(candidate => {
+        const candidateSkills = candidate.candidate_profile?.skills || []
+        return candidateFilters.skills.some(skill => candidateSkills.includes(skill))
+      })
+    }
+
+    if (candidateFilters.experienceMin || candidateFilters.experienceMax) {
+      filtered = filtered.filter(candidate => {
+        const experience = candidate.candidate_profile?.experience_years || 0
+        const min = candidateFilters.experienceMin ? parseInt(candidateFilters.experienceMin) : 0
+        const max = candidateFilters.experienceMax ? parseInt(candidateFilters.experienceMax) : Infinity
+        return experience >= min && experience <= max
+      })
+    }
+
+    if (candidateFilters.location) {
+      filtered = filtered.filter(candidate => {
+        const city = candidate.candidate_profile?.city || ''
+        const state = candidate.candidate_profile?.state || ''
+        const country = candidate.candidate_profile?.country || ''
+        const fullLocation = [city, state, country].filter(Boolean).join(', ')
+        return fullLocation.toLowerCase().includes(candidateFilters.location.toLowerCase())
+      })
+    }
+
+    if (candidateFilters.jobTitle) {
+      filtered = filtered.filter(candidate => {
+        const jobTitle = candidate.job_title || ''
+        return jobTitle.toLowerCase().includes(candidateFilters.jobTitle.toLowerCase())
+      })
+    }
+
+    if (candidateFilters.company) {
+      filtered = filtered.filter(candidate => {
+        const company = candidate.company_name || ''
+        return company.toLowerCase().includes(candidateFilters.company.toLowerCase())
+      })
+    }
+
+    setFilteredCandidates(filtered)
+  }, [candidates, candidateFilters])
+
   // Toggle job details expansion
   const toggleJobDetails = (jobId) => {
     const newExpanded = new Set(expandedJobs);
@@ -157,6 +210,38 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
       newExpanded.add(jobId);
     }
     setExpandedJobs(newExpanded);
+  };
+
+  // When job details are expanded, fetch the recruiter's attitude score (if available) and cache it
+  useEffect(() => {
+    if (!jobs || jobs.length === 0) return
+    const toFetch = []
+    Array.from(expandedJobs).forEach(jobId => {
+      const job = jobs.find(j => j.job_id === jobId)
+      if (!job) return
+      const rid = job.recruiter_id || job.recruiter?.user_id || job.recruiter_user_id || job.posted_by || job.posted_by_user_id || null
+      if (!rid) return
+      if (recruiterAttitudes[rid] !== undefined) return
+      toFetch.push({ rid, jobId })
+    })
+
+    if (toFetch.length === 0) return
+
+    toFetch.forEach(async ({ rid }) => {
+      try {
+        const rec = await getRecruiterData(rid)
+        const attitude = rec?.attitude_score || rec?.user_metadata?.attitude_score || rec?.attitude || null
+        setRecruiterAttitudes(prev => ({ ...prev, [rid]: attitude }))
+      } catch (err) {
+        console.error('Failed to fetch recruiter data for', rid, err)
+        setRecruiterAttitudes(prev => ({ ...prev, [rid]: null }))
+      }
+    })
+  }, [expandedJobs, jobs, recruiterAttitudes])
+
+  // Handle candidate filter changes
+  const handleCandidateFiltersChange = (filters) => {
+    setCandidateFilters(filters)
   };
 
   // Filter jobs based on search query
@@ -177,28 +262,39 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
   if (view === 'chat') return null
 
   return (
-  <div className="mt-6 px-3 md:px-6 lg:px-8 w-full" style={{ ['--primary']: '#0077B5', ['--secondary']: '#005885', ['--primary-foreground']: '#ffffff' }}>
+  <div className="px-3 md:px-6 lg:px-8 w-full" style={{ ['--primary']: '#0077B5', ['--secondary']: '#005885', ['--primary-foreground']: '#ffffff' }}>
       <div className="mb-4 flex items-center justify-between">
         <div></div>
-        {view === 'candidates' && (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3">
-              <div className="text-sm">Anonymous mode</div>
-              <button
-                role="switch"
-                aria-checked={anonymousMode}
-                aria-label="Toggle anonymous mode"
-                onClick={() => setAnonymousMode(s => !s)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${anonymousMode ? 'bg-[#0077B5]' : 'bg-gray-300'}`}>
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${anonymousMode ? 'translate-x-5' : 'translate-x-1'}`} />
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
       {view === 'candidates' && (
-        <CandidateStack initialCandidates={candidates} onShortlist={(c) => console.log('shortlist', c)} onReject={(c) => console.log('reject', c)} onView={(c) => console.log('view', c)} anonymousMode={anonymousMode} />
+        <div className="flex-1 flex md:flex-row flex-col relative">
+          {/* Desktop Filters Sidebar */}
+          <div className="hidden lg:block w-96 flex-shrink-0 bg-white border-r border-gray-200 p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+            <CandidateFilters
+              candidates={candidates}
+              onFiltersChange={handleCandidateFiltersChange}
+              anonymousMode={anonymousMode}
+              onAnonymousModeChange={setAnonymousMode}
+            />
+          </div>
+          
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col">
+            {/* Mobile Filter Toggle - could be added later if needed */}
+            
+            {/* Candidate Stack */}
+            <div className="flex-1">
+              <CandidateStack 
+                initialCandidates={filteredCandidates.length > 0 ? filteredCandidates : candidates} 
+                onShortlist={(c) => console.log('shortlist', c)} 
+                onReject={(c) => console.log('reject', c)} 
+                onView={(c) => console.log('view', c)} 
+                anonymousMode={anonymousMode} 
+              />
+            </div>
+          </div>
+        </div>
       )}
 
             {view === 'saved' && (
@@ -543,6 +639,28 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                               <div className="text-sm text-gray-600">Likes: <span className="font-medium text-green-600">{job.swipe_stats?.likes || 0}</span></div>
                               <div className="text-sm text-gray-600">Dislikes: <span className="font-medium text-red-600">{job.swipe_stats?.dislikes || 0}</span></div>
                             </div>
+                          </div>
+                        </div>
+                        
+                        {/* Recruiter profile / Attitude chart (if available) */}
+                        <div>
+                          <h4 className="text-md font-medium mb-3">Recruiter profile</h4>
+                          <div className="text-sm text-gray-600">
+                            {(() => {
+                              const rid = job.recruiter_id || job.recruiter?.user_id || job.recruiter_user_id || job.posted_by || job.posted_by_user_id || null
+                              const att = rid ? recruiterAttitudes[rid] : null
+                              if (!rid) return <div className="text-sm text-gray-500">No recruiter data available.</div>
+                              if (!att) return <div className="text-sm text-gray-500">No attitude data for this recruiter.</div>
+                              return (
+                                <div className="flex items-center gap-4">
+                                  <div><AttitudeRadar data={att} size={160} levels={4} /></div>
+                                  <div className="text-sm text-[color:var(--foreground)]">
+                                    <div className="font-semibold">Recruiter</div>
+                                    <div className="text-xs text-gray-500">Attitude profile</div>
+                                  </div>
+                                </div>
+                              )
+                            })()}
                           </div>
                         </div>
                       </div>

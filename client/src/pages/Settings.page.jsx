@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import AttitudeRadar from '@/components/AttitudeRadar'
-import { getCurrentUser } from '@/utils/supabaseInstance'
+import supabase, { getCurrentUser } from '@/utils/supabaseInstance'
 import { myProfile, updateCProfile } from '@/api/auth.api'
 import { uploadRecruiterProfileSingle } from '@/api/onboarding.api'
 import { uploadPfp, uploadResume } from '@/api/storage.api.js'
@@ -348,6 +348,60 @@ function SettingsPage() {
         }
     }
 
+        // Remove profile image: delete storage object when possible and clear DB field
+        async function handleRemoveProfileImage() {
+            try {
+                const user = await getCurrentUser();
+                const userId = user?.id || candidateUserId;
+                if (!userId) throw new Error('No authenticated user')
+
+                // Try to delete file from storage if URL present
+                const url = profile.profile_img || profileImageUrl || currentUser?.user_metadata?.profile_img || ''
+                if (url) {
+                    try {
+                        const parsed = new URL(url)
+                        const pathIndex = parsed.pathname.indexOf('/storage/v1/object/public/')
+                        if (pathIndex !== -1) {
+                            const after = parsed.pathname.substring(pathIndex + '/storage/v1/object/public/'.length)
+                            // after = "<bucket>/<objectPath>"
+                            const firstSlash = after.indexOf('/')
+                            if (firstSlash !== -1) {
+                                const bucket = after.substring(0, firstSlash)
+                                const objectPath = after.substring(firstSlash + 1)
+                                try {
+                                    const del = await supabase.storage.from(bucket).remove([objectPath])
+                                    if (del?.error) console.warn('Failed to remove storage object:', del.error)
+                                    else console.log('Removed storage object', objectPath)
+                                } catch (e) {
+                                    console.warn('Error deleting storage object from supabase:', e)
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Could not parse profile image URL for deletion:', e)
+                    }
+                }
+
+                // Clear DB column for profile image
+                if (isRecruiter) {
+                    const { error } = await supabase.from('recruiters').update({ profile_img: '' }).eq('user_id', userId)
+                    if (error) console.warn('Failed to clear recruiter profile_img:', error)
+                } else {
+                    const { error } = await supabase.from('candidates').update({ profile_img: '' }).eq('user_id', userId)
+                    if (error) console.warn('Failed to clear candidate profile_img:', error)
+                }
+
+                // Update local state and notify other components
+                setField('profile_img', '')
+                setProfileImageUrl('')
+                if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('profileImageUpdated', { detail: { profileImage: '' } }))
+
+            } catch (err) {
+                console.error('Failed to remove profile image', err)
+                alert('Failed to remove profile image. Check console for details.')
+            }
+        }
+
     async function handleResumeUpload(file) {
         try {
             setUploading(true);
@@ -525,16 +579,13 @@ function SettingsPage() {
                                     {uploading ? 'Uploading...' : 'Upload image'}
                                 </label>
                                                                                     <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        onClick={() => {
-                                                            setField('resume', '');
-                                                            setResumeUrl('');
-                                                        }}
-                                                        className="text-xs text-red-600 hover:text-red-700"
-                                                    >
-                                                        Remove
-                                                    </Button>
+                                                                                        size="sm"
+                                                                                        variant="outline"
+                                                                                        onClick={() => handleRemoveProfileImage()}
+                                                                                        className="text-xs text-red-600 hover:text-red-700"
+                                                                                    >
+                                                                                        Remove image
+                                                                                    </Button>
                             </div>
                         </div>
 

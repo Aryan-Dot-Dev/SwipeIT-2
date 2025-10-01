@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { Button } from './ui/button'
 import { getJobDetails } from '@/api/recommendations.api'
+import AttitudeRadar from '@/components/AttitudeRadar'
+import { getRecruiterData } from '@/api/details.api'
 
 const safeText = v => {
   if (v == null) return ''
@@ -25,6 +27,7 @@ const safeText = v => {
 function DetailsModal({ job, onClose }) {
   const [descExpanded, setDescExpanded] = useState(false)
   const modalRef = React.useRef(null)
+  const [recruiterAttitude, setRecruiterAttitude] = useState(null)
 
   React.useEffect(() => {
     const prev = document.activeElement
@@ -33,6 +36,38 @@ function DetailsModal({ job, onClose }) {
     window.addEventListener('keydown', onKey)
     return () => { window.removeEventListener('keydown', onKey); if (prev && prev.focus) prev.focus() }
   }, [onClose])
+
+  // Fetch recruiter attitude when a job is opened in the modal
+  React.useEffect(() => {
+    let mounted = true
+    if (!job) {
+      setRecruiterAttitude(null)
+      return () => { mounted = false }
+    }
+
+    // try multiple places for recruiter id (handles several shapes)
+    const rid = job.recruiter_id || job.recruiter?.user_id || job.recruiter_user_id || job.posted_by || job.posted_by_user_id || job.recruiter_meta?.user_id || job.recruiter_meta?.id || job.recruiter?.id || null
+    if (!rid) {
+      setRecruiterAttitude(null)
+      return () => { mounted = false }
+    }
+
+    setRecruiterAttitude(undefined) // loading
+    ;(async () => {
+      try {
+        const rec = await getRecruiterData(rid)
+        const attitude = rec?.attitude_score || rec?.user_metadata?.attitude_score || rec?.attitude || null
+        if (!mounted) return
+        setRecruiterAttitude(attitude)
+      } catch (err) {
+        console.error('SavedJobsPage: failed to fetch recruiter data for', rid, err)
+        if (!mounted) return
+        setRecruiterAttitude(null)
+      }
+    })()
+
+    return () => { mounted = false }
+  }, [job])
 
   if (!job) return null
 
@@ -84,6 +119,20 @@ function DetailsModal({ job, onClose }) {
                     <button onClick={() => setDescExpanded(false)} className="mt-2 text-xs text-[color:var(--muted-foreground)]">Show less</button>
                   </div>
                 )}
+              </div>
+
+              {/* Recruiter attitude (mobile) */}
+              <div className="mb-3">
+                <h4 className="text-sm font-medium mb-2">Recruiter profile</h4>
+                <div className="flex items-center">
+                  {recruiterAttitude === undefined ? (
+                    <div className="text-sm text-[color:var(--muted-foreground)]">Loading recruiter profile…</div>
+                  ) : recruiterAttitude ? (
+                    <AttitudeRadar data={recruiterAttitude} size={140} levels={4} />
+                  ) : (
+                    <div className="text-sm text-[color:var(--muted-foreground)]">No recruiter attitude data available.</div>
+                  )}
+                </div>
               </div>
 
               <div className="mb-4">
@@ -219,6 +268,14 @@ function DetailsModal({ job, onClose }) {
                     <div className="mt-2 text-sm" style={{ color: 'var(--foreground)' }}>{safeText(job.recruiter_name)}</div>
                     <div className="text-xs" style={{ color: 'var(--muted-foreground)', marginTop: '0.25rem' }}>{safeText(job.recruiter_phone)}</div>
                     {job.recruiter_email && <div className="text-xs mt-2"><a href={`mailto:${job.recruiter_email}`} className="text-[color:var(--primary)]">{job.recruiter_email}</a></div>}
+                    {/* Recruiter attitude (desktop inside Recruiter card) */}
+                    <div className="mt-3">
+                      {recruiterAttitude === undefined ? (
+                        <div className="text-xs text-[color:var(--muted-foreground)]">Loading recruiter profile…</div>
+                      ) : recruiterAttitude ? (
+                        <AttitudeRadar data={recruiterAttitude} size={120} levels={4} />
+                      ) : null}
+                    </div>
                   </div>
 
                   <div className="p-4 rounded" style={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)' }}>

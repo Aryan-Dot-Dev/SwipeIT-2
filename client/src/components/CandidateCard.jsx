@@ -17,7 +17,11 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
   const avatar = safe(c.candidate_profile_img)
   const notes = safe(c.candidate_profile.bio);
   const jobTitle = safe(c.job_title || c.title);
-  const skills = (c.candidate_profile.skills);
+  const skills = Array.isArray(c?.candidate_profile?.skills)
+    ? c.candidate_profile.skills
+    : Array.isArray(c?.skills)
+      ? c.skills
+      : []
   // const attitudeScore = safe(c.candidate_profile.attitude_score)
   const company = safe(c.company_name || (c.company && c.company.name))
   const status = safe(c.application_status)
@@ -27,6 +31,30 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
   }
   const appliedAt = fmt(c.applied_at || c.appliedAt)
   const email = safe(c.candidate_profile.email || c.email)
+
+  // helper to find a usable resume URL (first match)
+  const findResumeUrl = (candidateRecord) => {
+    const r = candidateRecord?.candidate_profile?.resume ||  null
+    if (!r) return null
+    if (typeof r === 'string' && r.length > 5) return r
+    if (Array.isArray(r)) {
+      for (const item of r) {
+        if (!item) continue
+        if (typeof item === 'string' && item.length > 5) return item
+        if (item.url) return item.url
+        if (item.file_url) return item.file_url
+        if (item.public_url) return item.public_url
+        if (item.path && typeof item.path === 'string' && item.path.startsWith('http')) return item.path
+      }
+      return null
+    }
+    if (typeof r === 'object') {
+      return r.url || r.file_url || r.public_url || (typeof r.path === 'string' && r.path.startsWith('http') ? r.path : null)
+    }
+    return null
+  }
+
+  const resumeUrl = findResumeUrl(c)
 
   // drag / swipe behavior
   const x = useMotionValue(0)
@@ -77,7 +105,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
         style={{ x, rotate }}
         drag={isSwiped ? false : "x"}
         onDragEnd={handleDragEnd}
-        className="w-full max-w-[420px] md:max-w-[520px] lg:max-w-[620px] cursor-grab"
+        className="w-full max-w-[380px] md:max-w-[460px] lg:max-w-[540px] cursor-grab"
       >
         <div className="relative z-10 bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
           {/* Gemini icon badge (top-right) */}
@@ -143,7 +171,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
             </div>
 
             <div className="mt-6 flex flex-wrap gap-2 px-2">
-              {skills.map((skill, index) => (
+              {(skills || []).map((skill, index) => (
                 <div
                   key={index}
                   className="bg-white text-slate-700 px-3 py-1.5 rounded-full border border-slate-300 text-xs font-medium shadow-sm hover:bg-slate-50 hover:shadow hover:border-slate-400 transition-all"
@@ -157,7 +185,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
 
           {/* Actions: horizontal, centered */}
     <div className="px-4 pb-4">
-  <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-4 mt-2">
+  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mt-2">
     {/* View Button */}
     <button
       onClick={() => { setShowDetails(true); onView && onView(c) }}
@@ -170,6 +198,26 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.269 2.943 9.542 7-.77 2.593-2.947 4.858-6.122 6.25" />
         </svg>
         View
+      </span>
+    </button>
+
+    {/* View Resume Button */}
+    <button
+      onClick={() => {
+        if (!resumeUrl) return
+        try { window.open(resumeUrl, '_blank', 'noopener,noreferrer') } catch { window.location.href = resumeUrl }
+      }}
+      disabled={!resumeUrl}
+      title={resumeUrl ? 'Open resume in new tab' : 'No resume available'}
+      className={`flex-1 px-3 py-2 rounded-lg text-sm font-semibold ${resumeUrl ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 hover:border-blue-300 focus:ring-2 focus:ring-blue-200' : 'text-gray-400 bg-gray-50 border border-gray-200 cursor-not-allowed'} active:scale-[0.98] transition-all shadow-sm`}
+      aria-label="View resume"
+    >
+      <span className="inline-flex items-center gap-2">
+        <svg className="h-4 w-4 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2v12" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6" />
+        </svg>
+        Resume
       </span>
     </button>
 

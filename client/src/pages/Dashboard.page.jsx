@@ -79,7 +79,18 @@ const Dashboard = ({ userId: propUserId }) => {
   const [attitudeFormOpen, setAttitudeFormOpen] = useState(false)
   const [savedJobs, setSavedJobs] = useState([])
   const [highlightSavedId, setHighlightSavedId] = useState(null)
-  const [currentView, setCurrentView] = useState('candidate')
+  // Initialize current view from localStorage when possible so the user's last
+  // active dashboard page survives a refresh. Fallback to 'candidate'.
+  const getInitialView = () => {
+    try {
+      if (typeof window === 'undefined') return 'candidate'
+      const v = localStorage.getItem('swipeit:dashboardView')
+      return v || 'candidate'
+    } catch {
+      return 'candidate'
+    }
+  }
+  const [currentView, setCurrentView] = useState(() => getInitialView())
   const [candidateInitialTab, setCandidateInitialTab] = useState('jobs')
   const [authToken, setAuthToken] = useState(() => getAccessToken() || readCookie('access_token'))
   const [toasts, setToasts] = useState([])
@@ -87,6 +98,49 @@ const Dashboard = ({ userId: propUserId }) => {
   const [createJobOpen, setCreateJobOpen] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
   const [filters, setFilters] = useState({ keyword: '', location: '', industry: '', minSimilarity: 0 })
+
+  // Helper: validate whether a particular view is allowed for the given role.
+  // This prevents restoring a recruiter-only view for candidates (and vice versa).
+  const isViewAllowedForRole = (view, role) => {
+    if (!view) return false
+    const recruiterOnly = new Set(['dashboard', 'candidates'])
+    const candidateOnly = new Set(['candidate', 'resume'])
+    if (!role) return true
+    const looksLikeRecruiter = String(role).toLowerCase().includes('recruit') || role === 'recruiter'
+    if (looksLikeRecruiter) {
+      // recruiter may also access 'saved', 'chat', 'settings'
+      return true // allow everything but enforce stricter mapping below if needed
+    }
+    // candidate: disallow recruiter-only views
+    if (candidateOnly.has(view)) return true
+    if (recruiterOnly.has(view)) return false
+    return true
+  }
+
+  // Persist currentView to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && currentView) {
+        localStorage.setItem('swipeit:dashboardView', currentView)
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, [currentView])
+
+  // When role becomes known, ensure the restored view is valid for the role.
+  useEffect(() => {
+    try {
+      if (!role) return
+      // if current view is invalid for this role, pick a sensible fallback
+      if (!isViewAllowedForRole(currentView, role)) {
+        if (String(role).toLowerCase().includes('recruit')) setCurrentView('dashboard')
+        else setCurrentView('candidate')
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [role, currentView])
 
   // Listen for profile image updates
   useEffect(() => {
@@ -1068,9 +1122,9 @@ const Dashboard = ({ userId: propUserId }) => {
                     placeholder="e.g. React, Python, Manager"
                     value={filters.keyword}
                     onChange={(e) => setFilters(f => ({ ...f, keyword: e.target.value }))}
-                    className="w-full pl-4 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                   />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -1093,9 +1147,9 @@ const Dashboard = ({ userId: propUserId }) => {
                     placeholder="e.g. New York, Remote"
                     value={filters.location}
                     onChange={(e) => setFilters(f => ({ ...f, location: e.target.value }))}
-                    className="w-full pl-4 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                   />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1118,9 +1172,9 @@ const Dashboard = ({ userId: propUserId }) => {
                     placeholder="e.g. Technology, Finance"
                     value={filters.industry}
                     onChange={(e) => setFilters(f => ({ ...f, industry: e.target.value }))}
-                    className="w-full pl-4 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                   />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>

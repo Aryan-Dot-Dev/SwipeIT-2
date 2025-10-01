@@ -13,10 +13,15 @@ const AttitudeRadar = ({ data = {}, size = 240, levels = 4, maxValue = null }) =
 
   const n = entries.length
   const S = size
-  const cx = S / 2
-  const cy = S / 2
-  const margin = 36
-  const radius = S / 2 - margin
+  // Set margin proportional to size so labels have room outside the inner radar
+  const margin = Math.max(24, Math.round(size * 0.14))
+  // Increase padding to give extra room for labels (helps in narrow modals)
+  const pad = margin + 12
+  const total = S + pad * 2
+  const cx = total / 2
+  const cy = total / 2
+  // radius of the inner radar stays tied to provided `size`
+  const radius = S / 2
 
   const values = entries.map((entry) => Number(entry[1]) || 0)
   const max = maxValue && Number(maxValue) > 0 ? Number(maxValue) : Math.max(...values, 1)
@@ -45,14 +50,63 @@ const AttitudeRadar = ({ data = {}, size = 240, levels = 4, maxValue = null }) =
   })
 
   // labels
+  // label placement: position labels slightly outside the outer polygon so they don't overlap grid lines
+  // increase offset so labels sit clearly outside the data polygon
+  const labelOffset = Math.max(14, Math.round(size * 0.08))
+  // place labels just outside the outer radius but still inside the SVG canvas
+  // ensure they are safely outside the outer grid polygon (rScale=1)
+  const labelRadius = Math.min(radius + labelOffset + 6, (total / 2) - pad / 2)
+  // adjust font size based on number of labels to avoid overlap
+  const baseFontSize = Math.max(9, Math.round(size * 0.045))
+  const fontSize = n > 6 ? Math.max(8, Math.round(baseFontSize * 0.9)) : baseFontSize
+
   const labels = entries.map(([label], i) => {
-    const [x, y] = point(i, radius + 14)
-    // shift labels slightly depending on quadrant
-    const anchor = x > cx + 4 ? 'start' : x < cx - 4 ? 'end' : 'middle'
-    const dy = y > cy + 6 ? '0.8em' : y < cy - 8 ? '-0.2em' : '0.35em'
+  // compute raw label position slightly outside the outer polygon
+  let [x, y] = point(i, labelRadius)
+  // shift labels depending on position relative to center
+  const anchor = x > cx + (size * 0.02) ? 'start' : x < cx - (size * 0.02) ? 'end' : 'middle'
+  // nudge vertical placement so labels aren't centered on grid lines
+  const dy = y > cy + (size * 0.03) ? '1.2em' : y < cy - (size * 0.03) ? '-0.6em' : '0.6em'
+
+    const normalizedLabel = String(label || '')
+    const words = normalizedLabel.split(' ')
+    let lines = [normalizedLabel]
+    if (normalizedLabel.length > 14 && words.length > 1) {
+      const mid = Math.ceil(words.length / 2)
+      lines = [words.slice(0, mid).join(' '), words.slice(mid).join(' ')]
+    }
+
+    // estimate width and clamp x so text doesn't overflow the SVG canvas
+    const estCharWidth = fontSize * 0.6
+    const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), '')
+    const estWidth = Math.min(longestLine.length * estCharWidth, total - pad * 2)
+
+    if (anchor === 'start') {
+      if (x + estWidth > total - pad) x = total - pad - estWidth
+      if (x < pad) x = pad
+    } else if (anchor === 'end') {
+      if (x - estWidth < pad) x = pad + estWidth
+      if (x > total - pad) x = total - pad
+    } else {
+      const half = estWidth / 2
+      if (x - half < pad) x = pad + half
+      if (x + half > total - pad) x = total - pad - half
+    }
+
+    if (lines.length === 1) {
+      return (
+        <text key={`l${i}`} x={x} y={y} fontSize={fontSize} fill="#374151" textAnchor={anchor} dy={dy}
+          stroke="#fff" strokeWidth={3} paintOrder="stroke" strokeLinejoin="round" strokeLinecap="round">
+          {lines[0]}
+        </text>
+      )
+    }
+
     return (
-      <text key={`l${i}`} x={x} y={y} fontSize={11} fill="#374151" textAnchor={anchor} dy={dy}>
-        {label}
+      <text key={`l${i}`} x={x} y={y} fontSize={fontSize} fill="#374151" textAnchor={anchor}
+        stroke="#fff" strokeWidth={3} paintOrder="stroke" strokeLinejoin="round" strokeLinecap="round">
+        <tspan x={x} dy={dy}>{lines[0]}</tspan>
+        <tspan x={x} dy={'1.05em'}>{lines[1]}</tspan>
       </text>
     )
   })
@@ -66,7 +120,8 @@ const AttitudeRadar = ({ data = {}, size = 240, levels = 4, maxValue = null }) =
 
   return (
     <div className="flex flex-col items-center">
-      <svg width={S} height={S} viewBox={`0 0 ${S} ${S}`}>
+      {/* render into a slightly larger canvas so labels are inside the SVG and won't be clipped by ancestor overflow/border-radius */}
+      <svg width={total} height={total} viewBox={`0 0 ${total} ${total}`} style={{ overflow: 'visible' }} preserveAspectRatio="xMidYMid meet">
         <g>
           {grid}
           {axes}

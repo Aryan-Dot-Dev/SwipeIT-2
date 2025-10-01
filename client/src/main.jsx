@@ -5,6 +5,8 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import App from './App';
 import LandingPage from './pages/Landing.page';
 import LoginPage from './pages/Login.page';
+import ForgotPasswordPage from './pages/ForgotPassword.page';
+import ResetPasswordPage from './pages/ResetPassword.page';
 import SignupPage from './pages/Signup.page';
 import OnboardingPage from './pages/Onboarding.page';
 import Dashboard from './pages/Dashboard.page';
@@ -32,6 +34,8 @@ async function bootstrap() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/blog" element={<BlogPage />} />

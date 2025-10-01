@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import DemoSwipeCard from '@/components/DemoSwipeCard'
 
 const Feature = ({ title, desc, icon }) => (
   <div className="p-4 md:p-6 bg-white/90 rounded-xl shadow-sm hover:shadow-md transition-shadow" style={{ borderColor: 'var(--border)' }}>
@@ -31,11 +32,6 @@ export default function LandingPage() {
     { title: 'Privacy-first', desc: 'We store only what you share and keep your hiring process private.', icon: '🔒' },
   ]
 
-  const testimonials = [
-    { text: 'We cut our time-to-hire in half using SwipeIT.', name: 'Aisha R.', role: 'Talent Lead, NovaTech' },
-    { text: 'Candidates love the simple experience — great matches fast.', name: 'Tom H.', role: 'Founder, BrightHire' },
-  ]
-
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(180deg, var(--background), #fbfdff)' }}>
       <header className="w-full py-4 md:py-6">
@@ -47,7 +43,6 @@ export default function LandingPage() {
             </a>
             <nav className="hidden md:flex items-center gap-4">
               <a href="#features" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Features</a>
-              <a href="#testimonials" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Customers</a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Log in</a>
               <a href="/signup"><Button size="sm" className="text-white" style={{ background: 'var(--primary)' }}>Sign up</Button></a>
             </nav>
@@ -104,13 +99,6 @@ export default function LandingPage() {
               >
                 Features
               </a>
-              <a
-                href="#testimonials"
-                className="text-base py-3 px-6 text-green-600 hover:text-[color:var(--foreground)] hover:bg-[color:var(--card)] transition-all duration-200 active:scale-95"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Customers
-              </a>
               <div className="border-t border-[color:var(--border)] my-2"></div>
               <div className="px-6 pb-2">
                 <Button size="sm" variant="outline" className="w-full mb-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary)] hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
@@ -137,44 +125,12 @@ export default function LandingPage() {
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)]">Or <span className="underline">sign in</span> to continue</a>
             </div>
 
-            <div className="mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="text-sm text-[color:var(--muted-foreground)]">Trusted by teams at</div>
-              <div className="flex flex-wrap items-center gap-3 md:gap-4">
-                <div className="text-sm font-semibold">NovaTech</div>
-                <div className="text-sm font-semibold">BrightHire</div>
-                <div className="text-sm font-semibold">Acme Labs</div>
-              </div>
-            </div>
+          
           </div>
 
           <div className="order-2 lg:order-2 flex items-center justify-center">
-            <div className="w-full max-w-sm md:max-w-lg p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-xl md:shadow-2xl bg-white" style={{ borderColor: 'var(--border)' }}>
-              {/* Simple screenshot-like card built from inline elements so no external assets required */}
-              <div className="h-2 md:h-3 bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--secondary)] rounded-t-xl" />
-              <div className="p-3 md:p-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-semibold">Candidates</div>
-                  <div className="text-xs text-[color:var(--muted-foreground)]">Live</div>
-                </div>
-                <div className="mt-3 md:mt-4 bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200" />
-                    <div>
-                      <div className="font-medium text-sm md:text-base">Priya K.</div>
-                      <div className="text-xs text-[color:var(--muted-foreground)]">Frontend Engineer • 4 yrs</div>
-                    </div>
-                  </div>
-                  <div className="mt-3 text-sm text-[color:var(--muted-foreground)]">Experienced React developer with strong focus on accessibility and performance.</div>
-                </div>
-                <div className="mt-3 md:mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div className="p-2 bg-white rounded border text-xs md:text-sm text-[color:var(--muted-foreground)]">Skills: React, Node</div>
-                  <div className="p-2 bg-white rounded border text-xs md:text-sm text-[color:var(--muted-foreground)]">Location: Remote</div>
-                </div>
-                <div className="mt-3 md:mt-4 flex items-center gap-2 md:gap-3">
-                  <button className="flex-1 px-3 py-2 rounded bg-[color:var(--primary)] text-white text-sm">Shortlist</button>
-                  <button className="flex-1 px-3 py-2 rounded border text-sm">Message</button>
-                </div>
-              </div>
+            <div className="w-full max-w-sm md:max-w-lg p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-xl md:shadow-2xl bg-white relative overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+              <DemoSwipeCard onSwipe={(dir) => console.log('Demo card swiped', dir)} />
             </div>
           </div>
         </section>
@@ -189,26 +145,12 @@ export default function LandingPage() {
 
         <section id="stats" className="bg-[color:var(--card)] py-6 md:py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 text-center">
-            <div className="p-4 md:p-6">
-              <div className="text-2xl md:text-3xl font-extrabold" style={{ color: 'var(--foreground)' }}>1.2k+</div>
-              <div className="text-sm text-[color:var(--muted-foreground)] mt-2">Active users</div>
-            </div>
-            <div className="p-4 md:p-6">
-              <div className="text-2xl md:text-3xl font-extrabold" style={{ color: 'var(--foreground)' }}>98%</div>
-              <div className="text-sm text-[color:var(--muted-foreground)] mt-2">Positive match rate</div>
-            </div>
-            <div className="p-4 md:p-6">
-              <div className="text-2xl md:text-3xl font-extrabold" style={{ color: 'var(--foreground)' }}>50%</div>
-              <div className="text-sm text-[color:var(--muted-foreground)] mt-2">Faster hiring</div>
-            </div>
+            {/* Stats removed - placeholder content */}
           </div>
         </section>
 
         <section id="testimonials" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-6 md:py-8">
-          <h3 className="text-xl md:text-2xl font-semibold text-center lg:text-left" style={{ color: 'var(--foreground)' }}>What customers say</h3>
-          <div className="mt-6 md:mt-8 grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            {testimonials.map((t, i) => <Testimonial key={i} {...t} />)}
-          </div>
+          {/* Testimonials section removed - contained fake customer reviews */}
         </section>
 
         <section className="py-6 md:py-8">

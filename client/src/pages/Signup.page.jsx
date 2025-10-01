@@ -2,23 +2,36 @@ import { SignupForm } from "@/components/SignupForm"
 
 export default function SignupPage() {
   return (
-  <div className="grid min-h-svh lg:grid-cols-2" style={{ background: 'linear-gradient(135deg, rgba(255,230,240,0.6), rgba(255,240,220,0.6), rgba(255,255,255,1))' }}>
-      <div className="flex flex-col gap-4 p-4 sm:p-6 md:p-10">
-        <div className="flex justify-center lg:justify-start gap-2">
-          <a href="/" className="flex items-center gap-2 font-medium">
-            <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-12 h-12 md:w-16 md:h-16 object-contain" />
+    <div className="min-h-screen bg-white flex flex-col">
+      <header className="w-full py-6 sm:py-8">
+        <div className="max-w-md mx-auto px-4 sm:px-6 flex items-center justify-between">
+          <a href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors text-sm sm:text-base">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="sm:w-5 sm:h-5">
+              <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Back
+          </a>
+          <a href="/" className="flex items-center gap-3">
+            <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-12 h-12 sm:w-16 sm:h-16 object-contain" />
             <span className="sr-only">SwipeIT</span>
           </a>
+          <div className="w-12 sm:w-16"></div> {/* Spacer for centering */}
         </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs sm:max-w-sm">
-            <SignupForm />
+      </header>
+
+      <main className="flex-1 flex items-center justify-center px-4 sm:px-6">
+        <div className="w-full max-w-sm sm:max-w-md">
+          <SignupForm />
+        </div>
+      </main>
+
+      <footer className="py-6">
+        <div className="max-w-md mx-auto px-4 sm:px-6 text-center">
+          <div className="text-xs sm:text-sm text-gray-500">
+            © {new Date().getFullYear()} SwipeIT — simple hiring
           </div>
         </div>
-      </div>
-      <div className="hidden lg:flex bg-muted relative items-center justify-center m-4 rounded-4xl" style={{ background: 'linear-gradient(135deg, rgba(20,20,30,0.9), rgba(60,60,70,0.9))' }}>
-  <img src="/logo_white_bg_removed.png" alt="SwipeIT" className="h-48 w-48 md:h-60 md:w-60 object-contain" />
-      </div>
+      </footer>
     </div>
   )
 }
