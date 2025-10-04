@@ -566,7 +566,7 @@ function SettingsPage() {
 
                         <div className="mt-4">
                             <div className="flex items-center gap-2">
-                                <label className="inline-flex items-center px-3 py-2 bg-blue-50 border border-blue-200 rounded-md text-sm cursor-pointer hover:bg-blue-100">
+                                <label className="inline-flex items-center px-3 py-2 rounded-md text-sm cursor-pointer" style={{ background: 'var(--muted)', border: '1px solid var(--border)' }}>
                                     <input 
                                         type="file" 
                                         accept=".jpg,.jpeg,.png" 
@@ -598,18 +598,18 @@ function SettingsPage() {
                                     <div
                                         className={`relative border-2 border-dashed rounded-lg p-4 md:p-6 text-center transition-colors ${
                                             uploading
-                                                ? 'border-blue-300 bg-blue-50'
-                                                : resumeUrl
-                                                ? 'border-green-300 bg-green-50'
-                                                : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                            ? 'border-[color:var(--primary)]/40 bg-[color:var(--primary)]/6'
+                                : resumeUrl
+                                ? 'border-green-300 bg-green-50'
+                                : 'border-gray-300 hover:border-[color:var(--primary)]/30 hover:bg-[color:var(--muted)]'
                                         }`}
                                         onDragOver={(e) => {
                                             e.preventDefault();
-                                            e.currentTarget.classList.add('border-blue-400', 'bg-blue-50');
+                                            e.currentTarget.classList.add('border-[color:var(--primary)]/30');
                                         }}
                                         onDragLeave={(e) => {
                                             e.preventDefault();
-                                            e.currentTarget.classList.remove('border-blue-400', 'bg-blue-50');
+                                            e.currentTarget.classList.remove('border-[color:var(--primary)]/30');
                                         }}
                                         onDrop={(e) => {
                                             e.preventDefault();
@@ -634,8 +634,8 @@ function SettingsPage() {
                                         <div className="flex flex-col items-center space-y-2">
                                             {uploading ? (
                                                 <>
-                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                                                    <p className="text-sm text-blue-600 font-medium">Uploading resume...</p>
+                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--primary)' }}></div>
+                                                    <p className="text-sm" style={{ color: 'var(--primary)', fontWeight: 600 }}>Uploading resume...</p>
                                                 </>
                                             ) : resumeUrl ? (
                                                 <>
@@ -693,14 +693,17 @@ function SettingsPage() {
                             </div>
                         )}
 
-                        <div className="mt-4">
-                            <div className="text-sm font-medium mb-2">Skills</div>
-                            <div className="flex flex-wrap gap-2">
-                                {(profile.skills || '').split(',').map(s => s.trim()).filter(Boolean).slice(0, 8).map((s, i) => (
-                                    <span key={i} className="px-2 py-1 bg-gray-100 rounded text-xs">{s}</span>
-                                ))}
+                        {/* Skills section - only for candidates */}
+                        {!isRecruiter && (
+                            <div className="mt-4">
+                                <div className="text-sm font-medium mb-2">Skills</div>
+                                <div className="flex flex-wrap gap-2">
+                                    {(profile.skills || '').split(',').map(s => s.trim()).filter(Boolean).slice(0, 8).map((s, i) => (
+                                        <span key={i} className="px-2 py-1 bg-gray-100 rounded text-xs">{s}</span>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
                         {/* Attitude radar (if available) */}
                         {((profile && profile.attitude_score) || (currentUser?.user_metadata && currentUser.user_metadata.attitude_score)) && (
                             <div className="mt-4">
@@ -722,7 +725,7 @@ function SettingsPage() {
                                 <p className="text-sm text-gray-500">Edit your profile and preferences</p>
                             </div>
                             <div className="hidden md:block">
-                                <Button onClick={() => { if (isRecruiter) { handleSaveRecruiter() } else { handleSave() } }} disabled={saving} className="text-white" style={{ background: 'var(--primary)' }}>{saving ? 'Saving...' : (isRecruiter ? 'Save recruiter settings' : 'Save')}</Button>
+                                <Button onClick={() => { if (isRecruiter) { handleSaveRecruiter() } else { handleSave() } }} disabled={saving} className="btn-primary">{saving ? 'Saving...' : (isRecruiter ? 'Save recruiter settings' : 'Save')}</Button>
                             </div>
                         </div>
 
@@ -758,8 +761,8 @@ function SettingsPage() {
                                 </section>
 
                                 <div className="flex items-center justify-end gap-2">
-                                    <Button variant="outline" onClick={() => setRecruiterSettings(r => ({ ...r, company_name: '', company_website: '', company_industry: '', company_location: '', company_logo: '' }))}>Reset</Button>
-                                    <Button onClick={handleSaveRecruiter} className="text-white" style={{ background: 'var(--primary)' }}>{saving ? 'Saving...' : 'Save recruiter settings'}</Button>
+                                    <Button className="btn-secondary" onClick={() => setRecruiterSettings(r => ({ ...r, company_name: '', company_website: '', company_industry: '', company_location: '', company_logo: '' }))}>Reset</Button>
+                                    <Button onClick={handleSaveRecruiter} className="btn-primary">{saving ? 'Saving...' : 'Save recruiter settings'}</Button>
                                 </div>
                             </form>
                         ) : (
@@ -869,7 +872,7 @@ function SettingsPage() {
             {/* Mobile-only fixed save bar for touch devices */}
             <div className="fixed bottom-4 left-0 right-0 px-4 md:hidden z-50">
                 <div className="max-w-[1600px] mx-auto">
-                    <Button onClick={() => { if (isRecruiter) { handleSaveRecruiter() } else { handleSave() } }} disabled={saving} className="w-full py-3 text-white" style={{ background: 'var(--primary)' }}>{saving ? 'Saving...' : (isRecruiter ? 'Save recruiter settings' : 'Save')}</Button>
+                    <Button onClick={() => { if (isRecruiter) { handleSaveRecruiter() } else { handleSave() } }} disabled={saving} className="w-full py-3 btn-primary">{saving ? 'Saving...' : (isRecruiter ? 'Save recruiter settings' : 'Save')}</Button>
                 </div>
             </div>
 
@@ -885,7 +888,7 @@ const SavedModal = ({ open = false }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/40" />
             <div className="relative z-10 bg-[color:var(--card)] rounded-lg p-6 w-full max-w-sm text-center shadow-2xl border" style={{ borderColor: 'var(--border)' }}>
-                <div className="text-4xl">🎉</div>
+                <div className="text-4xl text-green-500">✓</div>
                 <h3 className="mt-2 text-lg font-semibold" style={{ color: 'var(--foreground)' }}>Profile saved</h3>
                 <p className="text-sm text-[color:var(--muted-foreground)] mt-1">Your profile changes were saved successfully.</p>
                 <div className="mt-4 flex items-center justify-center gap-2">

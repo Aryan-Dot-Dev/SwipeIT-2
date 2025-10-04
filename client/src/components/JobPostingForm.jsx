@@ -42,7 +42,7 @@ const InputField = ({ label, error, required = false, children, icon }) => (
 
 const SectionHeader = ({ title, description, icon }) => (
   <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm">
+  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--secondary)] flex items-center justify-center text-white text-sm">
       {icon}
     </div>
     <div>
@@ -137,9 +137,9 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
 
       <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 w-full max-w-5xl max-h-[95vh] overflow-hidden z-20">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50">
+  <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gradient-to-r from-[color:var(--primary)]/10 to-[color:var(--secondary)]/10">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--secondary)] flex items-center justify-center text-white">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8" />
               </svg>
@@ -169,11 +169,11 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
               <SectionHeader
                 title="Basic Information"
                 description="Tell candidates about the role and what they'll be doing"
-                icon="📋"
+                icon="�"
               />
 
               <div className="mt-6 space-y-6">
-                <InputField label="Job Title" error={errors.title} required icon="💼">
+                <InputField label="Job Title" error={errors.title} required icon="🏷️">
                   <input
                     type="text"
                     value={form.title}
@@ -228,7 +228,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
               <SectionHeader
                 title="Compensation"
                 description="Set competitive salary ranges to attract top talent"
-                icon="💰"
+                icon="�"
               />
 
               <div className="mt-6">
@@ -279,7 +279,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
               <SectionHeader
                 title="Requirements"
                 description="Specify what skills and experience candidates need"
-                icon="🎯"
+                icon="📋"
               />
 
               <div className="mt-6 space-y-6">
@@ -382,7 +382,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
               form="job-posting-form"
               onClick={handleSubmit}
               disabled={submitting}
-              className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center gap-2 shadow-lg hover:shadow-xl"
+              className="px-6 py-2.5 bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--secondary)] text-white rounded-xl hover:from-[color:var(--primary)]/90 hover:to-[color:var(--secondary)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center gap-2 shadow-lg hover:shadow-xl"
             >
               {submitting && (
                 <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">

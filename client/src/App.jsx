@@ -9,7 +9,7 @@ export default function App() {
         <p className="text-gray-600 mb-6">Create an account or log in to continue.</p>
 
         <div className="flex gap-4">
-          <Link to="/signup" className="px-4 py-2 bg-blue-600 text-white rounded">Sign up</Link>
+          <Link to="/signup" className="px-4 py-2 btn-primary">Sign up</Link>
           <Link to="/login" className="px-4 py-2 border rounded">Log in</Link>
         </div>
 

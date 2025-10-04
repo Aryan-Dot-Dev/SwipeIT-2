@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button'
 import DemoSwipeCard from '@/components/DemoSwipeCard'
 
 const Feature = ({ title, desc, icon }) => (
-  <div className="p-4 md:p-6 bg-white/90 rounded-xl shadow-sm hover:shadow-md transition-shadow" style={{ borderColor: 'var(--border)' }}>
+  <div className="p-4 md:p-6 glass-panel hover:scale-105 transition-all">
     <div className="flex items-start gap-3 md:gap-4">
-      <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center bg-[color:var(--primary)] text-white flex-shrink-0">{icon}</div>
+      <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center bg-gradient-to-r from-pink-500 to-purple-500 text-white flex-shrink-0">{icon}</div>
       <div className="min-w-0">
         <div className="font-semibold text-sm md:text-base">{title}</div>
         <div className="text-xs md:text-sm text-[color:var(--muted-foreground)] mt-1">{desc}</div>
@@ -16,7 +16,7 @@ const Feature = ({ title, desc, icon }) => (
 )
 
 const Testimonial = ({ text, name, role }) => (
-  <div className="p-3 md:p-4 bg-white/95 rounded-lg shadow hover:shadow-md transition-shadow" style={{ borderColor: 'var(--border)' }}>
+  <div className="p-3 md:p-4 glass-panel hover:scale-105 transition-all">
     <div className="text-xs md:text-sm text-[color:var(--muted-foreground)]">"{text}"</div>
     <div className="mt-2 md:mt-3 font-medium text-sm md:text-base">{name}</div>
     <div className="text-xs text-[color:var(--muted-foreground)]">{role}</div>
@@ -28,12 +28,12 @@ export default function LandingPage() {
   const features = [
     { title: 'Fast matching', desc: 'Swipe, shortlist and message — move from discovery to interview faster.', icon: '⚡' },
     { title: 'Built-in chat', desc: 'Keep conversations neatly inside the app with message history and notifications.', icon: '💬' },
-    { title: 'Candidate profiles', desc: 'View skills, experience and quick previews to make faster decisions.', icon: '👤' },
+    { title: 'Candidate profiles', desc: 'View skills, experience and quick previews to make faster decisions.', icon: '�' },
     { title: 'Privacy-first', desc: 'We store only what you share and keep your hiring process private.', icon: '🔒' },
   ]
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(180deg, var(--background), #fbfdff)' }}>
+    <div className="min-h-screen flex flex-col">
       <header className="w-full py-4 md:py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6">
           <div className="flex items-center justify-between">
@@ -44,7 +44,7 @@ export default function LandingPage() {
             <nav className="hidden md:flex items-center gap-4">
               <a href="#features" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Features</a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Log in</a>
-              <a href="/signup"><Button size="sm" className="text-white" style={{ background: 'var(--primary)' }}>Sign up</Button></a>
+              <a href="/signup"><button className="btn-primary text-sm px-4 py-2">Sign up</button></a>
             </nav>
             {/* Mobile menu button */}
             <div className="md:hidden">
@@ -80,11 +80,11 @@ export default function LandingPage() {
             onClick={() => setIsMobileMenuOpen(false)}
           />
           {/* Menu */}
-          <div className="absolute top-20 right-4 w-64 bg-white rounded-xl shadow-2xl border border-[color:var(--border)] overflow-hidden animate-in slide-in-from-top-2 duration-300">
+          <div className="absolute top-20 right-4 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden animate-in slide-in-from-top-2 duration-300">
             {/* Close Button */}
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="absolute top-3 right-3 z-10 p-1 rounded-full text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] hover:bg-[color:var(--card)] transition-all duration-200 active:scale-95"
+              className="absolute top-3 right-3 z-10 p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all duration-200 active:scale-95"
               aria-label="Close menu"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,19 +94,19 @@ export default function LandingPage() {
             <nav className="flex flex-col py-2 pt-10">
               <a
                 href="#features"
-                className="text-base py-3 px-6 text-green-600 hover:text-[color:var(--foreground)] hover:bg-[color:var(--card)] transition-all duration-200 active:scale-95"
+                className="text-base py-3 px-6 text-green-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-95"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Features
               </a>
               <div className="border-t border-[color:var(--border)] my-2"></div>
               <div className="px-6 pb-2">
-                <Button size="sm" variant="outline" className="w-full mb-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary)] hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+                <button className="btn-secondary w-full mb-2 text-sm px-4 py-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/login" className="block w-full">Log in</a>
-                </Button>
-                <Button size="sm" className="w-full text-white" style={{ background: 'var(--primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                </button>
+                <button className="btn-primary w-full text-sm px-4 py-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/signup" className="block w-full">Sign up</a>
-                </Button>
+                </button>
               </div>
             </nav>
           </div>
@@ -116,12 +116,13 @@ export default function LandingPage() {
       <main className="flex-1">
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center py-6 md:py-10">
           <div className="order-1 lg:order-1">
+            <div className="text-6xl text-gray-600 font-extrabold tracking-tight" style={{ color: 'var(--foreground)' }}>SwipeIt</div>
             <div className="inline-flex items-center gap-2 md:gap-3 px-3 py-1 rounded-full bg-[color:var(--card)] text-green-600 text-xs md:text-sm font-medium">New · Designed for modern hiring</div>
             <h1 className="mt-4 md:mt-6 text-3xl md:text-4xl lg:text-5xl leading-tight font-extrabold" style={{ color: 'var(--foreground)' }}>Hire faster. Interview smarter.</h1>
             <p className="mt-3 md:mt-4 text-base md:text-lg text-[color:var(--muted-foreground)] max-w-xl">SwipeIT combines a fast candidate discovery workflow with built-in messaging and lightweight profiles — so hiring teams can focus on talking to great people, not managing tools.</p>
 
             <div className="mt-6 md:mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4">
-              <a href="/signup" className="w-full sm:w-auto"><Button size="lg" className="w-full sm:w-auto text-white" style={{ background: 'var(--primary)' }}>Create account — it's free</Button></a>
+              <a href="/signup" className="w-full sm:w-auto"><button className="btn-primary w-full sm:w-auto text-lg px-8 py-4">Create account — it's free</button></a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)]">Or <span className="underline">sign in</span> to continue</a>
             </div>
 

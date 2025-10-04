@@ -68,10 +68,10 @@ export default function FaqPage() {
   ]
 
   const categories = [
-    { title: 'Getting Started', count: 2, icon: '🚀' },
-    { title: 'Matching & AI', count: 3, icon: '🤖' },
+    { title: 'Getting Started', count: 2, icon: '�' },
+    { title: 'Matching & AI', count: 3, icon: '⚡' },
     { title: 'Privacy & Security', count: 2, icon: '🔒' },
-    { title: 'Pricing & Support', count: 2, icon: '💰' }
+    { title: 'Pricing & Support', count: 2, icon: '�' }
   ]
 
   return (
@@ -89,7 +89,7 @@ export default function FaqPage() {
               <a href="/" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Home</a>
               <a href="/about" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">About</a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Log in</a>
-              <a href="/signup"><Button size="sm" className="text-white" style={{ background: 'var(--primary)' }}>Sign up</Button></a>
+              <a href="/signup"><button className="btn-primary text-sm px-4 py-2">Sign up</button></a>
             </nav>
             {/* Mobile menu button */}
             <div className="md:hidden">
@@ -153,12 +153,12 @@ export default function FaqPage() {
               </a>
               <div className="border-t border-[color:var(--border)] my-2"></div>
               <div className="px-6 pb-2">
-                <Button size="sm" variant="outline" className="w-full mb-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary)] hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+                <button className="btn-secondary w-full mb-2 text-sm px-4 py-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/login" className="block w-full">Log in</a>
-                </Button>
-                <Button size="sm" className="w-full text-white" style={{ background: 'var(--primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                </button>
+                <button className="btn-primary w-full text-sm px-4 py-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/signup" className="block w-full">Sign up</a>
-                </Button>
+                </button>
               </div>
             </nav>
           </div>

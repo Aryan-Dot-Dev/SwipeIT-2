@@ -450,7 +450,7 @@ export default function CandidateOnboarding() {
               {step === 0 && (
                 <section className="flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-8">
                   <div className="flex-1">
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-2 sm:mb-3">Welcome to SwipeIT ✨</h2>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-2 sm:mb-3">Welcome to SwipeIT</h2>
                     <p className="text-sm sm:text-base md:text-lg text-gray-700 mb-3 sm:mb-5">Tell us a bit about yourself and we'll surface the best jobs for you — fast.</p>
                   </div>
                 </section>

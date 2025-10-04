@@ -50,38 +50,40 @@ export function LoginForm({
     }
  
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>
-            <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Login to your account</h1>
-                <p className="text-muted-foreground text-sm text-balance">
-                    Enter your email below to login to your account
-                </p>
-            </div>
-            <div className="grid gap-6">
-                <div className="grid gap-3">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="m@example.com" {...register("email")} aria-invalid={!!errors.email} />
-                    {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+        <div className="glass-panel max-w-md w-full">
+            <form onSubmit={handleSubmit(onSubmit)} className={cn("flex flex-col gap-6 p-6", className)} {...props}>
+                <div className="flex flex-col items-center gap-2 text-center">
+                    <h1 className="text-2xl font-bold">Welcome Back</h1>
+                    <p className="text-muted-foreground text-sm text-balance">
+                        Enter your email below to login to your account
+                    </p>
                 </div>
-                <div className="grid gap-3">
-                    <div className="flex items-center">
-                        <Label htmlFor="password">Password</Label>
-                        <Link to="/forgot-password" className="ml-auto text-sm underline-offset-4 hover:underline">Forgot your password?</Link>
+                <div className="grid gap-6">
+                    <div className="grid gap-3">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" placeholder="m@example.com" {...register("email")} aria-invalid={!!errors.email} />
+                        {errors.email && <p className="text-sm text-red-400 microcopy">{errors.email.message}</p>}
                     </div>
-                    <Input id="password" type="password" {...register("password")} aria-invalid={!!errors.password} />
-                    {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
+                    <div className="grid gap-3">
+                        <div className="flex items-center">
+                            <Label htmlFor="password">Password</Label>
+                            <Link to="/forgot-password" className="ml-auto text-sm underline-offset-4 hover:underline text-pink-400">Forgot your password?</Link>
+                        </div>
+                        <Input id="password" type="password" placeholder="Your password" {...register("password")} aria-invalid={!!errors.password} />
+                        {errors.password && <p className="text-sm text-red-400 microcopy">{errors.password.message}</p>}
+                    </div>
+                    {serverError && <div className="text-sm text-red-400 microcopy">{serverError}</div>}
+                    <Button className="w-full" type="submit" disabled={loading}>
+                        {loading ? <div className="loading-bar w-full h-4 rounded"></div> : "Login"}
+                    </Button>
                 </div>
-                {serverError && <div className="text-sm text-red-600">{serverError}</div>}
-                <Button className="w-full" type="submit" disabled={loading}>
-                    {loading ? "Logging in..." : "Login"}
-                </Button>
-            </div>
-            <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link to="/signup" className="underline underline-offset-4">
-                    Sign up
-                </Link>
-            </div>
-        </form>
+                <div className="text-center text-sm">
+                    Don&apos;t have an account?{" "}
+                    <Link to="/signup" className="underline underline-offset-4 text-pink-400 hover:text-pink-300">
+                        Sign up
+                    </Link>
+                </div>
+            </form>
+        </div>
     )
 }

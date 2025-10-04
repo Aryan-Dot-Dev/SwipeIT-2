@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
-const BlogPost = ({ title, excerpt, category, date, readTime }) => (
+const BlogPost = ({ title, excerpt, category, date, readTime, readUrl }) => (
   <div className="p-6 bg-white/90 rounded-xl shadow-sm" style={{ borderColor: 'var(--border)' }}>
     <div className="flex items-center gap-2 mb-3">
       <span className="px-2 py-1 bg-[color:var(--primary)] text-white text-xs rounded-full">{category}</span>
@@ -9,7 +9,11 @@ const BlogPost = ({ title, excerpt, category, date, readTime }) => (
     </div>
     <h3 className="font-semibold text-lg mb-2">{title}</h3>
     <p className="text-sm text-[color:var(--muted-foreground)] mb-4">{excerpt}</p>
-    <Button variant="link" className="p-0 h-auto">Read more →</Button>
+    {readUrl ? (
+      <a href={readUrl} target="_blank" rel="noopener noreferrer" className="text-[color:var(--primary)] font-medium underline">Read more →</a>
+    ) : (
+      <Button variant="link" className="p-0 h-auto">Read more →</Button>
+    )}
   </div>
 )
 
@@ -23,34 +27,30 @@ const CategoryCard = ({ name, count, icon }) => (
 
 export default function BlogPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  // Keep only approved posts that include a readUrl (external links)
   const featuredPosts = [
     {
-      title: 'The Future of AI in Recruitment: Beyond the Resume',
-      excerpt: 'How artificial intelligence is transforming hiring processes and what it means for candidates and recruiters alike.',
-      category: 'AI & Tech',
-      date: 'Aug 25, 2025',
-      readTime: 5
+      title: 'Silence: Why Keyword Matching is Failing Hiring (and How Context Fixes It)',
+      excerpt: 'Most resumes never reach a human recruiter — they’re filtered and discarded by keyword-matching ATS. This post explains why keyword filters fail, shows the data, and outlines how embeddings and similarity models restore context and fairness to hiring.',
+      category: 'Hiring Tips',
+      date: 'Oct 1, 2025',
+      readTime: 7,
+      readUrl: 'https://www.linkedin.com/pulse/keyword-matching-outdated-context-new-gold-standard-yashwanth-c-3qwee/?trackingId=hS%2FwtcvZQgi7IfXClIhNJw%3D%3D'
     },
     {
-      title: 'Building Diverse Teams: Strategies for Inclusive Hiring',
-      excerpt: 'Practical approaches to reduce bias in recruitment and create more diverse, high-performing teams.',
+      title: "Bias Isn’t Always Intentional. But It’s Always Expensive.",
+      excerpt: 'Despite decades of awareness around diversity and inclusion, hiring across the world remains inherently biased — even when we don’t intend it to be. This post lays out the costs of biased hiring, where bias creeps in, and why blind hiring can materially improve outcomes.',
       category: 'Diversity',
-      date: 'Aug 18, 2025',
-      readTime: 7
-    },
-    {
-      title: 'Gen Z in the Workplace: What Recruiters Need to Know',
-      excerpt: 'Understanding the expectations and values of the next generation workforce.',
-      category: 'Workforce',
-      date: 'Aug 10, 2025',
-      readTime: 6
+      date: 'Jun 17, 2025',
+      readTime: 6,
+      readUrl: 'https://www.linkedin.com/pulse/bias-isnt-always-intentional-its-expensive-yashwanth-c-o2i0e/?trackingId=GTUI1xi7TK6aOuwmb3U%2B9g%3D%3D'
     }
   ]
 
   const categories = [
-    { name: 'AI & Tech', count: 12, icon: '🤖' },
+    { name: 'AI & Tech', count: 12, icon: '⚡' },
     { name: 'Hiring Tips', count: 8, icon: '💡' },
-    { name: 'Diversity', count: 6, icon: '🌈' },
+    { name: 'Diversity', count: 6, icon: '�' },
     { name: 'Workforce', count: 10, icon: '👥' }
   ]
 
@@ -69,7 +69,7 @@ export default function BlogPage() {
               <a href="/" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Home</a>
               <a href="/about" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">About</a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Log in</a>
-              <a href="/signup"><Button size="sm" className="text-white" style={{ background: 'var(--primary)' }}>Sign up</Button></a>
+              <a href="/signup"><Button size="sm" className="btn-primary">Sign up</Button></a>
             </nav>
             {/* Mobile menu button */}
             <div className="md:hidden">
@@ -133,10 +133,10 @@ export default function BlogPage() {
               </a>
               <div className="border-t border-[color:var(--border)] my-2"></div>
               <div className="px-6 pb-2">
-                <Button size="sm" variant="outline" className="w-full mb-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary)] hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-secondary w-full mb-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/login" className="block w-full">Log in</a>
                 </Button>
-                <Button size="sm" className="w-full text-white" style={{ background: 'var(--primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/signup" className="block w-full">Sign up</a>
                 </Button>
               </div>
@@ -176,7 +176,7 @@ export default function BlogPage() {
                 <div className="mt-1 md:mt-2 text-sm md:text-base">Subscribe to our newsletter for the latest insights on hiring and recruitment.</div>
               </div>
               <div className="flex-shrink-0">
-                <a href="/newsletter"><Button className="text-white bg-white/10 hover:bg-white/20 border border-white/20" style={{ background: 'transparent' }}>Subscribe</Button></a>
+                <a href="/newsletter"><Button className="btn-secondary">Subscribe</Button></a>
               </div>
             </div>
           </div>

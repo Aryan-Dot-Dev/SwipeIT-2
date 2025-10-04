@@ -11,17 +11,17 @@ const safeText = v => {
 const SavedJobs = ({ saved = [], onClear = () => {}, onOpen = () => {} }) => {
   return (
     <aside className="w-full max-w-sm mx-auto md:mx-0">
-      <div className="bg-white rounded-xl p-3 sm:p-4 md:p-6 h-full flex flex-col shadow-sm border border-teal-100" style={{ border: '1px solid var(--border)' }}>
+      <div className="bg-white rounded-xl p-3 sm:p-4 md:p-6 h-full flex flex-col shadow-sm border border-[color:var(--border)]">
         {/* Header with icon */}
-        <div className="flex items-center gap-3 pb-3 border-b border-teal-100 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center">
+        <div className="flex items-center gap-3 pb-3 border-b border-[color:var(--border)] mb-4">
+          <div className="w-8 h-8 rounded-lg bg-[color:var(--primary)] flex items-center justify-center">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
           </div>
           <h3 className="text-base sm:text-lg font-semibold text-gray-900">Saved Jobs</h3>
           {saved.length > 0 && (
-            <span className="ml-auto bg-teal-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
+            <span className="ml-auto bg-[color:var(--primary)] text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
               {saved.length}
             </span>
           )}
@@ -48,7 +48,7 @@ const SavedJobs = ({ saved = [], onClear = () => {}, onOpen = () => {} }) => {
             {saved.map((job, idx) => (
               <div
                 key={job.id || job.job_id || job.application_id || `saved-${idx}`}
-                className="group p-3 sm:p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100 hover:border-teal-200 hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:-translate-y-1"
+                className="group p-3 sm:p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-[color:var(--border)] hover:border-[color:var(--primary)] hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:-translate-y-1"
                 style={{ borderColor: 'var(--border)', cursor: 'pointer' }}
                 role="button"
                 tabIndex={0}
@@ -56,13 +56,13 @@ const SavedJobs = ({ saved = [], onClear = () => {}, onOpen = () => {} }) => {
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onOpen(job) }}
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-teal-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <div className="w-10 h-10 rounded-lg bg-[color:var(--primary)] flex items-center justify-center flex-shrink-0 shadow-sm">
                     <span className="text-white font-bold text-sm">
                       {String(job.company_name || '').charAt(0) || 'C'}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-sm text-gray-900 truncate group-hover:text-green-700 transition-colors">
+                    <div className="font-semibold text-sm text-gray-900 truncate group-hover:text-[color:var(--primary)] transition-colors">
                       {safeText(job.job_title || job.title)}
                     </div>
                     <div className="text-xs text-gray-600 truncate mt-1">
@@ -81,10 +81,10 @@ const SavedJobs = ({ saved = [], onClear = () => {}, onOpen = () => {} }) => {
                 </div>
                 <div className="mt-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                    <div className="w-2 h-2 rounded-full bg-[color:var(--primary)]"></div>
                     <span className="text-xs text-gray-500">Saved</span>
                   </div>
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-[color:var(--primary)] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>

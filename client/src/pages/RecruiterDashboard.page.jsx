@@ -79,7 +79,7 @@ const ChatButton = ({ candidate }) => {
 
   return (
     <button
-      className="px-3 py-2 md:py-1 rounded bg-[color:var(--primary)] text-white text-sm hover:bg-[color:var(--primary)]/90 transition-colors min-h-[40px] md:min-h-[32px]"
+      className="btn-primary px-3 py-2 md:py-1 text-sm min-h-[40px] md:min-h-[32px]"
       onClick={handleChatClick}
       disabled={checking}
     >
@@ -156,8 +156,10 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
 
   // Filter candidates based on filters
   useEffect(() => {
+    // Start with all candidates
     let filtered = [...candidates]
 
+    // Apply individual filters
     if (candidateFilters.skills && candidateFilters.skills.length > 0) {
       filtered = filtered.filter(candidate => {
         const candidateSkills = candidate.candidate_profile?.skills || []
@@ -191,11 +193,27 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
       })
     }
 
-    if (candidateFilters.company) {
+    // Apply match percentage filter using candidate_profile.similarity
+    if (candidateFilters.minMatchPercentage && candidateFilters.minMatchPercentage > 0) {
       filtered = filtered.filter(candidate => {
-        const company = candidate.company_name || ''
-        return company.toLowerCase().includes(candidateFilters.company.toLowerCase())
+        // Get similarity from candidate_profile.similarity
+        const similarity = candidate.candidate_profile?.similarity
+        
+        // If no similarity score available, include the candidate (don't filter out)
+        if (similarity === null || similarity === undefined) {
+          return true // Include candidates without scores
+        }
+        
+        // Convert similarity to percentage (assuming it's 0-1 or 0-100)
+        const matchPercentage = similarity > 1 ? similarity : similarity * 100
+        
+        return matchPercentage >= candidateFilters.minMatchPercentage
       })
+    }
+
+    // Log filtering results for debugging
+    if (candidateFilters.minMatchPercentage && candidateFilters.minMatchPercentage > 0) {
+      console.log(`Filtering: ${candidates.length} candidates -> ${filtered.length} after applying ${candidateFilters.minMatchPercentage}% minimum match`)
     }
 
     setFilteredCandidates(filtered)
@@ -262,7 +280,7 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
   if (view === 'chat') return null
 
   return (
-  <div className="px-3 md:px-6 lg:px-8 w-full" style={{ ['--primary']: '#0077B5', ['--secondary']: '#005885', ['--primary-foreground']: '#ffffff' }}>
+  <div className="px-3 md:px-6 lg:px-8 w-full" style={{ '--primary': '#7C3AED', '--secondary': '#FF49A0', '--primary-foreground': '#ffffff' }}>
       <div className="mb-4 flex items-center justify-between">
         <div></div>
       </div>
@@ -286,7 +304,7 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
             {/* Candidate Stack */}
             <div className="flex-1">
               <CandidateStack 
-                initialCandidates={filteredCandidates.length > 0 ? filteredCandidates : candidates} 
+                initialCandidates={filteredCandidates} 
                 onShortlist={(c) => console.log('shortlist', c)} 
                 onReject={(c) => console.log('reject', c)} 
                 onView={(c) => console.log('view', c)} 
@@ -310,7 +328,17 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                 <div className="flex items-center gap-3">
                   <img src={s.candidate_profile_img || s.profile_img} alt={s.candidate_name || s.name} className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover" />
                   <div className="flex-1">
-                    <div className="font-semibold">{s.candidate_name || s.name || 'Candidate'}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="font-semibold">{s.candidate_name || s.name || 'Candidate'}</div>
+                      {s.candidate_profile?.similarity !== null && s.candidate_profile?.similarity !== undefined && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[color:var(--primary)]/10 text-[color:var(--primary)]">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          {Math.round(s.candidate_profile.similarity > 1 ? s.candidate_profile.similarity : s.candidate_profile.similarity * 100)}%
+                        </span>
+                      )}
+                    </div>
                     <div className="text-sm text-gray-500">{s.job_title || s.position || ''} {s.company_name ? `• ${s.company_name}` : ''}</div>
                   </div>
                   <div className="flex-shrink-0">
@@ -329,10 +357,10 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
         <div>          
           {/* Overview Metrics - show 2x2 on mobile/tablet, 4 on large */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white p-4 rounded-lg shadow-sm border">
+            <div className="bg-white p-4 rounded-lg shadow-sm border recruiter-glass">
               <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="p-2 rounded-lg recruiter-cta">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
@@ -342,10 +370,10 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border">
+            <div className="bg-white p-4 rounded-lg shadow-sm border recruiter-glass">
               <div className="flex items-center">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="p-2 rounded-lg recruiter-cta">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
@@ -357,10 +385,10 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border">
+            <div className="bg-white p-4 rounded-lg shadow-sm border recruiter-glass">
               <div className="flex items-center">
-                <div className="p-2 bg-yellow-100 rounded-lg">
-                  <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="p-2 rounded-lg recruiter-cta">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
                 </div>
@@ -372,10 +400,10 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border">
+            <div className="bg-white p-4 rounded-lg shadow-sm border recruiter-glass">
               <div className="flex items-center">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="p-2 rounded-lg recruiter-cta">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                 </div>
@@ -422,7 +450,7 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                       <div className="flex h-full">
                         {totalApplied > 0 && (
                           <div 
-                            className="bg-blue-500 flex items-center justify-center text-white text-xs font-bold"
+                            className="bg-[color:var(--primary)] flex items-center justify-center text-white text-xs font-bold"
                             style={{ width: `${appliedPercent}%` }}
                           >
                             {appliedPercent > 10 ? `${Math.round(appliedPercent)}%` : ''}
@@ -430,7 +458,7 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                         )}
                         {totalShortlisted > 0 && (
                           <div 
-                            className="bg-yellow-500 flex items-center justify-center text-white text-xs font-bold"
+                            className="bg-[color:var(--secondary)] flex items-center justify-center text-white text-xs font-bold"
                             style={{ width: `${shortlistedPercent}%` }}
                           >
                             {shortlistedPercent > 10 ? `${Math.round(shortlistedPercent)}%` : ''}
@@ -458,11 +486,11 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                   return (
                     <>
                       <div className="flex items-center">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                        <div className="w-3 h-3 bg-[color:var(--primary)] rounded-full mr-2"></div>
                         <span className="text-sm">Applied ({total > 0 ? ((totalApplied / total) * 100).toFixed(1) : 0}%)</span>
                       </div>
                       <div className="flex items-center">
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                        <div className="w-3 h-3 bg-[color:var(--secondary)] rounded-full mr-2"></div>
                         <span className="text-sm">Shortlisted ({total > 0 ? ((totalShortlisted / total) * 100).toFixed(1) : 0}%)</span>
                       </div>
                       <div className="flex items-center">
@@ -490,7 +518,7 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                         <div className="w-28 md:w-32 text-sm truncate mr-4">{job.title}</div>
                         <div className="flex-1 bg-gray-200 rounded-full h-4">
                           <div
-                            className="bg-yellow-500 h-4 rounded-full"
+                            className="bg-[color:var(--secondary)] h-4 rounded-full"
                             style={{ width: `${width}%` }}
                           ></div>
                         </div>
@@ -526,7 +554,7 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                       </div>
                       <div className="text-right">
                         <div className="text-sm text-gray-500">{new Date(applicant.applied_at).toLocaleDateString()}</div>
-                        <span className={`px-2 py-1 rounded-full text-xs ${applicant.status === 'applied' ? 'bg-blue-100 text-blue-800' : applicant.status === 'shortlisted' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+                        <span className={`px-2 py-1 rounded-full text-xs ${applicant.status === 'applied' ? 'bg-[color:var(--primary)]/10 text-[color:var(--primary)]' : applicant.status === 'shortlisted' ? 'bg-[color:var(--secondary)]/10 text-[color:var(--secondary)]' : 'bg-red-100 text-red-800'}`}>
                           {applicant.status}
                         </span>
                       </div>
@@ -541,13 +569,13 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">All Jobs ({filteredJobs.length})</h3>
-              <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3">
                 <input
                   type="text"
                   placeholder="Search jobs by title, location, or skills..."
                   value={jobsSearchQuery}
                   onChange={(e) => setJobsSearchQuery(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent"
                 />
               </div>
             </div>
@@ -563,12 +591,12 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                       <p className="text-sm text-gray-600">{job.location} • {job.job_type || 'Full-time'}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${job.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${job.status === 'active' ? 'bg-[color:var(--primary)]/10 text-[color:var(--primary)]' : 'bg-gray-100 text-gray-800'}`}>
                         {job.status}
                       </span>
                       <button
                         onClick={() => toggleJobDetails(job.job_id)}
-                        className="px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                        className="btn-secondary px-3 py-1 text-sm"
                       >
                         {expandedJobs.has(job.job_id) ? 'Hide Details' : 'Show Details'}
                       </button>
@@ -636,7 +664,7 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                               </div>
                             )}
                             <div className="mt-2">
-                              <div className="text-sm text-gray-600">Likes: <span className="font-medium text-green-600">{job.swipe_stats?.likes || 0}</span></div>
+                              <div className="text-sm text-gray-600">Likes: <span className="font-medium text-[color:var(--primary)]">{job.swipe_stats?.likes || 0}</span></div>
                               <div className="text-sm text-gray-600">Dislikes: <span className="font-medium text-red-600">{job.swipe_stats?.dislikes || 0}</span></div>
                             </div>
                           </div>
@@ -687,9 +715,9 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                                     Applied: {new Date(applicant.applied_at).toLocaleDateString()}
                                   </div>
                                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    applicant.status === 'applied' ? 'bg-blue-100 text-blue-800' : 
-                                    applicant.status === 'shortlisted' ? 'bg-yellow-100 text-yellow-800' : 
-                                    'bg-red-100 text-red-800'
+                                    applicant.status === 'applied' ? 'bg-[color:var(--primary)]/10 text-[color:var(--primary)]' : 
+                                      applicant.status === 'shortlisted' ? 'bg-[color:var(--secondary)]/10 text-[color:var(--secondary)]' : 
+                                      'bg-red-100 text-red-800'
                                   }`}>
                                     {applicant.status}
                                   </span>
@@ -717,7 +745,7 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                             <div className="text-xs text-gray-500">
                               {applicant.experience_years} yrs exp
                             </div>
-                            <span className={`px-2 py-1 rounded-full text-xs ${applicant.status === 'applied' ? 'bg-blue-100 text-blue-800' : applicant.status === 'shortlisted' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+                            <span className={`px-2 py-1 rounded-full text-xs ${applicant.status === 'applied' ? 'bg-[color:var(--primary)]/10 text-[color:var(--primary)]' : applicant.status === 'shortlisted' ? 'bg-[color:var(--secondary)]/10 text-[color:var(--secondary)]' : 'bg-red-100 text-red-800'}`}>
                               {applicant.status}
                             </span>
                           </div>

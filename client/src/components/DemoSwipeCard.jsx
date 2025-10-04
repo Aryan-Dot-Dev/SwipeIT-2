@@ -64,7 +64,7 @@ export default function DemoSwipeCard({ onSwipe = () => {} }) {
     }
   }, [isDragging])
 
-  const rotate = Math.max(Math.min(pos.x / 20, 12), -12)
+  const rotate = Math.max(Math.min(pos.x / 26, 8), -8)
 
   return (
     <div className="relative w-full">
@@ -80,7 +80,7 @@ export default function DemoSwipeCard({ onSwipe = () => {} }) {
           transition: isDragging || animating ? 'transform 0.15s linear' : 'transform 0.3s cubic-bezier(.2,.8,.2,1)'
         }}
       >
-        <div className="relative z-10 bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
+  <div className="relative z-10 bg-[color:var(--card)] rounded-xl border border-[color:var(--border)] shadow-md overflow-hidden" style={{ backdropFilter: 'blur(6px)' }}>
           {/* Top-right helper icon (like CandidateCard) */}
           <div className="absolute top-3 right-3">
             <button
@@ -94,8 +94,8 @@ export default function DemoSwipeCard({ onSwipe = () => {} }) {
           </div>
 
           {/* Header: avatar, name, email/status */}
-          <div className="flex flex-col items-center gap-3 p-5" style={{ background: 'linear-gradient(180deg,var(--primary),transparent)' }}>
-            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-white overflow-hidden border-2">
+          <div className="flex flex-col items-center gap-3 p-5" style={{ background: 'linear-gradient(180deg, rgba(124,58,237,0.12), rgba(255,73,160,0.06))' }}>
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[color:var(--card)] overflow-hidden border border-[color:var(--border)]/60">
               <div className="text-3xl font-bold text-[color:var(--primary)]">D</div>
             </div>
             <div className="text-center">
@@ -103,7 +103,7 @@ export default function DemoSwipeCard({ onSwipe = () => {} }) {
               <div className="text-xs mt-1 text-[color:var(--muted-foreground)]">demo@example.com</div>
             </div>
             <div className="flex items-center gap-4 mt-2">
-              <div className="text-xs px-3 py-1 rounded-full font-medium bg-gray-800 text-white border border-gray-700 shadow-sm">New</div>
+              <div className="text-xs px-3 py-1 rounded-full font-medium bg-[color:var(--primary)]/12 text-[color:var(--primary)] border border-[color:var(--primary)]/20 shadow-sm">New</div>
               <span className="h-5 w-px bg-gray-200 rounded mx-1" />
               <div className="text-sm text-gray-600">Applied: <span className="font-semibold text-gray-900">Today</span></div>
             </div>
@@ -119,7 +119,7 @@ export default function DemoSwipeCard({ onSwipe = () => {} }) {
 
             <div className="mt-6 flex flex-wrap gap-2 px-2">
               {['React','Node','TypeScript'].map((skill, i) => (
-                <div key={i} className="bg-white text-slate-700 px-3 py-1.5 rounded-full border border-slate-300 text-xs font-medium shadow-sm">{skill}</div>
+                <div key={i} className="px-3 py-1.5 rounded-full text-xs font-medium" style={{ background: 'rgba(255,255,255,0.02)', color: 'var(--foreground)', border: '1px solid rgba(255,255,255,0.03)' }}>{skill}</div>
               ))}
             </div>
           </div>
@@ -129,13 +129,13 @@ export default function DemoSwipeCard({ onSwipe = () => {} }) {
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-4 mt-2">
               <button
                 onClick={() => console.log('Demo view')}
-                className="flex-1 px-3 py-2 rounded-lg text-sm border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200 active:scale-[0.98] transition-all shadow group font-semibold"
+                className="flex-1 px-3 py-2 rounded-lg text-sm border border-[color:var(--border)] bg-[color:var(--card)] text-[color:var(--foreground)] hover:bg-[color:var(--card)]/95 focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] active:scale-[0.98] transition-all group font-semibold"
               >
                 View
               </button>
               <button
                 onClick={() => animateOff(1000, () => onSwipe('right'))}
-                className="flex-1 px-3 py-2 rounded-lg text-sm font-semibold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-200 active:scale-[0.98] transition-all shadow-md group"
+                className="flex-1 px-3 py-2 rounded-lg text-sm font-semibold text-white recruiter-cta hover:scale-[1.01] focus:outline-none active:scale-[0.98] transition-all shadow-sm group"
               >
                 Shortlist
               </button>

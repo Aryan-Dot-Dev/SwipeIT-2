@@ -29,8 +29,8 @@ export default function AboutPage() {
   const values = [
     { title: 'Fair Hiring', desc: 'We eliminate bias from recruitment with AI that focuses on skills and attitude, not just keywords.', icon: '⚖️' },
     { title: 'Speed & Efficiency', desc: 'Our swipe-based interface makes hiring faster, helping you find great matches in minutes.', icon: '⚡' },
-    { title: 'Transparency', desc: 'Clear processes and open communication ensure trust between candidates and recruiters.', icon: '👁️' },
-    { title: 'Innovation', desc: 'We leverage cutting-edge AI to revolutionize how companies connect with talent.', icon: '🚀' },
+    { title: 'Transparency', desc: 'Clear processes and open communication ensure trust between candidates and recruiters.', icon: '�' },
+    { title: 'Innovation', desc: 'We leverage cutting-edge AI to revolutionize how companies connect with talent.', icon: '�' },
   ]
 
   const team = [
@@ -54,7 +54,7 @@ export default function AboutPage() {
               <a href="/" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Home</a>
               <a href="/blog" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Blog</a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Log in</a>
-              <a href="/signup"><Button size="sm" className="text-white" style={{ background: 'var(--primary)' }}>Sign up</Button></a>
+              <a href="/signup"><Button size="sm" className="btn-primary">Sign up</Button></a>
             </nav>
             {/* Mobile menu button */}
             <div className="md:hidden">
@@ -118,10 +118,10 @@ export default function AboutPage() {
               </a>
               <div className="border-t border-[color:var(--border)] my-2"></div>
               <div className="px-6 pb-2">
-                <Button size="sm" variant="outline" className="w-full mb-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary)] hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-secondary w-full mb-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/login" className="block w-full">Log in</a>
                 </Button>
-                <Button size="sm" className="w-full text-white" style={{ background: 'var(--primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/signup" className="block w-full">Sign up</a>
                 </Button>
               </div>
@@ -165,7 +165,7 @@ export default function AboutPage() {
               <div className="mt-1 text-sm md:text-base">Start using SwipeIT today and experience hiring done right.</div>
             </div>
             <div className="flex-shrink-0 mt-4 lg:mt-0">
-              <a href="/signup"><Button className="w-full lg:w-auto text-white bg-white/20 hover:bg-white/30 border-white/30" style={{ background: 'transparent' }}>Get started</Button></a>
+              <a href="/signup"><Button className="w-full lg:w-auto btn-secondary">Get started</Button></a>
             </div>
           </div>
         </section>

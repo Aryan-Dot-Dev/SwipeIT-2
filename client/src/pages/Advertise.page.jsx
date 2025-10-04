@@ -64,7 +64,7 @@ export default function AdvertisePage() {
     {
       title: 'Higher Visibility',
       description: 'Promoted jobs appear at the top of search results and in featured sections.',
-      icon: '👁️'
+      icon: '�'
     },
     {
       title: 'Quality Leads',
@@ -93,7 +93,7 @@ export default function AdvertisePage() {
               <a href="/" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Home</a>
               <a href="/about" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">About</a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Log in</a>
-              <a href="/signup"><Button size="sm" className="text-white" style={{ background: 'var(--primary)' }}>Sign up</Button></a>
+              <a href="/signup"><Button size="sm" className="btn-primary">Sign up</Button></a>
             </nav>
             {/* Mobile menu button */}
             <div className="md:hidden">
@@ -157,10 +157,10 @@ export default function AdvertisePage() {
               </a>
               <div className="border-t border-[color:var(--border)] my-2"></div>
               <div className="px-6 pb-2">
-                <Button size="sm" variant="outline" className="w-full mb-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary)] hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-secondary w-full mb-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/login" className="block w-full">Log in</a>
                 </Button>
-                <Button size="sm" className="w-full text-white" style={{ background: 'var(--primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/signup" className="block w-full">Sign up</a>
                 </Button>
               </div>
@@ -196,7 +196,7 @@ export default function AdvertisePage() {
           <div className="p-6 md:p-8 bg-[color:var(--card)] rounded-xl text-center">
             <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">Custom Solutions</h2>
             <p className="text-[color:var(--muted-foreground)] mb-4 md:mb-6 text-sm md:text-base">Need something tailored to your specific needs? We offer custom advertising solutions for large organizations and unique campaigns.</p>
-            <a href="mailto:team@swipeit.in"><Button className="w-full sm:w-auto">Contact Sales</Button></a>
+            <a href="mailto:team@swipeit.in"><Button className="w-full sm:w-auto btn-primary">Contact Sales</Button></a>
           </div>
         </section>
 
@@ -207,7 +207,7 @@ export default function AdvertisePage() {
               <div className="mt-1 text-sm md:text-base">Contact our advertising team to discuss your campaign goals and find the perfect solution.</div>
             </div>
             <div className="flex-shrink-0 mt-4 lg:mt-0">
-              <a href="mailto:team@swipeit.in"><Button className="w-full lg:w-auto text-white bg-white/20 hover:bg-white/30 border-white/30" style={{ background: 'transparent' }}>Start Advertising</Button></a>
+              <a href="mailto:team@swipeit.in"><Button className="w-full lg:w-auto btn-secondary">Start Advertising</Button></a>
             </div>
           </div>
         </section>

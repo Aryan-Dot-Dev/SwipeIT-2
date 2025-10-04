@@ -166,11 +166,11 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
           /* Desktop: Three-column layout | Mobile: Single-column with fixed filter button */
           <div className="flex-1 flex md:flex-row flex-col relative">
             {/* Desktop Filters Sidebar */}
-            <div className="hidden lg:block w-80 flex-shrink-0 bg-white border-r border-teal-100 p-6 overflow-y-auto">
+            <div className="hidden lg:block w-80 flex-shrink-0 bg-white border-r border-[color:var(--border)] p-6 overflow-y-auto">
               <div className="space-y-6">
                 {/* Header with icon */}
-                <div className="flex items-center gap-3 pb-2 border-b border-teal-100">
-                  <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center">
+                <div className="flex items-center gap-3 pb-2 border-b border-[color:var(--border)]">
+                  <div className="w-8 h-8 rounded-lg bg-[color:var(--primary)] flex items-center justify-center">
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                     </svg>
@@ -181,7 +181,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                 {/* Keywords */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                    <svg className="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-[color:var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                     </svg>
                     Keywords
@@ -192,7 +192,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                       placeholder="e.g. React, Python, Manager"
                       value={filters.keyword}
                       onChange={(e) => setFilters(f => ({ ...f, keyword: e.target.value }))}
-                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                     />
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,7 +205,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                 {/* Location */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                    <svg className="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-[color:var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -217,7 +217,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                       placeholder="e.g. New York, Remote"
                       value={filters.location}
                       onChange={(e) => setFilters(f => ({ ...f, location: e.target.value }))}
-                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                     />
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,7 +231,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                 {/* Industry */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                    <svg className="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-[color:var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                     Industry
@@ -242,7 +242,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                       placeholder="e.g. Technology, Finance"
                       value={filters.industry}
                       onChange={(e) => setFilters(f => ({ ...f, industry: e.target.value }))}
-                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                     />
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -255,7 +255,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                 {/* Min Match % */}
                 <div className="space-y-3">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                    <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-[color:var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                     Minimum Match
@@ -267,11 +267,11 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                       max="100"
                       value={filters.minSimilarity}
                       onChange={(e) => setFilters(f => ({ ...f, minSimilarity: e.target.value }))}
-                      className="w-full h-2 bg-gradient-to-r from-teal-200 to-teal-400 rounded-lg appearance-none cursor-pointer slider-thumb"
+                      className="w-full h-2 bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--secondary)] rounded-lg appearance-none cursor-pointer slider-thumb"
                     />
                     <div className="flex justify-between text-xs text-gray-500 mt-2">
                       <span className="font-medium">0%</span>
-                      <span className="font-semibold text-teal-600 bg-teal-50 px-2 py-1 rounded-full">{filters.minSimilarity}%</span>
+                      <span className="font-semibold text-[color:var(--primary)] bg-[color:var(--primary)]/10 px-2 py-1 rounded-full">{filters.minSimilarity}%</span>
                       <span className="font-medium">100%</span>
                     </div>
                   </div>
@@ -282,7 +282,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                   onClick={() => {
                     setFilters({ keyword: '', location: '', industry: '', minSimilarity: 0 })
                   }}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-xl font-medium hover:from-gray-200 hover:to-gray-300 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                  className="btn-secondary w-full py-3 px-4"
                 >
                   <div className="flex items-center justify-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -344,18 +344,18 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
             </div>
 
             {/* Desktop Saved Jobs Sidebar */}
-            <div className="hidden lg:flex w-80 flex-shrink-0 bg-white border-l border-teal-100 p-6 overflow-hidden flex-col">
+            <div className="hidden lg:flex w-80 flex-shrink-0 bg-white border-l border-[color:var(--border)] p-6 overflow-hidden flex-col">
               <div className="flex-1 space-y-4 overflow-y-auto">
                 {/* Header with icon */}
-                <div className="flex items-center gap-3 pb-2 border-b border-teal-100">
-                  <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center">
+                <div className="flex items-center gap-3 pb-2 border-b border-[color:var(--border)]">
+                  <div className="w-8 h-8 rounded-lg bg-[color:var(--primary)] flex items-center justify-center">
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                     </svg>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">Saved Jobs</h3>
                   {savedJobs.length > 0 && (
-                    <span className="ml-auto bg-teal-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
+                    <span className="ml-auto bg-[color:var(--primary)] text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
                       {savedJobs.length}
                     </span>
                   )}
@@ -376,17 +376,17 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                     {savedJobs.slice(0, 5).map((job, idx) => (
                       <div
                         key={job.id || job.job_id || job.application_id || `saved-${idx}`}
-                        className="group p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100 hover:border-teal-200 hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:-translate-y-1"
+                        className="group p-4 rounded-xl bg-white/80 backdrop-blur-sm border border-[color:var(--border)] hover:border-[color:var(--primary)] hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:-translate-y-1"
                         onClick={() => onOpenSaved(job)}
                       >
                         <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-teal-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                          <div className="w-10 h-10 rounded-lg bg-[color:var(--primary)] flex items-center justify-center flex-shrink-0 shadow-sm">
                             <span className="text-white font-bold text-sm">
                               {String(job.company_name || '').charAt(0) || 'C'}
                             </span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="font-semibold text-sm text-gray-900 truncate group-hover:text-teal-700 transition-colors">
+                            <div className="font-semibold text-sm text-gray-900 truncate group-hover:text-[color:var(--primary)] transition-colors">
                               {job.job_title || job.title}
                             </div>
                             <div className="text-xs text-gray-600 truncate mt-1">
@@ -405,10 +405,10 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                         </div>
                         <div className="mt-3 flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            <div className="w-2 h-2 rounded-full bg-[color:var(--primary)]"></div>
                             <span className="text-xs text-gray-500">Saved</span>
                           </div>
-                          <svg className="w-4 h-4 text-gray-400 group-hover:text-teal-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-400 group-hover:text-[color:var(--primary)] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
                         </div>
@@ -417,7 +417,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                     {savedJobs.length > 5 && (
                       <button
                         onClick={() => setShowSavedJobsModal(true)}
-                        className="w-full py-3 px-4 bg-gradient-to-r from-teal-50 to-teal-100 hover:from-teal-100 hover:to-teal-200 text-teal-700 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 border border-teal-200"
+                        className="btn-primary w-full py-3 px-4"
                       >
                         <div className="flex items-center justify-center gap-2">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -468,22 +468,22 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
             {/* Logo in menu */}
             <div className="flex items-center justify-center p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--secondary)] flex items-center justify-center text-white font-bold text-lg">
                   SI
                 </div>
-                <div className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <div className="text-lg font-semibold bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--secondary)] bg-clip-text text-transparent">
                   SwipeIT
                 </div>
               </div>
             </div>
 
             {/* User Info Section */}
-            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-[color:var(--primary)]/10 to-[color:var(--secondary)]/10">
               <div className="flex items-center gap-4">
                 {currentUser?.user_metadata?.avatar_url ? (
                   <img src={currentUser.user_metadata.avatar_url} alt={currentUser.user_metadata.name} className="w-12 h-12 rounded-full border-2 border-white shadow-sm" />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--secondary)] flex items-center justify-center text-white font-bold text-lg shadow-sm">
                     {(currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -535,24 +535,24 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                     setShowMenuModal(false);
                     // Filters modal is now handled at Dashboard level
                   }}
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors duration-200 touch-manipulation"
+                  className="btn-secondary flex flex-col items-center gap-2 p-3"
                 >
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                   </svg>
-                  <span className="text-xs font-medium text-blue-700">Filters</span>
+                  <span className="text-xs font-medium">Filters</span>
                 </button>
                 <button
                   onClick={() => {
                     setShowMenuModal(false);
                     setShowSavedJobsModal(true);
                   }}
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors duration-200 touch-manipulation relative"
+                  className="btn-primary flex flex-col items-center gap-2 p-3 relative"
                 >
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                   </svg>
-                  <span className="text-xs font-medium text-green-700">Saved</span>
+                  <span className="text-xs font-medium">Saved</span>
                   {savedJobs.length > 0 && (
                     <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
                       <span className="text-white text-xs font-bold">{savedJobs.length}</span>

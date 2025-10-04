@@ -134,7 +134,7 @@ const Dashboard = ({ userId: propUserId }) => {
       if (!role) return
       // if current view is invalid for this role, pick a sensible fallback
       if (!isViewAllowedForRole(currentView, role)) {
-        if (String(role).toLowerCase().includes('recruit')) setCurrentView('dashboard')
+        if (String(role).toLowerCase().includes('recruit')) setCurrentView('candidates')
         else setCurrentView('candidate')
       }
     } catch {
@@ -233,6 +233,7 @@ const Dashboard = ({ userId: propUserId }) => {
             setCurrentUser(user)
             setUserId(user.id || user.user_id || null)
             setSavedJobs([])
+            setCurrentView(prev => (prev == null || prev === 'candidate' ? 'candidates' : prev))
             return
           } else {
             setRole('candidate')
@@ -341,8 +342,8 @@ const Dashboard = ({ userId: propUserId }) => {
               setRole('recruiter')
               setCurrentUser(payload)
               setUserId(payload.id || payload.user_id || null)
-              // Ensure recruiter users default to the dashboard view unless the user already selected something else
-              setCurrentView(prev => (prev == null || prev === 'candidate' ? 'dashboard' : prev))
+              // Ensure recruiter users default to the candidates view unless the user already selected something else
+              setCurrentView(prev => (prev == null || prev === 'candidate' ? 'candidates' : prev))
             } else {
               setRole('candidate')
               setCurrentUser(payload)
@@ -691,7 +692,6 @@ const Dashboard = ({ userId: propUserId }) => {
                 <h1 className="text-lg md:text-xl font-semibold truncate" style={{ color: 'var(--foreground)' }}>
                   Hello {headerName || 'there'}
                 </h1>
-                <div className="text-xs md:text-sm text-gray-500">Welcome back</div>
               </div>
             </div>
 

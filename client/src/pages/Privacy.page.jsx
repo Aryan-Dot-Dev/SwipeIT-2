@@ -116,7 +116,7 @@ export default function PrivacyPage() {
               <a href="/" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Home</a>
               <a href="/about" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">About</a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Log in</a>
-              <a href="/signup"><Button size="sm" className="text-white" style={{ background: 'var(--primary)' }}>Sign up</Button></a>
+              <a href="/signup"><Button size="sm" className="btn-primary">Sign up</Button></a>
             </nav>
             {/* Mobile menu button */}
             <div className="md:hidden">
@@ -180,10 +180,10 @@ export default function PrivacyPage() {
               </a>
               <div className="border-t border-[color:var(--border)] my-2"></div>
               <div className="px-6 pb-2">
-                <Button size="sm" variant="outline" className="w-full mb-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary)] hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-secondary w-full mb-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/login" className="block w-full">Log in</a>
                 </Button>
-                <Button size="sm" className="w-full text-white" style={{ background: 'var(--primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/signup" className="block w-full">Sign up</a>
                 </Button>
               </div>
@@ -211,7 +211,7 @@ export default function PrivacyPage() {
           <div className="p-4 md:p-6 bg-[color:var(--card)] rounded-xl text-center">
             <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Questions About Your Privacy?</h2>
             <p className="text-sm md:text-base text-[color:var(--muted-foreground)] mb-4 md:mb-6">If you have any questions about this Privacy Policy or our data practices, please don't hesitate to contact us.</p>
-            <a href="/contact"><Button>Contact Us</Button></a>
+            <a href="/contact"><Button className="btn-primary">Contact Us</Button></a>
           </div>
         </section>
 
@@ -223,7 +223,7 @@ export default function PrivacyPage() {
                 <div className="mt-1 md:mt-2 text-sm md:text-base">We regularly review and update our privacy practices to ensure they meet the highest standards.</div>
               </div>
               <div className="flex-shrink-0">
-                <a href="/contact"><Button className="text-white bg-white/10 hover:bg-white/20 border border-white/20" style={{ background: 'transparent' }}>Contact Data Protection Officer</Button></a>
+                <a href="/contact"><Button className="btn-secondary">Contact Data Protection Officer</Button></a>
               </div>
             </div>
           </div>

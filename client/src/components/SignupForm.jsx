@@ -1,4 +1,3 @@
-// ...existing code...
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -64,53 +63,55 @@ export function SignupForm({
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={cn("flex flex-col gap-4", className)} {...props}>
-            <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Create your account</h1>
-                <p className="text-muted-foreground text-sm text-balance">Enter your details below to sign up</p>
-            </div>
-            <div className="grid gap-4">
-                <div className="grid gap-3">
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" type="text" placeholder="Your full name" {...register("name")} aria-invalid={!!errors.name} />
-                    {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+        <div className="glass-panel max-w-md w-full">
+            <form onSubmit={handleSubmit(onSubmit)} className={cn("flex flex-col gap-4 p-6", className)} {...props}>
+                <div className="flex flex-col items-center gap-2 text-center">
+                    <h1 className="text-2xl font-bold">Create your account</h1>
+                    <p className="text-muted-foreground text-sm text-balance">Enter your details below to sign up</p>
                 </div>
-                <div className="grid gap-3">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="m@example.com" {...register("email")} aria-invalid={!!errors.email} />
-                    {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
-                </div>
-                <div className="grid gap-3">
-                    <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" {...register("password")} aria-invalid={!!errors.password} />
-                    {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
-                </div>
-                <div className="grid gap-3">
-                    <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input id="confirm-password" type="password" {...register("confirmPassword")} aria-invalid={!!errors.confirmPassword} />
-                    {errors.confirmPassword && <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>}
-                </div>
-                <div className="grid gap-3">
-                    <Label className="mb-1">Proceed as</Label>
-                    <div className="flex gap-2">
-                        <label className={["cursor-pointer flex-1 rounded-md py-2 px-4 text-center border", roleValue === 'recruiter' ? 'text-[color:var(--primary-foreground)] border-[color:var(--primary)]' : 'text-[color:var(--secondary-foreground)] border-[color:var(--secondary)]'].join(' ')} style={ roleValue === 'recruiter' ? { background: 'var(--primary)' } : { background: 'var(--secondary)' }}>
-                            <input type="radio" {...register("role")} value="recruiter" className="sr-only" />
-                            Recruiter
-                        </label>
-                        <label className={["cursor-pointer flex-1 rounded-md py-2 px-4 text-center border", roleValue === 'candidate' ? 'text-[color:var(--primary-foreground)] border-[color:var(--primary)]' : 'text-[color:var(--secondary-foreground)] border-[color:var(--secondary)]'].join(' ')} style={ roleValue === 'candidate' ? { background: 'var(--primary)' } : { background: 'var(--secondary)' }}>
-                            <input type="radio" {...register("role")} value="candidate" className="sr-only" />
-                            Candidate
-                        </label>
+                <div className="grid gap-4">
+                    <div className="grid gap-3">
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" type="text" placeholder="Your full name" {...register("name")} aria-invalid={!!errors.name} />
+                        {errors.name && <p className="text-sm text-red-400 microcopy">{errors.name.message}</p>}
                     </div>
-                    {errors.role && <p className="text-sm text-red-600">{errors.role.message}</p>}
+                    <div className="grid gap-3">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" placeholder="m@example.com" {...register("email")} aria-invalid={!!errors.email} />
+                        {errors.email && <p className="text-sm text-red-400 microcopy">{errors.email.message}</p>}
+                    </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="password">Password</Label>
+                        <Input id="password" type="password" placeholder="Create a password" {...register("password")} aria-invalid={!!errors.password} />
+                        {errors.password && <p className="text-sm text-red-400 microcopy">{errors.password.message}</p>}
+                    </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="confirm-password">Confirm Password</Label>
+                        <Input id="confirm-password" type="password" placeholder="Confirm your password" {...register("confirmPassword")} aria-invalid={!!errors.confirmPassword} />
+                        {errors.confirmPassword && <p className="text-sm text-red-400 microcopy">{errors.confirmPassword.message}</p>}
+                    </div>
+                    <div className="grid gap-3">
+                        <Label className="mb-1">Proceed as</Label>
+                        <div className="flex gap-2">
+                            <label className={["cursor-pointer flex-1 rounded-md py-2 px-4 text-center border", roleValue === 'recruiter' ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white border-pink-500' : 'bg-transparent text-white border-white/30 hover:bg-white/10'].join(' ')}>
+                                <input type="radio" {...register("role")} value="recruiter" className="sr-only" />
+                                Recruiter
+                            </label>
+                            <label className={["cursor-pointer flex-1 rounded-md py-2 px-4 text-center border", roleValue === 'candidate' ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white border-pink-500' : 'bg-transparent text-white border-white/30 hover:bg-white/10'].join(' ')}>
+                                <input type="radio" {...register("role")} value="candidate" className="sr-only" />
+                                Candidate
+                            </label>
+                        </div>
+                        {errors.role && <p className="text-sm text-red-400 microcopy">{errors.role.message}</p>}
+                    </div>
+                    {serverError && <div className="text-sm text-red-400 microcopy">{serverError}</div>}
+                                    <Button type="submit" className="w-full" disabled={loading}>{loading ? <div className="loading-bar w-full h-4 rounded"></div> : "Sign Up"}</Button>
                 </div>
-                {serverError && <div className="text-sm text-red-600">{serverError}</div>}
-                <Button type="submit" className="w-full" disabled={loading}>{loading ? "Signing up..." : "Sign Up"}</Button>
-            </div>
-            <div className="text-center text-sm">
-                Already have an account?{" "}
-                <Link to="/login" className="underline underline-offset-4">Login</Link>
-            </div>
-        </form>
+                <div className="text-center text-sm">
+                    Already have an account?{" "}
+                    <Link to="/login" className="underline underline-offset-4 text-pink-400 hover:text-pink-300">Login</Link>
+                </div>
+            </form>
+        </div>
     )
 }

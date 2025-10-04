@@ -79,9 +79,9 @@ function DetailsModal({ job, onClose }) {
         <div className="fixed inset-0 bg-black/40" onClick={onClose} />
 
         {/* Mobile: simplified sheet */}
-        <section className="block md:hidden" aria-hidden={false}>
-          <section role="dialog" aria-modal="true" ref={modalRef} tabIndex={-1} className="relative w-full sm:max-w-2xl mx-0 sm:mx-auto bg-[color:var(--card)] border rounded-t-lg sm:rounded-lg overflow-hidden shadow-lg" style={{ borderColor: 'var(--border)', maxHeight: '92vh' }}>
-            <header className="sticky top-0 z-20 flex items-center justify-between gap-3 px-4 py-3 border-b bg-[color:var(--card)]">
+        <section className="block md:hidden bg-white" aria-hidden={false}>
+          <section role="dialog" aria-modal="true" ref={modalRef} tabIndex={-1} className="relative w-full sm:max-w-2xl mx-0 sm:mx-auto bg-white border rounded-t-lg sm:rounded-lg overflow-hidden shadow-lg" style={{ borderColor: 'var(--border)', maxHeight: '92vh', backgroundColor: '#ffffff' }}>
+            <header className="sticky top-0 z-20 flex items-center justify-between gap-3 px-4 py-3 border-b bg-white" style={{ backgroundColor: '#ffffff' }}>
               <div className="flex items-center gap-3 min-w-0">
                 {job.company_logo ? (
                   <img src={job.company_logo} alt={job.company_name} className="w-9 h-9 object-cover rounded-md flex-shrink-0" loading="lazy" />
@@ -95,12 +95,12 @@ function DetailsModal({ job, onClose }) {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${job.status==='applied'?'bg-blue-100 text-blue-800':job.status==='shortlisted'?'bg-yellow-100 text-yellow-800':job.status==='rejected'?'bg-red-100 text-red-800':'bg-gray-100 text-gray-800'}`}>{safeText(job.status) || 'Applied'}</span>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${job.status==='applied'?'bg-[color:var(--primary)]/10 text-[color:var(--primary)]':job.status==='shortlisted'?'bg-[color:var(--secondary)]/10 text-[color:var(--secondary)]':job.status==='rejected'?'bg-red-100 text-red-800':'bg-gray-100 text-gray-800'}`}>{safeText(job.status) || 'Applied'}</span>
                 <button onClick={onClose} aria-label="Close" className="p-2 rounded-md text-[color:var(--foreground)] hover:bg-[color:var(--muted)]/30">✕</button>
               </div>
             </header>
 
-            <main className="overflow-auto p-4" style={{ maxHeight: 'calc(92vh - 64px)' }}>
+            <main className="overflow-auto p-4 bg-white" style={{ maxHeight: 'calc(92vh - 64px)', backgroundColor: '#ffffff' }}>
               <div className="flex gap-2 overflow-x-auto pb-3 -mx-1">
                 {chips.map((c, i) => (
                   <div key={i} className="ml-1"><span className="inline-flex items-center text-xs px-3 py-1 rounded-full" style={{ backgroundColor: 'var(--muted)', color: 'var(--foreground)' }}>{c}</span></div>
@@ -154,7 +154,7 @@ function DetailsModal({ job, onClose }) {
               )}
             </main>
 
-            <div className="sm:hidden sticky bottom-0 z-30 bg-[color:var(--card)] border-t p-3" style={{ borderColor: 'var(--border)' }}>
+            <div className="sm:hidden sticky bottom-0 z-30 bg-white border-t p-3" style={{ borderColor: 'var(--border)', backgroundColor: '#ffffff' }}>
               <div className="flex gap-2">
                 {job.company_website && <a href={job.company_website} target="_blank" rel="noreferrer" className="flex-1 text-center px-3 py-2 rounded-md text-sm font-medium" style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}>Visit</a>}
                 {job.recruiter_email && <a href={`mailto:${job.recruiter_email}`} className="flex-1 text-center px-3 py-2 rounded-md text-sm font-medium border" style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}>Email</a>}
@@ -165,11 +165,11 @@ function DetailsModal({ job, onClose }) {
         </section>
 
         {/* Desktop: original two-column modal */}
-        <section className="hidden md:flex items-center justify-center w-full">
-          <div className="relative z-30 bg-[color:var(--card)] rounded-lg shadow-2xl w-full max-w-5xl p-0 overflow-hidden" style={{ border: '1px solid var(--border)', maxHeight: '80vh', height: '80vh' }}>
-            <div className="flex h-full min-h-0">
+        <section className="hidden md:flex items-center justify-center w-full bg-transparent">
+          <div className="relative z-30 bg-white rounded-lg shadow-2xl w-full max-w-5xl p-0 overflow-hidden" style={{ border: '1px solid var(--border)', maxHeight: '80vh', height: '80vh', backgroundColor: '#ffffff' }}>
+            <div className="flex h-full min-h-0 bg-white" style={{ backgroundColor: '#ffffff' }}>
               {/* Left summary */}
-              <div className="w-1/3 p-6 flex flex-col gap-4 min-h-0" style={{ borderRight: '1px solid var(--border)', backgroundColor: 'var(--card)' }}>
+              <div className="w-1/3 p-6 flex flex-col gap-4 min-h-0" style={{ borderRight: '1px solid var(--border)', backgroundColor: '#ffffff' }}>
                 {job.company_logo ? (
                   <img src={job.company_logo} alt={job.company_name} className="w-20 h-20 object-cover rounded-lg shadow-sm" />
                 ) : (
@@ -258,7 +258,7 @@ function DetailsModal({ job, onClose }) {
                     {(job.salary_min || job.salary_max) && (
                       <div className="text-sm" style={{ color: 'var(--foreground)' }}>Salary: {job.currency || 'INR'} {job.salary_min || 0} - {job.salary_max || 0}</div>
                     )}
-                    <div className="text-sm" style={{ color: 'var(--foreground)' }}>Status: <span className={`px-2 py-1 rounded-full text-xs font-medium ${job.status==='applied'?'bg-blue-100 text-blue-800':job.status==='shortlisted'?'bg-yellow-100 text-yellow-800':job.status==='rejected'?'bg-red-100 text-red-800':'bg-gray-100 text-gray-800'}`}>{job.status || 'Applied'}</span></div>
+                    <div className="text-sm" style={{ color: 'var(--foreground)' }}>Status: <span className={`px-2 py-1 rounded-full text-xs font-medium ${job.status==='applied'?'bg-[color:var(--primary)]/10 text-[color:var(--primary)]':job.status==='shortlisted'?'bg-[color:var(--secondary)]/10 text-[color:var(--secondary)]':job.status==='rejected'?'bg-red-100 text-red-800':'bg-gray-100 text-gray-800'}`}>{job.status || 'Applied'}</span></div>
                     {job.applied_at && (<div className="text-sm" style={{ color: 'var(--foreground)' }}>Applied: {new Date(job.applied_at).toLocaleDateString()}</div>)}
                     {job.application_deadline && (<div className="text-sm" style={{ color: 'var(--foreground)' }}>Deadline: {new Date(job.application_deadline).toLocaleDateString()}</div>)}
                   </div>
@@ -413,7 +413,7 @@ const SavedJobsPage = ({ jobs = [], highlightId = null }) => {
           onClick={() => setStatusFilter('applied')}
           className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
             statusFilter === 'applied'
-              ? 'bg-blue-500 text-white'
+              ? 'bg-[color:var(--primary)] text-white'
               : 'bg-[color:var(--muted)] text-[color:var(--foreground)] hover:bg-[color:var(--muted)]/80'
           }`}
         >
@@ -423,7 +423,7 @@ const SavedJobsPage = ({ jobs = [], highlightId = null }) => {
           onClick={() => setStatusFilter('shortlisted')}
           className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
             statusFilter === 'shortlisted'
-              ? 'bg-yellow-500 text-white'
+              ? 'bg-[color:var(--secondary)] text-white'
               : 'bg-[color:var(--muted)] text-[color:var(--foreground)] hover:bg-[color:var(--muted)]/80'
           }`}
         >
@@ -476,8 +476,8 @@ const SavedJobsPage = ({ jobs = [], highlightId = null }) => {
                   </div>
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ml-2 flex-shrink-0 ${
-                  job.status === 'applied' ? 'bg-blue-100 text-blue-800' :
-                  job.status === 'shortlisted' ? 'bg-yellow-100 text-yellow-800' :
+                  job.status === 'applied' ? 'bg-[color:var(--primary)]/10 text-[color:var(--primary)]' :
+                  job.status === 'shortlisted' ? 'bg-[color:var(--secondary)]/10 text-[color:var(--secondary)]' :
                   job.status === 'rejected' ? 'bg-red-100 text-red-800' :
                   'bg-gray-100 text-gray-800'
                 }`}>

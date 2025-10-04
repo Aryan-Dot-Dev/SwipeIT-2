@@ -169,12 +169,12 @@ const Header = ({
 
               {/* User Info Section - For Dashboard Users */}
               {(userType === 'candidate' || userType === 'recruiter') && (
-                <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+                <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-[color:var(--primary)]/10 to-[color:var(--secondary)]/10">
                   <div className="flex items-center gap-4">
                     {userAvatar ? (
                       <img src={userAvatar} alt={userName} className="w-12 h-12 rounded-full border-2 border-white shadow-sm" />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--secondary)] flex items-center justify-center text-white font-bold text-lg shadow-sm">
                         {userName.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -217,7 +217,8 @@ const Header = ({
                     <a
                       key={index}
                       href={item.href}
-                      className="text-base py-4 px-6 text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-200 active:scale-95 touch-manipulation block relative"
+                      className="text-base py-4 px-6 text-gray-700 hover:bg-gray-50 transition-all duration-200 active:scale-95 touch-manipulation block relative"
+                      style={{ '--hover-color': 'var(--primary)' }}
                       onClick={() => {
                         handleMenuToggle();
                         onMenuClick();
@@ -246,12 +247,13 @@ const Header = ({
                             onMenuClick();
                             onFilterClick();
                           }}
-                          className="flex flex-col items-center gap-2 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors duration-200 touch-manipulation"
+                          className="flex flex-col items-center gap-2 p-3 rounded-lg transition-colors duration-200 touch-manipulation"
+                          style={{ background: 'var(--muted)', border: '1px solid var(--border)' }}
                         >
-                          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--primary)' }}>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                           </svg>
-                          <span className="text-xs font-medium text-blue-700">Filters</span>
+                          <span className="text-xs font-medium" style={{ color: 'var(--primary)' }}>Filters</span>
                         </button>
                         <button
                           onClick={() => {
@@ -259,12 +261,13 @@ const Header = ({
                             onMenuClick();
                             // Navigate to saved jobs
                           }}
-                          className="flex flex-col items-center gap-2 p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors duration-200 touch-manipulation relative"
+                          className="flex flex-col items-center gap-2 p-3 rounded-lg transition-colors duration-200 touch-manipulation relative"
+                          style={{ background: 'var(--card)' }}
                         >
-                          <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-6 h-6 text-[color:var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                           </svg>
-                          <span className="text-xs font-medium text-green-700">Saved</span>
+                          <span className="text-xs font-medium text-[color:var(--primary)]">Saved</span>
                           {savedJobsCount > 0 && (
                             <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
                               <span className="text-white text-xs font-bold">{savedJobsCount}</span>

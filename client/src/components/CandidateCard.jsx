@@ -107,7 +107,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
         onDragEnd={handleDragEnd}
         className="w-full max-w-[380px] md:max-w-[460px] lg:max-w-[540px] cursor-grab"
       >
-        <div className="relative z-10 bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
+        <div className="relative z-10 glass-panel overflow-hidden">
           {/* Gemini icon badge (top-right) */}
           <div className="absolute top-3 right-3">
             <button
@@ -134,29 +134,44 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
                   setGeminiLoading(false)
                 }
               }}
-              className="w-10 h-10 rounded-lg bg-white p-1 flex items-center justify-center border border-gray-100 shadow-sm hover:scale-105 transition-transform"
+              className="w-10 h-10 rounded-lg bg-white/10 p-1 flex items-center justify-center border border-white/20 shadow-sm hover:scale-105 transition-all backdrop-blur-sm"
             >
               {/* Use the public help.png icon instead of inline SVG */}
               <img src="/help.png" alt="Assistant" className="w-6 h-6 object-contain" loading="lazy" />
             </button>
           </div>
           {/* Compact header: centered avatar, name, email, status */}
-          <div className="flex flex-col items-center gap-3 p-5" style={{ background: 'linear-gradient(180deg,var(--primary),transparent)' }}>
-            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-white overflow-hidden border-2">
-              {avatar ? <img src={avatar} alt={name} className="w-full h-full object-cover" /> : <div className="text-3xl font-bold text-[color:var(--primary)]">{String(name || 'U').charAt(0)}</div>}
+          <div className="flex flex-col items-center gap-3 p-5 recruiter-glass bg-gradient-to-b from-[color:var(--primary)]/30 to-[color:var(--secondary)]/12">
+            {/* Match percentage badge - top left */}
+            {c.candidate_profile?.similarity !== null && c.candidate_profile?.similarity !== undefined && (
+              <div className="absolute top-3 left-3">
+                <div className="bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg border border-[color:var(--primary)]/20">
+                  <div className="flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5 text-[color:var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-xs font-bold text-[color:var(--primary)]">
+                      {Math.round(c.candidate_profile.similarity > 1 ? c.candidate_profile.similarity : c.candidate_profile.similarity * 100)}% Match
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-white/10 overflow-hidden border border-white/10 backdrop-blur-sm">
+              {avatar ? <img src={avatar} alt={name} className="w-full h-full object-cover" /> : <div className="text-3xl font-bold text-[color:var(--primary-foreground)]">{String(name || 'U').charAt(0)}</div>}
             </div>
             <div className="text-center">
-              <h3 className="text-lg font-bold" style={{ color: 'var(--primary-foreground)' }}>{anonymous ? 'Anonymous candidate' : name}</h3>
-              {!anonymous && <div className="text-xs mt-1 text-[color:var(--muted-foreground)] truncate max-w-[360px]">{email}</div>}
+              <h3 className="text-xl font-semibold truncate max-w-[320px]" style={{ color: 'var(--primary-foreground)' }}>{anonymous ? 'Anonymous candidate' : name}</h3>
+              {!anonymous && <div className="text-xs mt-1 text-[color:var(--muted-foreground)] truncate max-w-[320px]">{email}</div>}
               {anonymous && <div className="text-xs mt-1 text-[color:var(--muted-foreground)] truncate max-w-[360px]">Profile summary only</div>}
             </div>
             <div className="flex items-center gap-4 mt-2">
-              <div className="text-xs px-3 py-1 rounded-full font-medium bg-gray-800 text-white border border-gray-700 shadow-sm">
+              <div className="text-xs px-3 py-1 rounded-full font-medium bg-[color:var(--primary)]/8 text-[color:var(--primary)] border border-[color:var(--primary)]/14 backdrop-blur-sm">
                 {status || 'New'}
               </div>
-              <span className="h-5 w-px bg-gray-200 rounded mx-1" />
-              <div className="text-sm text-gray-600">
-                Applied: <span className="font-semibold text-gray-900">{appliedAt}</span>
+              <span className="h-5 w-px bg-white/30 rounded mx-1" />
+              <div className="text-sm text-white/80">
+                Applied: <span className="font-semibold text-white">{appliedAt}</span>
               </div>
             </div>
 
@@ -166,7 +181,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
           <div className="px-4 py-4">
             <div className="text-sm text-[color:var(--muted-foreground)] mb-2 text-center">Applied for <strong className="text-[color:var(--foreground)]">{jobTitle}</strong> at <strong className="text-[color:var(--foreground)]">{company}</strong></div>
 
-            <div className="text-sm leading-relaxed text-[color:var(--foreground)] h-28 overflow-y-auto pr-2 custom-scrollbar px-2">
+            <div className="text-sm leading-relaxed text-[color:var(--foreground)] h-24 overflow-y-auto pr-2 custom-scrollbar px-2 whitespace-pre-wrap break-words">
               {notes || 'No profile summary available.'}
             </div>
 
@@ -174,7 +189,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
               {(skills || []).map((skill, index) => (
                 <div
                   key={index}
-                  className="bg-white text-slate-700 px-3 py-1.5 rounded-full border border-slate-300 text-xs font-medium shadow-sm hover:bg-slate-50 hover:shadow hover:border-slate-400 transition-all"
+                  className="bg-[color:var(--primary)]/6 text-[color:var(--primary)] px-3 py-1 rounded-full border border-[color:var(--primary)]/12 text-xs font-medium transition-all"
                 >
                   {skill}
                 </div>
@@ -189,15 +204,15 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
     {/* View Button */}
     <button
       onClick={() => { setShowDetails(true); onView && onView(c) }}
-      className="flex-1 px-3 py-2 rounded-lg text-sm border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200 active:scale-[0.98] transition-all shadow group font-semibold"
+      className="btn-secondary w-full sm:w-auto"
       aria-label="View details"
     >
-      <span className="inline-flex items-center gap-2">
-        <svg className="h-4 w-4 text-blue-500 group-hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <span className="inline-flex items-center gap-1">
+        <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.269 2.943 9.542 7-.77 2.593-2.947 4.858-6.122 6.25" />
         </svg>
-        View
+        View Details
       </span>
     </button>
 
@@ -209,11 +224,11 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
       }}
       disabled={!resumeUrl}
       title={resumeUrl ? 'Open resume in new tab' : 'No resume available'}
-      className={`flex-1 px-3 py-2 rounded-lg text-sm font-semibold ${resumeUrl ? 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 hover:border-blue-300 focus:ring-2 focus:ring-blue-200' : 'text-gray-400 bg-gray-50 border border-gray-200 cursor-not-allowed'} active:scale-[0.98] transition-all shadow-sm`}
+      className={`btn-secondary w-full sm:w-auto ${!resumeUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
       aria-label="View resume"
     >
-      <span className="inline-flex items-center gap-2">
-        <svg className="h-4 w-4 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <span className="inline-flex items-center gap-1">
+        <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2v12" />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6" />
         </svg>
@@ -224,11 +239,11 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
     {/* Shortlist Button */}
     <button
       onClick={() => onShortlist && onShortlist(c)}
-      className="flex-1 px-3 py-2 rounded-lg text-sm font-semibold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-200 active:scale-[0.98] transition-all shadow-md group"
+      className="btn-primary recruiter-cta w-full sm:w-auto"
       aria-label="Shortlist"
     >
-      <span className="inline-flex items-center gap-2">
-        <svg className="h-4 w-4 text-white group-hover:text-gray-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <span className="inline-flex items-center gap-1">
+        <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/>
         </svg>
         Shortlist
@@ -238,11 +253,11 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
     {/* Reject Button */}
     <button
       onClick={() => onReject && onReject(c)}
-      className="flex-1 px-3 py-2 rounded-lg text-sm font-semibold text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-200 active:scale-[0.98] transition-all shadow-md group"
+      className="btn-primary recruiter-cta w-full sm:w-auto"
       aria-label="Reject"
     >
-      <span className="inline-flex items-center gap-2">
-        <svg className="h-4 w-4 text-white group-hover:text-gray-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <span className="inline-flex items-center gap-1">
+        <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
         </svg>
         Reject
@@ -255,11 +270,11 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
       </Motion.div>
       {showDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-opacity-40 backdrop-blur-sm" onClick={() => setShowDetails(false)} />
-          <div className="relative bg-white backdrop-blur-sm border border-white/10 rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowDetails(false)} />
+          <div className="relative glass-panel max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
             <div className="flex items-start justify-between">
               <h3 className="text-xl font-semibold">{safe(c.candidate_profile?.name || name)}</h3>
-              <button onClick={() => setShowDetails(false)} className="text-gray-500 hover:text-gray-700">×</button>
+              <button onClick={() => setShowDetails(false)} className="text-white hover:text-gray-300">×</button>
             </div>
             <div className="mt-4 space-y-4 text-sm text-[color:var(--foreground)]">
               {c.candidate_profile ? (
@@ -290,7 +305,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
                     <div className="font-medium">Skills</div>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {(Array.isArray(c.candidate_profile.skills) ? c.candidate_profile.skills : []).map((s, i) => (
-                        <div key={i} className="text-xs px-2 py-1 rounded-full bg-slate-100 border border-slate-200">{s}</div>
+                        <div key={i} className="text-xs px-2 py-1 rounded-full bg-white/10 border border-white/20 text-white backdrop-blur-sm">{s}</div>
                       ))}
                     </div>
                   </div>
@@ -304,7 +319,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
                           <div className="flex-1">
                             <div className="grid grid-cols-2 gap-2">
                               {Object.entries(c.candidate_profile.attitude_score).map(([trait, val]) => (
-                                <div key={trait} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded">
+                                <div key={trait} className="flex items-center justify-between px-3 py-2 bg-white/10 rounded backdrop-blur-sm">
                                   <span className="text-xs text-[color:var(--muted-foreground)]">{trait}</span>
                                   <span className="font-medium">{val}</span>
                                 </div>
@@ -321,7 +336,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
                   {c.candidate_profile.resumes && (
                     <div className="col-span-2">
                       <div className="font-medium">Resumes</div>
-                      <pre className="text-xs text-[color:var(--muted-foreground)] overflow-x-auto bg-gray-50 p-2 rounded mt-1">{JSON.stringify(c.candidate_profile.resumes, null, 2)}</pre>
+                      <pre className="text-xs text-[color:var(--muted-foreground)] overflow-x-auto bg-white/10 p-2 rounded mt-1 backdrop-blur-sm">{JSON.stringify(c.candidate_profile.resumes, null, 2)}</pre>
                     </div>
                   )}
                 </div>
@@ -335,19 +350,19 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
       {showGeminiModal && (
         <div className="fixed inset-0 z-60 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setShowGeminiModal(false)} />
-          <div className="relative bg-white border border-white/10 rounded-lg shadow-xl max-w-md w-full p-4">
+          <div className="relative glass-panel max-w-md w-full p-4">
             <div className="flex items-start justify-between">
               <h4 className="text-lg font-semibold">AI Summary</h4>
               <div className="flex items-center gap-2">
-                {geminiLoading && <div className="text-sm text-gray-500">Thinking…</div>}
-                <button onClick={() => setShowGeminiModal(false)} className="text-gray-500 hover:text-gray-700">×</button>
+                {geminiLoading && <div className="loading-bar w-16 h-2 rounded"></div>}
+                <button onClick={() => setShowGeminiModal(false)} className="text-white hover:text-gray-300">×</button>
               </div>
             </div>
             <div className="mt-3 text-sm text-[color:var(--foreground)] max-h-48 overflow-y-auto">
               {geminiSummary ? (
                 <div className="whitespace-pre-wrap">{geminiSummary}</div>
               ) : (
-                <div className="text-gray-500">No summary available.</div>
+                <div className="text-[color:var(--muted-foreground)]">No summary available.</div>
               )}
             </div>
           </div>

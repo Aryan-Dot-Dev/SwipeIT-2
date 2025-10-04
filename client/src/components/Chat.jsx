@@ -270,6 +270,8 @@ export default function Chat({ currentUser }) {
   const hasConvo = !!(current && (current.id || current.matchId))
   // detect if current user is (likely) a candidate
   const isCandidate = !!(currentUser && (currentUser.candidate || currentUser.candidate_id || currentUser.role === 'candidate' || (currentUser.user_metadata && currentUser.user_metadata.role === 'candidate')))
+  // recruiter detection (used to apply recruiter-scoped glass theme)
+  const isRecruiter = !!(currentUser && (currentUser.recruiter || (currentUser.company && (currentUser.company.id || currentUser.company.name))))
 
   // can the current user send a message in this view?
   // Candidates should be able to reply on existing match-backed conversations (matchId present),
@@ -537,14 +539,14 @@ export default function Chat({ currentUser }) {
   }, [])
 
   return (
-  <div className="w-full bg-white md:rounded-lg shadow-md flex flex-col md:flex-row" style={{ height: `calc(100vh - ${headerOffset + 32}px)`, overflow: 'hidden' }}>
+  <div className={`w-full md:rounded-lg shadow-md flex flex-col md:flex-row ${isRecruiter ? 'recruiter-glass' : 'bg-white'}`} style={{ height: `calc(100vh - ${headerOffset + 32}px)`, overflow: 'hidden' }}>
       {/* Mobile Sidebar Toggle */}
       <div className="md:hidden fixed top-4 left-4 z-30">
-        <button
-          onClick={() => setShowSidebar(true)}
-          className="w-10 h-10 bg-[color:var(--primary)] text-white rounded-full shadow-lg flex items-center justify-center"
-          aria-label="Open conversations"
-        >
+          <button
+            onClick={() => setShowSidebar(true)}
+            className="w-10 h-10 btn-primary rounded-full shadow-lg flex items-center justify-center"
+            aria-label="Open conversations"
+          >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
@@ -604,20 +606,19 @@ export default function Chat({ currentUser }) {
 
         {!isCandidate && (
           <div className="p-3 border-t" style={{ borderTopColor: 'var(--border)' }}>
-            <button
-              aria-label="New chat"
-              onClick={() => {
-                const id = `c${Date.now()}`
-                const n = { id, name: 'New chat', avatar: '', last: '', messages: [] }
-                setConvos([n, ...convos])
-                setSelectedId(id)
-                setShowSidebar(false) // Close sidebar on mobile
-              }}
-              className="w-full py-3 rounded-md text-sm font-medium"
-              style={{ border: '2px dotted var(--primary)', background: 'transparent', color: 'var(--primary)', textAlign: 'center' }}
-            >
-              + New chat
-            </button>
+              <button
+                aria-label="New chat"
+                onClick={() => {
+                  const id = `c${Date.now()}`
+                  const n = { id, name: 'New chat', avatar: '', last: '', messages: [] }
+                  setConvos([n, ...convos])
+                  setSelectedId(id)
+                  setShowSidebar(false) // Close sidebar on mobile
+                }}
+                className="w-full py-3 rounded-md text-sm font-medium recruiter-cta"
+              >
+                + New chat
+              </button>
           </div>
         )}
       </aside>
@@ -639,19 +640,19 @@ export default function Chat({ currentUser }) {
               <Avatar name={current?.name} src={current?.avatar} />
               <div className="min-w-0 flex-1">
                 <div className="font-semibold text-sm md:text-base truncate" style={{ color: 'var(--foreground)' }}>{current?.name}</div>
-                <div className="text-xs flex items-center gap-2" style={{ color: 'var(--muted-foreground)' }}>
-                  <span style={{ width: 6, height: 6, borderRadius: 9999, background: 'var(--primary)', display: 'inline-block' }} />
+          <div className="text-xs flex items-center gap-2" style={{ color: 'var(--muted-foreground)' }}>
+            <span style={{ width: 6, height: 6, borderRadius: 9999, background: 'var(--primary)', display: 'inline-block' }} />
                   <span className="truncate">{current?.last || 'No recent messages'}</span>
                 </div>
               </div>
             </div>
             <div className="text-xs md:text-sm text-gray-500 flex items-center gap-2 flex-shrink-0">
-              <span style={{ width: 8, height: 8, borderRadius: 9999, background: 'var(--primary)', display: 'inline-block', boxShadow: '0 0 0 3px rgba(13,148,136,0.12)' }} />
+              <span style={{ width: 8, height: 8, borderRadius: 9999, background: 'var(--primary)', display: 'inline-block', boxShadow: isRecruiter ? '0 0 0 6px rgba(139,92,246,0.12)' : '0 0 0 3px rgba(13,148,136,0.12)' }} />
               <span style={{ color: 'var(--foreground)' }}>Online</span>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto py-4 md:py-6 px-0 pb-28 md:pb-20" style={{ background: 'linear-gradient(180deg, var(--card), var(--muted))' }}>
+          <div className="flex-1 overflow-y-auto py-4 md:py-6 px-0 pb-28 md:pb-20" style={{ background: isRecruiter ? 'linear-gradient(180deg, rgba(250,244,255,0.6), rgba(250,244,255,0.12))' : 'linear-gradient(180deg, var(--card), var(--muted))' }}>
             <div className="w-full max-w-full md:max-w-4xl md:mx-auto space-y-3 md:space-y-4 px-3 md:px-0">
               {displayMessages.map(m => {
                 const renderedText = m.displayText || m.content || m.text || m.message || m.body || ''
@@ -680,7 +681,7 @@ export default function Chat({ currentUser }) {
                         }}
                       >
                         <div className="text-sm md:text-base">{linkify(renderedText, m.fromMe)}</div>
-                        <div className="text-xs text-gray-200 mt-1 text-right">
+                        <div className="text-xs text-[color:var(--muted-foreground)] mt-1 text-right">
                           {(m.created_at && new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })) || m.time}
                         </div>
                       </div>
@@ -693,22 +694,22 @@ export default function Chat({ currentUser }) {
           </div>
 
           {/* Inputs: hidden for candidate users */}
-          {canSend && (
-            <div className="hidden md:flex md:sticky md:bottom-0 md:left-0 md:right-0 px-3 md:px-4 py-3 border-t bg-white items-center gap-3" style={{ borderTopColor: 'var(--border)' }}>
+              {canSend && (
+            <div className="hidden md:flex md:sticky md:bottom-0 md:left-0 md:right-0 px-3 md:px-4 py-3 border-t bg-[color:var(--card)] items-center gap-3" style={{ borderTopColor: 'var(--border)' }}>
               <input
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); sendMessage() } }}
                 placeholder="Type a message..."
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] text-sm md:text-base"
+                className="flex-1 px-3 md:px-4 py-2 md:py-3 rounded-full border border-[color:var(--border)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] text-sm md:text-base"
               />
-              <Button
-                onClick={sendMessage}
-                size="sm"
-                className="px-4 md:px-6 py-2 md:py-3 text-sm md:text-base flex-shrink-0"
-              >
-                Send
-              </Button>
+                  <Button
+                    onClick={sendMessage}
+                    size="sm"
+                    className="px-4 md:px-6 py-2 md:py-3 text-sm md:text-base flex-shrink-0 btn-primary"
+                  >
+                    Send
+                  </Button>
             </div>
           )}
 
@@ -756,8 +757,7 @@ export default function Chat({ currentUser }) {
                       setSelectedId(id)
                       setShowSidebar(false)
                     }}
-                    className="px-4 py-2 rounded-md font-medium"
-                    style={{ background: 'var(--primary)', color: 'var(--primary-foreground)' }}
+                    className="px-4 py-2 rounded-md font-medium btn-primary"
                   >
                     Start new chat
                   </button>

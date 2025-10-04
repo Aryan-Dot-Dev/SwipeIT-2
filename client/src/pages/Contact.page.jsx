@@ -43,7 +43,7 @@ export default function ContactPage() {
     {
       title: 'Email Support',
       info: 'team@swipeit.in',
-      icon: '📧',
+      icon: '✉️',
       link: 'mailto:team@swipeit.in'
     },
     {
@@ -60,7 +60,7 @@ export default function ContactPage() {
     {
       title: 'Response Time',
       info: 'We typically respond within 24 hours',
-      icon: '⏰'
+      icon: '🕒'
     }
   ]
 
@@ -79,7 +79,7 @@ export default function ContactPage() {
               <a href="/" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Home</a>
               <a href="/about" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">About</a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Log in</a>
-              <a href="/signup"><Button size="sm" className="text-white" style={{ background: 'var(--primary)' }}>Sign up</Button></a>
+              <a href="/signup"><Button size="sm" className="btn-primary">Sign up</Button></a>
             </nav>
             {/* Mobile menu button */}
             <div className="md:hidden">
@@ -143,10 +143,10 @@ export default function ContactPage() {
               </a>
               <div className="border-t border-[color:var(--border)] my-2"></div>
               <div className="px-6 pb-2">
-                <Button size="sm" variant="outline" className="w-full mb-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary)] hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-secondary w-full mb-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/login" className="block w-full">Log in</a>
                 </Button>
-                <Button size="sm" className="w-full text-white" style={{ background: 'var(--primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                <Button size="sm" className="btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
                   <a href="/signup" className="block w-full">Sign up</a>
                 </Button>
               </div>
@@ -225,7 +225,7 @@ export default function ContactPage() {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full">Send Message</Button>
+                <Button type="submit" className="w-full btn-primary">Send Message</Button>
               </form>
             </div>
           </div>
@@ -239,7 +239,7 @@ export default function ContactPage() {
                 <div className="mt-1 md:mt-2 text-sm md:text-base">Check out our FAQ section for quick answers to common questions.</div>
               </div>
               <div className="flex-shrink-0">
-                <a href="/faq"><Button className="text-white bg-white/10 hover:bg-white/20 border border-white/20" style={{ background: 'transparent' }}>View FAQ</Button></a>
+                <a href="/faq"><Button className="btn-secondary">View FAQ</Button></a>
               </div>
             </div>
           </div>

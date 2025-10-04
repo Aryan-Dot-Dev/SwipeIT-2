@@ -4,10 +4,10 @@ import { updateAttitude } from '@/api/update.api'
 
 const TRAIT_COLORS = {
   Collaboration: 'bg-fuchsia-500',
-  Adaptability: 'bg-teal-600',
+  Adaptability: 'bg-[color:var(--primary)]',
   Innovation: 'bg-purple-500',
   'Risk Tolerance': 'bg-yellow-500',
-  'Execution Speed': 'bg-teal-600',
+  'Execution Speed': 'bg-[color:var(--primary)]',
 }
 
 const AttitudeForm = ({ role, onSubmit, onClose }) => {
@@ -69,11 +69,11 @@ const AttitudeForm = ({ role, onSubmit, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-r from-teal-50 to-teal-100 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gradient-to-r from-[color:var(--primary)]/10 to-[color:var(--secondary)]/10 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-gray-100 relative animate-in fade-in">
         <button
           onClick={onClose}
-          className="absolute right-3 top-3 text-gray-400 hover:text-gray-700 transition-colors rounded-full w-8 h-8 flex items-center justify-center focus:outline-none focus:ring focus:ring-teal-200"
+          className="absolute right-3 top-3 text-gray-400 hover:text-gray-700 transition-colors rounded-full w-8 h-8 flex items-center justify-center focus:outline-none focus:ring focus:ring-[color:var(--primary)]/20"
           aria-label="Close"
         >
           <span className="text-2xl leading-none">&times;</span>
@@ -82,9 +82,9 @@ const AttitudeForm = ({ role, onSubmit, onClose }) => {
         {/* Progress Indicator */}
         <div className="flex items-center mb-4">
           <div className="flex-1">
-            <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
               <div
-                className="bg-teal-600 h-full transition-all"
+                className="bg-[color:var(--primary)] h-full transition-all"
                 style={{
                   width: `${((currentQuestionIndex + 1) / roleQuestions.length) * 100}%`
                 }}
@@ -110,10 +110,10 @@ const AttitudeForm = ({ role, onSubmit, onClose }) => {
             <label
               key={option.option}
               className={`group flex items-start cursor-pointer p-4 border rounded-lg transition-all duration-200
-                ${answers[currentQuestion.id] === option.option
-                  ? "bg-teal-50 border-teal-400 shadow-sm ring-2 ring-teal-100"
-                  : "bg-white border-gray-200 hover:border-teal-300"}
-              `}
+                  ${answers[currentQuestion.id] === option.option
+                    ? "bg-[color:var(--card)] border-[color:var(--border)] shadow-sm ring-2 ring-[color:var(--primary)]/10"
+                    : "bg-white border-gray-200 hover:border-[color:var(--primary)]/30"}
+                `}
             >
               <input
                 type="radio"
@@ -121,14 +121,14 @@ const AttitudeForm = ({ role, onSubmit, onClose }) => {
                 value={option.option}
                 checked={answers[currentQuestion.id] === option.option}
                 onChange={() => handleAnswer(option.option)}
-                className="mt-1 accent-teal-600 focus:ring-0 border-gray-300"
+                  className="mt-1 accent-[color:var(--primary)] focus:ring-0 border-gray-300"
               />
               <div className="ml-4">
                 <div className="font-semibold text-gray-900">{option.description}</div>
                 <div className="flex gap-1 mt-1">
                   {Array.isArray(option.mapping) ? (
                     option.mapping.map(trait => (
-                      <span
+                        <span
                         key={trait}
                         className={`inline-block text-xs px-2 py-0.5 rounded-full text-white font-semibold ${TRAIT_COLORS[trait] || "bg-gray-400"}`}
                       >
@@ -155,7 +155,7 @@ const AttitudeForm = ({ role, onSubmit, onClose }) => {
           <button
             onClick={handleNext}
             disabled={!answers[currentQuestion.id] || isSubmitting}
-            className="px-6 py-2 rounded-lg font-semibold text-white bg-teal-600 hover:bg-teal-700 shadow transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 rounded-lg font-semibold text-white bg-[color:var(--primary)] hover:bg-[color:var(--primary)]/90 shadow transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {currentQuestionIndex === roleQuestions.length - 1
               ? isSubmitting ? 'Submitting...' : 'Submit'

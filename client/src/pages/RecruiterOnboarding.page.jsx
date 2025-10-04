@@ -335,7 +335,7 @@ export default function RecruiterOnboarding() {
                   </div>
 
                   <div className="w-full max-w-sm hidden md:block">
-                    <div className="rounded-xl shadow p-3 sm:p-4" style={{ border: '2px solid rgba(15, 118, 110, 0.08)', background: 'linear-gradient(135deg, #e6f7ff 0%, #d9f7e6 40%, #ffffff 100%)' }}>
+                        <div className="rounded-xl shadow p-3 sm:p-4" style={{ border: '2px solid rgba(124,58,237,0.08)', background: 'linear-gradient(135deg, rgba(124,58,237,0.04) 0%, rgba(255,73,160,0.03) 40%, #ffffff 100%)' }}>
                       {/* inner white panel for clear contrast */}
                       <div className="rounded-lg bg-white p-3 sm:p-4 shadow-sm">
                         <div className="mb-2 sm:mb-3">
@@ -352,12 +352,12 @@ export default function RecruiterOnboarding() {
                         <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">Build great user experiences using React and modern web tooling. Collaborate with product and design to ship fast.</p>
 
                         <div className="flex gap-2">
-                          <div className="flex-1 inline-flex flex-col items-start bg-blue-50 border border-blue-100 rounded px-2 sm:px-3 py-2">
-                            <div className="text-xs text-blue-700 font-semibold">Avg. time to hire</div>
+                          <div className="flex-1 inline-flex flex-col items-start" style={{ background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.08)', padding: '0.5rem', borderRadius: '0.375rem' }}>
+                            <div className="text-xs" style={{ color: 'var(--primary)', fontWeight: 600 }}>Avg. time to hire</div>
                             <div className="text-xs sm:text-sm text-gray-900">14 days</div>
                           </div>
-                          <div className="flex-1 inline-flex flex-col items-start bg-teal-50 border border-teal-100 rounded px-2 sm:px-3 py-2">
-                            <div className="text-xs text-teal-700 font-semibold">Candidates matched</div>
+                          <div className="flex-1 inline-flex flex-col items-start" style={{ background: 'rgba(255,73,160,0.04)', border: '1px solid rgba(255,73,160,0.06)', padding: '0.5rem', borderRadius: '0.375rem' }}>
+                            <div className="text-xs" style={{ color: 'var(--secondary)', fontWeight: 600 }}>Candidates matched</div>
                             <div className="text-xs sm:text-sm text-gray-900">84%</div>
                           </div>
                         </div>
@@ -523,7 +523,7 @@ export default function RecruiterOnboarding() {
                               <div className="flex-1">
                                 <div className="text-sm text-gray-500">Company</div>
                                 <div className="text-base font-semibold text-gray-900">{company.name || '—'}</div>
-                                {company.website ? (<a className="text-xs text-blue-600" href={company.website} target="_blank" rel="noreferrer">{company.website}</a>) : null}
+                                {company.website ? (<a className="text-xs" style={{ color: 'var(--primary)' }} href={company.website} target="_blank" rel="noreferrer">{company.website}</a>) : null}
                                 <div className="text-xs text-gray-500 mt-1">{company.industry || ''}{company.location ? ` • ${company.location}` : ''}</div>
                               </div>
                             </div>
