@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { getCandidateDetails, getRecruiterShortlisted } from '@/api/recommendations.api'
 import CandidateStack from '@/components/CandidateStack'
 import CandidateFilters from '@/components/CandidateFilters'
 import AttitudeRadar from '@/components/AttitudeRadar'
 import { getRecruiterData } from '@/api/details.api'
+import Footer from '@/components/Footer'
 
 import { startConversation, checkConversationExists } from '@/api/chatting.api'
 import { getAllMyJobs, deleteJob } from '@/api/recruiter.api.js'
+import { swipeRecruiter, addAnonymousCandidate, updateJobStatus } from '@/api/swiping.api'
 
 const ChatButton = ({ candidate }) => {
   const [conversationExists, setConversationExists] = useState(false)
@@ -88,7 +91,7 @@ const ChatButton = ({ candidate }) => {
   )
 }
 
-const RecruiterDashboard = ({ view = 'dashboard' }) => {
+const RecruiterDashboard = ({ view = 'candidates', onFilterButtonClick }) => {
   const [candidates, setCandidates] = useState([])
   const [saved, setSaved] = useState([])
   const [savedLoading, setSavedLoading] = useState(false)
@@ -102,6 +105,15 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
   const [filteredCandidates, setFilteredCandidates] = useState([])
   const [recruiterAttitudes, setRecruiterAttitudes] = useState({})
   const [showSwipeHelper, setShowSwipeHelper] = useState(true)
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
+
+  // Expose filter modal control to parent
+  React.useEffect(() => {
+    if (onFilterButtonClick) {
+      // Wrap in a function to prevent React from calling it immediately
+      onFilterButtonClick(() => () => setShowMobileFilters(true))
+    }
+  }, [onFilterButtonClick])
 
   useEffect(() => {
     let mounted = true
@@ -231,6 +243,21 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
     setExpandedJobs(newExpanded);
   };
 
+  // Status change handler
+  const handleStatusChange = async (jobId, newStatus) => {
+    try {
+      await updateJobStatus(jobId, newStatus)
+      // Update local state
+      setJobs(prevJobs => prevJobs.map(job => 
+        job.job_id === jobId ? { ...job, status: newStatus } : job
+      ))
+      console.log(`Job ${jobId} status updated to: ${newStatus}`)
+    } catch (err) {
+      console.error('Failed to update job status:', err)
+      alert('Failed to update job status. Please try again.')
+    }
+  }
+
   // Delete job handler
   const handleDeleteJob = async (jobId, jobTitle) => {
     if (!confirm(`Are you sure you want to delete "${jobTitle}"?\n\nThis will permanently delete:\n• The job posting\n• All applications\n• All matches\n• All related messages\n\nThis action cannot be undone.`)) {
@@ -299,12 +326,12 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
   });
 
   // (no pagination — RPC returns full saved list)
-  // if chat is active, let the central Dashboard render Chat and avoid rendering
+  // if chat or settings is active, let the central Dashboard render them and avoid rendering
   // the RecruiterDashboard spacer (which adds mt-6 and causes a gap)
-  if (view === 'chat') return null
+  if (view === 'chat' || view === 'settings') return null
 
   return (
-    <div className="px-3 md:px-6 lg:px-8 w-full" style={{ '--primary': '#7C3AED', '--secondary': '#FF49A0', '--primary-foreground': '#ffffff' }}>
+    <div className="px-3 md:px-6 lg:px-8 w-full min-h-screen flex flex-col" style={{ '--primary': '#7C3AED', '--secondary': '#FF49A0', '--primary-foreground': '#ffffff' }}>
       <div className="mb-4 flex items-center justify-between">
         <div></div>
       </div>
@@ -312,17 +339,21 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
       {view === 'candidates' && (
         <div className="flex-1 flex md:flex-row flex-col relative">
           {/* Desktop Filters Sidebar */}
-          <div className="hidden lg:block w-96 flex-shrink-0 bg-white border-r border-gray-200 p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
-            <CandidateFilters
-              candidates={candidates}
-              onFiltersChange={handleCandidateFiltersChange}
-              anonymousMode={anonymousMode}
-              onAnonymousModeChange={setAnonymousMode}
-            />
+          <div className="hidden lg:flex lg:flex-col flex-shrink-0 overflow-y-auto relative p-[2px] rounded-2xl bg-gradient-to-br from-purple-400 via-pink-400 to-purple-500" style={{ width: '344px', height: 'calc(100vh - 120px)' }}>
+            <div className="bg-white rounded-2xl flex-1 overflow-y-auto">
+              <div className="p-5">
+                <CandidateFilters
+                  candidates={candidates}
+                  onFiltersChange={handleCandidateFiltersChange}
+                  anonymousMode={anonymousMode}
+                  onAnonymousModeChange={setAnonymousMode}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col min-w-0">
             {/* Swipe Helper Instruction - Integrated at the top */}
             {showSwipeHelper && filteredCandidates.length > 0 && (
               <div className="flex justify-center pt-4 pb-2 px-4">
@@ -357,13 +388,98 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
             <div className="flex-1 relative pt-2">
               <CandidateStack
                 initialCandidates={filteredCandidates}
-                onShortlist={(c) => console.log('shortlist', c)}
-                onReject={(c) => console.log('reject', c)}
+                onShortlist={async (c) => {
+                  try {
+                    console.log('shortlist', c)
+                    // Shortlist the candidate using the swipe API
+                    const applicationId = c.application_id || c.applicationId || c.match_id
+                    if (applicationId) {
+                      await swipeRecruiter(applicationId, true)
+                      console.log('Candidate shortlisted:', applicationId)
+                      
+                      // If anonymous mode is on, add to anonymous_candidates table
+                      if (anonymousMode) {
+                        const candidateId = c.user_id || c.candidate_id || c.id
+                        if (candidateId) {
+                          try {
+                            await addAnonymousCandidate(candidateId)
+                            console.log('Candidate added to anonymous list:', candidateId)
+                          } catch (err) {
+                            console.error('Failed to add anonymous candidate:', err)
+                          }
+                        }
+                      }
+                    }
+                  } catch (err) {
+                    console.error('Failed to shortlist candidate:', err)
+                  }
+                }}
+                onReject={async (c) => {
+                  try {
+                    console.log('reject', c)
+                    const applicationId = c.application_id || c.applicationId || c.match_id
+                    if (applicationId) {
+                      await swipeRecruiter(applicationId, false)
+                      console.log('Candidate rejected:', applicationId)
+                    }
+                  } catch (err) {
+                    console.error('Failed to reject candidate:', err)
+                  }
+                }}
                 onView={(c) => console.log('view', c)}
                 anonymousMode={anonymousMode}
               />
             </div>
           </div>
+
+          {/* Mobile Filters Modal - Rendered via Portal */}
+          {showMobileFilters && createPortal(
+            <div className="fixed inset-0 z-[999999] lg:hidden">
+              {/* Backdrop */}
+              <div 
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onClick={() => setShowMobileFilters(false)}
+              />
+              
+              {/* Modal Content */}
+              <div className="absolute inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl max-h-[85vh] overflow-hidden flex flex-col animate-slide-up">
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                  <h3 className="text-lg font-semibold text-gray-900">Filter Candidates</h3>
+                  <button
+                    onClick={() => setShowMobileFilters(false)}
+                    className="p-2 hover:bg-white/50 rounded-full transition-colors"
+                    aria-label="Close filters"
+                  >
+                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                
+                {/* Scrollable Filters */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  <CandidateFilters
+                    candidates={candidates}
+                    onFiltersChange={handleCandidateFiltersChange}
+                    anonymousMode={anonymousMode}
+                    onAnonymousModeChange={setAnonymousMode}
+                  />
+                </div>
+                
+                {/* Apply Button */}
+                <div className="p-4 border-t border-gray-200 bg-white">
+                  <button
+                    onClick={() => setShowMobileFilters(false)}
+                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    Apply Filters
+                  </button>
+                </div>
+              </div>
+            </div>,
+            document.body
+          )}
         </div>
       )}
 
@@ -680,9 +796,22 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
                       <p className="text-sm text-gray-600">{job.location} • {job.job_type || 'Full-time'}</p>
                     </div>
                     <div className="flex flex-col items-start md:items-end gap-2 flex-shrink-0">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${job.status === 'active' ? 'bg-[color:var(--primary)]/10 text-[color:var(--primary)]' : 'bg-gray-100 text-gray-800'}`}>
-                        {job.status}
-                      </span>
+                      <select
+                        value={job.status}
+                        onChange={(e) => handleStatusChange(job.job_id, e.target.value)}
+                        className={`px-3 py-1 rounded-lg text-xs font-medium border-2 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                          job.status === 'active' ? 'bg-green-50 text-green-700 border-green-300' :
+                          job.status === 'paused' ? 'bg-yellow-50 text-yellow-700 border-yellow-300' :
+                          job.status === 'closed' ? 'bg-red-50 text-red-700 border-red-300' :
+                          'bg-blue-50 text-blue-700 border-blue-300'
+                        }`}
+                        title="Change job status"
+                      >
+                        <option value="active">🟢 Active</option>
+                        <option value="paused">🟡 Paused</option>
+                        <option value="closed">🔴 Closed</option>
+                        <option value="filled">🔵 Filled</option>
+                      </select>
                       <div className="hidden md:flex items-center gap-2">
                         <button
                           onClick={() => toggleJobDetails(job.job_id)}
@@ -868,6 +997,11 @@ const RecruiterDashboard = ({ view = 'dashboard' }) => {
       )}
 
       {/* Chat is rendered centrally by Dashboard to avoid duplicates */}
+
+      {/* Footer - Sticks to bottom */}
+      <div className="mt-auto">
+        <Footer />
+      </div>
     </div>
   )
 }

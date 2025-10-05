@@ -48,7 +48,7 @@ const CandidateStack = ({ initialCandidates = [], onShortlist, onReject, onView,
   }
 
   return (
-    <div className="flex min-h-[60vh] w-full h-fit">
+    <div className="flex min-h-[60vh] w-full h-fit justify-center items-start">
       <AnimatePresence>
         {items[0] && (
           <CandidateCard key={items[0].application_id || items[0].applicationId || items[0].id || JSON.stringify(items[0])} candidate={items[0]} onShortlist={handleShortlist} onReject={handleReject} onView={handleView} anonymous={anonymousMode} />

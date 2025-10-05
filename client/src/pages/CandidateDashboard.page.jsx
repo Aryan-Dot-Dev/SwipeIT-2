@@ -10,6 +10,7 @@ import ResumeDetails from '@/components/ResumeDetails'
 import { getResume } from '@/api/candidate.api'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import Footer from '@/components/Footer'
 
 // small helper to read cookies (used to pass access_token into API calls when available)
 function readCookie(name) {
@@ -156,7 +157,8 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
     const kw = (filters.keyword || '').trim().toLowerCase()
     const loc = (filters.location || '').trim().toLowerCase()
     const ind = (filters.industry || '').trim().toLowerCase()
-    const jobType = (filters.jobType || '').trim().toLowerCase()
+    const employmentType = (filters.employmentType || '').trim().toLowerCase()
+    const workMode = (filters.workMode || '').trim().toLowerCase()
     const minSim = Number(filters.minSimilarity) || 0
 
     const out = (jobs || []).filter(j => {
@@ -167,7 +169,8 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
       }
       if (loc && j.company_location && !j.company_location.toLowerCase().includes(loc)) return false
       if (ind && j.company_industry && !j.company_industry.toLowerCase().includes(ind)) return false
-      if (jobType && j.job_type && !j.job_type.toLowerCase().includes(jobType)) return false
+      if (employmentType && j.job_type && !j.job_type.toLowerCase().includes(employmentType)) return false
+      if (workMode && j.job_type && !j.job_type.toLowerCase().includes(workMode)) return false
       return true
     })
 
@@ -175,9 +178,9 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
   }, [jobs, filters])
 
   return (
-    <div className="w-full overflow-x-hidden flex flex-col h-full" data-candidate-dashboard>
+    <div className="w-full overflow-x-hidden flex flex-col min-h-screen" data-candidate-dashboard>
       {/* Main Content Area - Full screen like Tinder */}
-      <main className="flex-1 relative md:flex-col flex flex-col">
+      <main className="flex-1 relative md:flex-col flex flex-col pb-6">
         {activeTab === 'jobs' ? (
           /* Desktop: Three-column layout | Mobile: Single-column with fixed filter button */
           <div className="flex-1 flex md:flex-row flex-col relative">
@@ -268,31 +271,60 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                   </div>
                 </div>
 
-                {/* Job Type */}
+                {/* Employment Type */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                     <svg className="w-4 h-4 text-[color:var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8m0 0V4" />
                     </svg>
-                    Job Type
+                    Employment Type
                   </label>
                   <div className="relative">
                     <select
-                      value={filters.jobType}
-                      onChange={(e) => setFilters(f => ({ ...f, jobType: e.target.value }))}
+                      value={filters.employmentType}
+                      onChange={(e) => setFilters(f => ({ ...f, employmentType: e.target.value }))}
                       className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 appearance-none cursor-pointer"
                     >
-                      <option value="">All Job Types</option>
+                      <option value="">All Types</option>
                       <option value="full-time">Full Time</option>
                       <option value="part-time">Part Time</option>
-                      <option value="contract">Contract</option>
                       <option value="internship">Internship</option>
-                      <option value="remote">Remote</option>
-                      <option value="hybrid">Hybrid</option>
                     </select>
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8m0 0V4" />
+                      </svg>
+                    </div>
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Work Mode */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <svg className="w-4 h-4 text-[color:var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Work Mode
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={filters.workMode}
+                      onChange={(e) => setFilters(f => ({ ...f, workMode: e.target.value }))}
+                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 appearance-none cursor-pointer"
+                    >
+                      <option value="">All Modes</option>
+                      <option value="remote">Remote</option>
+                      <option value="onsite">Onsite</option>
+                      <option value="hybrid">Hybrid</option>
+                    </select>
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -331,7 +363,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                 {/* Clear All Button */}
                 <button
                   onClick={() => {
-                    setFilters({ keyword: '', location: '', industry: '', jobType: '', minSimilarity: 0 })
+                    setFilters({ keyword: '', location: '', industry: '', employmentType: '', workMode: '', minSimilarity: 0 })
                   }}
                   className="btn-secondary w-full py-3 px-4"
                 >
@@ -664,6 +696,11 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
           console.log('Open job details:', job)
         }}
       />
+
+      {/* Footer - Sticks to bottom */}
+      <div className="mt-auto">
+        <Footer />
+      </div>
     </div>
   )
 }
@@ -678,9 +715,9 @@ const SavedJobsModal = ({ isOpen, onClose, saved, onRemove, onClear, onOpen }) =
   <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999]" onClick={onClose} />
 
   {/* Modal */}
-  <div className="fixed inset-3 sm:inset-4 md:inset-8 left-3 right-3 sm:left-6 sm:right-6 bg-white rounded-2xl shadow-2xl z-[100000] flex flex-col overflow-hidden max-w-[1200px] mx-auto">
+  <div className="fixed inset-3 sm:inset-4 md:inset-8 left-3 right-3 sm:left-6 sm:right-6 h-fit bg-white rounded-2xl shadow-2xl z-[100000] flex flex-col overflow-hidden max-w-[1200px] mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center h-fit justify-between p-4 border-b">
           <h3 className="text-lg font-semibold">Saved Jobs</h3>
           <button
             onClick={onClose}

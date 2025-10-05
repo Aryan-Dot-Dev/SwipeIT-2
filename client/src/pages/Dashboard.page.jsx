@@ -81,6 +81,7 @@ const Dashboard = ({ userId: propUserId }) => {
   const [attitudeFormOpen, setAttitudeFormOpen] = useState(false)
   const [savedJobs, setSavedJobs] = useState([])
   const [highlightSavedId, setHighlightSavedId] = useState(null)
+  const [recruiterFilterHandler, setRecruiterFilterHandler] = useState(null)
   // Initialize current view from localStorage when possible so the user's last
   // active dashboard page survives a refresh. Fallback to 'candidate'.
   const getInitialView = () => {
@@ -102,7 +103,7 @@ const Dashboard = ({ userId: propUserId }) => {
   const toastId = useRef(0)
   const [createJobOpen, setCreateJobOpen] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
-  const [filters, setFilters] = useState({ keyword: '', location: '', industry: '', jobType: '', minSimilarity: 0 })
+  const [filters, setFilters] = useState({ keyword: '', location: '', industry: '', employmentType: '', workMode: '', minSimilarity: 0 })
 
   // Helper: validate whether a particular view is allowed for the given role.
   // This prevents restoring a recruiter-only view for candidates (and vice versa).
@@ -688,7 +689,7 @@ const Dashboard = ({ userId: propUserId }) => {
     <div className={`h-screen p-3 text-gray-900 font-sans flex flex-col overflow-auto`} style={{ background: 'linear-gradient(135deg, var(--background), rgba(0,119,181,0.03))', ...(isRecruiter ? { ['--primary']: '#0077B5', ['--secondary']: '#005885', ['--primary-foreground']: '#ffffff', ['--background']: '#f0f8ff', ['--foreground']: '#003d5c', ['--card']: '#e6f7ff', ['--card-foreground']: '#003d5c', ['--border']: 'rgba(0,61,92,0.06)', ['--ring']: 'rgba(0,119,181,0.15)' } : {}) }}>
       {/* Portal-rendered toasts (ensures visibility above transforms/overlays) */}
       <ToastPortal toasts={toasts} />
-      <div className="w-full flex-1 flex flex-col" style={{ perspective: 900 }}>
+      <div className="w-full h-[100vh] flex-1 flex flex-col" style={{ perspective: 900 }}>
         {/* Header: clean, compact and responsive */}
         <header className="mb-2 flex-shrink-0" ref={(el) => { window.__dashboard_header_el = el }}>
           <div className={`flex items-center justify-between p-3 rounded-xl shadow-sm border border-transparent ${isRecruiter ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-white'}`}>
@@ -993,7 +994,7 @@ const Dashboard = ({ userId: propUserId }) => {
         <SimpleTransition key={currentView}>
           <div className="w-full flex-1 transition-panel">
             {isRecruiter ? (
-              <RecruiterDashboard userId={userId} currentUser={currentUser} view={currentView} />
+              <RecruiterDashboard userId={userId} currentUser={currentUser} view={currentView} onFilterButtonClick={setRecruiterFilterHandler} />
             ) : (
               <>
                 {currentView === 'candidate' && (
@@ -1056,27 +1057,27 @@ const Dashboard = ({ userId: propUserId }) => {
             )}
           </div>
         </SimpleTransition>
-      </div>
 
-            {/* Bottom Action Bar - Single Filters Button - Fixed to viewport bottom - Mobile/Tablet only */}
-            {(!isRecruiter && currentView === 'candidate') && (
-              <div className="fixed bottom-4 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 px-6 py-4 z-50 md:hidden">
-                <div className="flex items-center justify-center">
-                  {/* Filters Button */}
-                  <button
-                    onClick={() => {
-                      setShowFiltersModal(true);
-                    }}
-                    className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full font-medium transition-colors duration-200 touch-manipulation shadow-lg"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                    </svg>
-                    <span>Filter Jobs</span>
-                  </button>
-                </div>
-              </div>
-            )}
+        {/* Recruiter Mobile Filter Button - Sticky Bottom */}
+        {isRecruiter && currentView === 'candidates' && recruiterFilterHandler && (
+          <button
+            onClick={() => recruiterFilterHandler()}
+            className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white/20 whitespace-nowrap z-[9999]"
+          >
+            🔍 Filter Candidates
+          </button>
+        )}
+
+        {/* Candidate Mobile Filter Button - Sticky Bottom */}
+        {(!isRecruiter && currentView === 'candidate') && (
+          <button
+            onClick={() => setShowFiltersModal(true)}
+            className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white/20 whitespace-nowrap z-[9999]"
+          >
+            🔍 Filter Jobs
+          </button>
+        )}
+      </div>
 
       {createJobOpen && (
         <JobPostingForm recruiterId={userId} onClose={() => setCreateJobOpen(false)} onSubmit={handleJobPostingSubmit} />
@@ -1084,7 +1085,7 @@ const Dashboard = ({ userId: propUserId }) => {
 
       {/* Filters Modal - Mobile/Tablet only */}
       {showFiltersModal && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className=" m-20 z-50 md:hidden">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -1188,31 +1189,61 @@ const Dashboard = ({ userId: propUserId }) => {
                 </div>
               </div>
 
-              {/* Job Type */}
+              {/* Employment Type */}
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                   <svg className="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8m0 0V4" />
                   </svg>
-                  Job Type
+                  Employment Type
                 </label>
                 <div className="relative">
                   <select
-                    value={filters.jobType}
-                    onChange={(e) => setFilters(f => ({ ...f, jobType: e.target.value }))}
+                    value={filters.employmentType}
+                    onChange={(e) => setFilters(f => ({ ...f, employmentType: e.target.value }))}
                     className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 appearance-none cursor-pointer"
                   >
-                    <option value="">All Job Types</option>
+                    <option value="">All Types</option>
                     <option value="full-time">Full Time</option>
                     <option value="part-time">Part Time</option>
                     <option value="contract">Contract</option>
                     <option value="internship">Internship</option>
-                    <option value="remote">Remote</option>
-                    <option value="hybrid">Hybrid</option>
                   </select>
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8m0 0V4" />
+                    </svg>
+                  </div>
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Work Mode */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Work Mode
+                </label>
+                <div className="relative">
+                  <select
+                    value={filters.workMode}
+                    onChange={(e) => setFilters(f => ({ ...f, workMode: e.target.value }))}
+                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 appearance-none cursor-pointer"
+                  >
+                    <option value="">All Modes</option>
+                    <option value="remote">Remote</option>
+                    <option value="onsite">Onsite</option>
+                    <option value="hybrid">Hybrid</option>
+                  </select>
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -1252,7 +1283,7 @@ const Dashboard = ({ userId: propUserId }) => {
               <div className="flex gap-3 pt-4 border-t border-gray-200">
                 <button
                   onClick={() => {
-                    setFilters({ keyword: '', location: '', industry: '', jobType: '', minSimilarity: 0 })
+                    setFilters({ keyword: '', location: '', industry: '', employmentType: '', workMode: '', minSimilarity: 0 })
                   }}
                   className="flex-1 py-3 px-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-xl font-medium hover:from-gray-200 hover:to-gray-300 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 touch-manipulation"
                 >

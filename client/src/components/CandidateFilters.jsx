@@ -83,20 +83,20 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-x-hidden">
       {/* Header with icon */}
-  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 gap-3 sm:gap-0" style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[color:var(--primary)] flex items-center justify-center">
+      <div className="flex flex-col gap-3 pb-3" style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-[color:var(--primary)] flex items-center justify-center flex-shrink-0">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">Filter Candidates</h3>
+          <h3 className="text-lg font-semibold text-gray-900 truncate">Filter Candidates</h3>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
+        <div className="flex items-center justify-between gap-3 min-w-0">
           {onAnonymousModeChange && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <div className="text-sm text-gray-700">Anonymous</div>
               <button
                 role="switch"
@@ -111,7 +111,7 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
           {hasActiveFilters && (
             <button
               onClick={clearAllFilters}
-              className="text-sm text-[color:var(--primary)] hover:text-[color:var(--primary)]/80 font-medium whitespace-nowrap"
+              className="text-sm text-[color:var(--primary)] hover:text-[color:var(--primary)]/80 font-medium flex-shrink-0"
             >
               Clear all
             </button>

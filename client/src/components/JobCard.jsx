@@ -46,7 +46,6 @@ const JobCard = ({ jobData, onLike, onReject }) => {
     (typeof raw.company?.description === 'string' ? raw.company.description : null)
   ) || 'No description provided.'
   const similarity = Number(raw.similarity) || 0
-  const company_industry = safeText(raw.company?.industry || raw.company_industry)
   const job_type = safeText(raw.job_type || raw.type)
   const experience_min = raw.experience_min != null ? raw.experience_min : null
   const salary_range = formatSalary(raw.salary_min, raw.salary_max)
@@ -70,110 +69,100 @@ const JobCard = ({ jobData, onLike, onReject }) => {
 
   return (
     <div className="w-full max-w-md mx-auto px-2 sm:px-0">
-  <Motion.div
+      <Motion.div
         key={jobData?.id}
         initial="initial"
         animate="animate"
         exit={(jobData?.id ?? 0) % 2 === 0 ? 'like' : 'reject'}
         variants={cardVariants}
-        className="select-none touch-action-none relative z-10 cursor-grab font-mono w-full glass-panel rounded-xl shadow-glass overflow-hidden border border-white/20"
+        className="select-none touch-action-none relative z-10 cursor-grab w-full glass-panel rounded-2xl shadow-2xl overflow-hidden border border-white/20 bg-white/95 backdrop-blur-md min-h-[600px] sm:min-h-[550px]"
         drag="x"
         dragElastic={0.12}
         onDragEnd={handleDragEnd}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98, cursor: 'grabbing' }}
       >
-  {/* Header */}
-  <div className="flex items-center justify-between p-3 sm:p-4 md:p-5 bg-gradient-to-r from-[color:var(--primary)]/20 to-[color:var(--secondary)]/20 backdrop-blur-sm border-b border-white/10">
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br from-white/90 to-white/70 rounded-lg border border-white/30 flex items-center justify-center text-lg sm:text-xl md:text-2xl font-bold shadow-lg" style={{ color: 'var(--foreground)' }}>
+        {/* Compact Header - All key info in 2-3 lines */}
+        <div className="p-4 border-b border-gray-100">
+          <div className="flex items-start gap-3">
+            {/* Company Avatar */}
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg flex-shrink-0">
               {String(company_name || '').charAt(0) || 'C'}
             </div>
-            <div className="min-w-0 flex-1">
-              <h3 className="text-sm sm:text-base md:text-lg font-bold tracking-tight truncate" style={{ color: 'var(--foreground)' }}>{company_name}</h3>
-              <p className="text-xs sm:text-sm" style={{ color: 'var(--muted-foreground)' }}>{company_location || 'Remote'}</p>
-            </div>
-          </div>
 
-          <div className="text-right flex-shrink-0">
-            <div className="text-xs text-white/70">Match</div>
-            <div className="mt-1 inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-gradient-to-r from-[color:var(--secondary)] to-[color:var(--primary)] text-white shadow-lg">
-              {similarityPercentage}%
-            </div>
-          </div>
-        </div>
+            {/* Info Section */}
+            <div className="flex-1 min-w-0">
+              {/* Row 1: Job Title */}
+              <h2 className="text-lg font-bold text-gray-900 break-words line-clamp-1">
+                {title}
+              </h2>
 
-        {/* Title */}
-        <div className="px-3 sm:px-4 py-2 sm:py-3 text-center bg-white/5 backdrop-blur-sm">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight truncate" style={{ color: 'var(--foreground)' }}>{title}</h2>
-          <div className="mt-2 flex items-center justify-center gap-2 flex-wrap">
-            <span className="text-xs sm:text-sm uppercase font-medium" style={{ color: 'var(--muted-foreground)' }}>{company_industry || 'General'}</span>
-            {job_type && (
-              <>
-                <span className="text-gray-400">•</span>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 capitalize">
-                  {job_type.replace('-', ' ')}
+              {/* Row 2: Company, Location, Match */}
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                <span className="text-sm font-medium text-gray-700 break-words">
+                  {company_name}
                 </span>
-              </>
-            )}
-          </div>
-        </div>
+                <span className="text-gray-400">•</span>
+                <span className="text-sm text-gray-600">
+                  {company_location || 'Remote'}
+                </span>
+                <span className="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm">
+                  {similarityPercentage}% Match
+                </span>
+              </div>
 
-        {/* Meta grid */}
-        <div className="px-3 sm:px-4 py-2 sm:py-3">
-          <div className="flex flex-col">
-            {/* First row: Experience and Location side by side */}
-            <div className="grid grid-cols-2">
-              {experience_min != null && (
-                <div className="p-2 sm:p-3 rounded-lg glass-panel text-center shadow-glass border border-white/20">
-                  <div className="text-xs uppercase" style={{ color: 'var(--muted-foreground)' }}>Experience</div>
-                  <div className="font-bold mt-1 text-sm sm:text-base" style={{ color: 'var(--foreground)' }}>{experience_min}+ years</div>
-                </div>
-              )}
-              
-              <div className={`p-2 sm:p-3 rounded-lg glass-panel text-center shadow-glass border border-white/20 ${experience_min == null ? 'col-span-2' : ''}`}>
-                <div className="text-xs uppercase" style={{ color: 'var(--muted-foreground)' }}>Location</div>
-                <div className="font-bold mt-1 text-sm sm:text-base truncate" style={{ color: 'var(--foreground)' }}>{company_location || 'Remote'}</div>
+              {/* Row 3: Meta info */}
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap text-xs text-gray-600">
+                {job_type && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-medium capitalize">
+                    {job_type.replace('-', ' ')}
+                  </span>
+                )}
+                {experience_min != null && (
+                  <>
+                    <span className="text-gray-400">•</span>
+                    <span>{experience_min}+ yrs exp</span>
+                  </>
+                )}
+                <>
+                  <span className="text-gray-400">•</span>
+                  <span className={`font-medium ${salary_range ? 'text-green-600' : 'text-gray-500'}`}>
+                    {salary_range || 'Unpaid'}
+                  </span>
+                </>
               </div>
             </div>
-            
-            {/* Second row: Salary full width if available */}
-            {salary_range && (
-              <div className="p-2 sm:p-3 rounded-lg glass-panel text-center shadow-glass border border-white/20">
-                <div className="text-xs uppercase" style={{ color: 'var(--muted-foreground)' }}>Salary Range</div>
-                <div className="font-bold mt-1 text-sm sm:text-base" style={{ color: 'var(--foreground)' }}>{salary_range}</div>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Description */}
-        <div className="px-3 sm:px-4 pt-2 pb-3 sm:pb-4 border-t border-white/10 bg-white/5 backdrop-blur-sm">
-              <div className="h-24 sm:h-32 md:h-36 overflow-y-auto pr-2 text-xs sm:text-sm leading-relaxed font-sans custom-scrollbar" style={{ color: 'var(--foreground)' }}>
+        {/* Description - Maximized Space */}
+        <div className="p-4">
+          <div className="text-xs font-semibold mb-2 uppercase tracking-wide text-gray-500">Job Description</div>
+          <div className="h-64 sm:h-56 overflow-y-auto pr-2 text-sm leading-relaxed custom-scrollbar p-3 rounded-lg bg-gray-50 border border-gray-100 text-gray-700">
             {description || 'No description provided.'}
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center justify-around p-3 sm:p-4 bg-white/5 backdrop-blur-sm border-t border-white/10">
-            <Motion.button
-              whileHover={{ scale: 1.06 }}
-              whileTap={{ scale: 0.96 }}
-              className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full btn-secondary font-bold text-lg sm:text-xl shadow-lg"
-              onClick={() => onReject && onReject(jobData)}
-              aria-label="reject"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
-            </Motion.button>
+        {/* Premium Action Buttons */}
+        <div className="grid grid-cols-2 gap-3 p-4 pt-0">
+          <Motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="py-2.5 px-4 rounded-lg text-sm font-semibold text-red-600 bg-white border-2 border-red-200 hover:border-red-300 hover:bg-red-50 shadow-sm transition-all duration-200"
+            onClick={() => onReject && onReject(jobData)}
+            aria-label="reject"
+          >
+            ✗ Reject
+          </Motion.button>
 
           <Motion.button
-            whileHover={{ scale: 1.06 }}
-            whileTap={{ scale: 0.96 }}
-            className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full btn-primary font-bold text-lg sm:text-xl shadow-lg"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="py-2.5 px-4 rounded-lg text-sm font-semibold text-green-600 bg-white border-2 border-green-200 hover:border-green-300 hover:bg-green-50 shadow-sm transition-all duration-200"
             onClick={() => onLike && onLike(jobData)}
             aria-label="like"
           >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+            ✓ Like
           </Motion.button>
         </div>
   </Motion.div>

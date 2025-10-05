@@ -52,6 +52,7 @@ function SettingsPage() {
         recruiter_designation: '',
         recruiter_phone: '',
         recruiter_email: '',
+        profile_img: '',
     })
 
     useEffect(() => {
@@ -122,6 +123,7 @@ function SettingsPage() {
                                 recruiter_designation: rec?.designation || '',
                                 recruiter_phone: rec?.phone || '',
                                 recruiter_email: rec?.email || payload.email || '',
+                                profile_img: rec?.profile_img || '',
                             })
 
                             if (mounted) setProfile(p => ({
@@ -331,7 +333,12 @@ function SettingsPage() {
             // Add cache-busting parameter to force image refresh
             const cacheBustedUrl = `${publicUrl}?t=${Date.now()}`;
             
-            setField('profile_img', cacheBustedUrl);
+            // Update profile image for both candidate and recruiter
+            if (isRecruiter) {
+                setRecruiterField('profile_img', cacheBustedUrl);
+            } else {
+                setField('profile_img', cacheBustedUrl);
+            }
             setProfileImageUrl(cacheBustedUrl);
             
             // Dispatch event to update header avatar in real-time
@@ -433,6 +440,7 @@ function SettingsPage() {
                 email: recruiterSettings.recruiter_email || null,
                 phone: recruiterSettings.recruiter_phone || null,
                 designation: recruiterSettings.recruiter_designation || null,
+                profile_img: profileImageUrl || profile.profile_img || null,
                 company: {
                     id: recruiterSettings.company_id || null,
                     name: recruiterSettings.company_name || null,
@@ -566,7 +574,7 @@ function SettingsPage() {
 
                         <div className="mt-4">
                             <div className="flex items-center gap-2">
-                                <label className="inline-flex items-center px-3 py-2 rounded-md text-sm cursor-pointer" style={{ background: 'var(--muted)', border: '1px solid var(--border)' }}>
+                                <label className="inline-flex items-center px-3 py-2 rounded-lg text-sm cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium transition-colors border border-gray-300">
                                     <input 
                                         type="file" 
                                         accept=".jpg,.jpeg,.png" 
@@ -582,7 +590,7 @@ function SettingsPage() {
                                                                                         size="sm"
                                                                                         variant="outline"
                                                                                         onClick={() => handleRemoveProfileImage()}
-                                                                                        className="text-xs text-red-600 hover:text-red-700"
+                                                                                        className="text-xs text-red-600 hover:text-red-700 rounded-lg"
                                                                                     >
                                                                                         Remove image
                                                                                     </Button>
