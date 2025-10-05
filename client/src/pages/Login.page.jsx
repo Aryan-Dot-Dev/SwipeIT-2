@@ -71,7 +71,7 @@ export default function LoginPage() {
           </div>
 
           {/* Right Side - Login Form */}
-          <div className="w-full md:w-auto md:flex-1 max-w-md">
+          <div className="w-full mr-8 md:w-auto md:flex-1 max-w-md">
             <LoginForm />
           </div>
         </div>

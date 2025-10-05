@@ -3,8 +3,13 @@ import { Button } from './ui/button'
 
 const safeText = v => {
   if (v == null) return ''
-  if (typeof v === 'string' || typeof v === 'number') return v
-  if (typeof v === 'object') return v.name || v.company || v.company_name || v.first_name || v.title || JSON.stringify(v)
+  if (typeof v === 'string') return v
+  if (typeof v === 'number') return String(v)
+  if (typeof v === 'object') {
+    // Extract string properties from objects to avoid rendering objects directly
+    const str = v.name || v.company_name || v.company || v.first_name || v.title || v.location || ''
+    return typeof str === 'string' ? str : ''
+  }
   return String(v)
 }
 

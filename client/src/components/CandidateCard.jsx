@@ -5,8 +5,13 @@ import AttitudeRadar from './AttitudeRadar'
 
 const safe = v => {
   if (v == null) return ''
-  if (typeof v === 'string' || typeof v === 'number') return v
-  if (typeof v === 'object') return v.name || v.title || v.company_name || JSON.stringify(v)
+  if (typeof v === 'string') return v
+  if (typeof v === 'number') return String(v)
+  if (typeof v === 'object') {
+    // Extract string properties from objects to avoid rendering objects directly
+    const str = v.name || v.title || v.company_name || v.location || ''
+    return typeof str === 'string' ? str : ''
+  }
   return String(v)
 }
 
@@ -23,7 +28,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
       ? c.skills
       : []
   // const attitudeScore = safe(c.candidate_profile.attitude_score)
-  const company = safe(c.company_name || (c.company && c.company.name))
+  const company = safe(c.company_name || (c.company?.name) || (typeof c.company === 'string' ? c.company : null)) || 'Company'
   const status = safe(c.application_status)
   // const notes = safe(c.profile_summary || c.summary || c.bio)
   const fmt = d => {

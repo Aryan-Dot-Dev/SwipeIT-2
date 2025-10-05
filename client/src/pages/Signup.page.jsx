@@ -71,7 +71,7 @@ export default function SignupPage() {
           </div>
 
           {/* Right Side - Signup Form */}
-          <div className="w-full md:w-auto md:flex-1 max-w-md">
+          <div className="w-full mr-8 md:w-auto md:flex-1 max-w-md">
             <SignupForm />
           </div>
         </div>

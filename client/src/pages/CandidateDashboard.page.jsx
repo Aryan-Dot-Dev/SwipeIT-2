@@ -21,6 +21,19 @@ function readCookie(name) {
   }
 }
 
+// Helper to safely extract text from values that might be objects
+const safeText = v => {
+  if (v == null) return ''
+  if (typeof v === 'string') return v
+  if (typeof v === 'number') return String(v)
+  if (typeof v === 'object') {
+    // Extract string properties from objects to avoid rendering objects directly
+    const str = v.name || v.company_name || v.company || v.title || v.location || ''
+    return typeof str === 'string' ? str : ''
+  }
+  return String(v)
+}
+
 const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOpenSaved = () => {}, initialTab = 'jobs', filters, setFilters }) => {
   const [resumeObj, setResumeObj] = useState(null)
   const [activeTab, setActiveTab] = useState('jobs') // 'jobs' or 'resume'
@@ -459,18 +472,18 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-sm text-gray-900 truncate group-hover:text-[color:var(--primary)] transition-colors">
-                              {job.job_title || job.title}
+                              {safeText(job.job_title || job.title)}
                             </div>
                             <div className="text-xs text-gray-600 truncate mt-1">
-                              {job.company_name || job.company}
+                              {safeText(job.company_name || job.company?.name || (typeof job.company === 'string' ? job.company : null)) || 'Company'}
                             </div>
-                            {job.company_location && (
+                            {(job.company_location || job.company?.location) && (
                               <div className="flex items-center gap-1 mt-2">
                                 <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                <span className="text-xs text-gray-500 truncate">{job.company_location}</span>
+                                <span className="text-xs text-gray-500 truncate">{safeText(job.company_location || job.company?.location)}</span>
                               </div>
                             )}
                           </div>
@@ -701,8 +714,8 @@ const SavedJobsModal = ({ isOpen, onClose, saved, onRemove, onClear, onOpen }) =
                       {String(job.company_name || '').charAt(0) || 'C'}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate">{job.job_title || job.title}</div>
-                      <div className="text-xs text-gray-600 truncate">{job.company_name || job.company}</div>
+                      <div className="font-medium text-sm truncate">{safeText(job.job_title || job.title)}</div>
+                      <div className="text-xs text-gray-600 truncate">{safeText(job.company_name || job.company?.name || (typeof job.company === 'string' ? job.company : null)) || 'Company'}</div>
                     </div>
                     <button
                       onClick={(e) => {

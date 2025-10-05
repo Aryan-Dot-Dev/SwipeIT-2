@@ -50,9 +50,7 @@ export default function AboutPage() {
   ]
 
   const team = [
-    { name: 'Alex Chen', role: 'CEO & Founder', desc: 'Former HR tech executive passionate about fair hiring.' },
-    { name: 'Maria Rodriguez', role: 'Head of AI', desc: 'AI researcher focused on bias-free algorithms.' },
-    { name: 'David Kim', role: 'Lead Developer', desc: 'Full-stack engineer building the future of recruitment.' },
+    { name: 'Yashwant', role: 'CEO & Founder', desc: 'HR Student passionate about revolutionizing the hiring process.' },
   ]
 
   return (

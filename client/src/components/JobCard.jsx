@@ -3,8 +3,13 @@ import { motion as Motion } from 'framer-motion'
 
 const safeText = v => {
   if (v == null) return ''
-  if (typeof v === 'string' || typeof v === 'number') return v
-  if (typeof v === 'object') return v.name || v.company || v.company_name || v.title || JSON.stringify(v)
+  if (typeof v === 'string') return v
+  if (typeof v === 'number') return String(v)
+  if (typeof v === 'object') {
+    // Extract string properties from objects to avoid rendering objects directly
+    const str = v.name || v.company_name || v.company || v.title || v.location || ''
+    return typeof str === 'string' ? str : ''
+  }
   return String(v)
 }
 
@@ -24,15 +29,27 @@ const formatSalary = (min, max) => {
 const JobCard = ({ jobData, onLike, onReject }) => {
   const raw = jobData || {}
   const title = safeText(raw.title)
-  const company_name = safeText(raw.company?.name || raw.company_name || raw.company)
-  const company_location = safeText(raw.company?.location || raw.company_location || raw.location)
-  const description = safeText(raw.description || raw.summary || raw.company?.description)
+  // Ensure we extract company name properly, never pass the whole company object
+  const company_name = safeText(
+    raw.company?.name || 
+    raw.company_name || 
+    (typeof raw.company === 'string' ? raw.company : null)
+  ) || 'Company'
+  const company_location = safeText(
+    raw.company?.location || 
+    raw.company_location || 
+    raw.location
+  )
+  const description = safeText(
+    raw.description || 
+    raw.summary || 
+    (typeof raw.company?.description === 'string' ? raw.company.description : null)
+  ) || 'No description provided.'
   const similarity = Number(raw.similarity) || 0
   const company_industry = safeText(raw.company?.industry || raw.company_industry)
   const job_type = safeText(raw.job_type || raw.type)
   const experience_min = raw.experience_min != null ? raw.experience_min : null
   const salary_range = formatSalary(raw.salary_min, raw.salary_max)
-  const company_website = raw.company?.website
 
   const similarityPercentage = Number(similarity) ? Math.round(similarity * 100) : 0
 
