@@ -19,7 +19,7 @@ const BlogPost = ({ title, excerpt, category, date, readTime, readUrl }) => (
 
 const CategoryCard = ({ name, count, icon }) => (
   <div className="p-4 bg-white/95 rounded-lg shadow text-center" style={{ borderColor: 'var(--border)' }}>
-    <div className="text-2xl mb-2">{icon}</div>
+    <div className="flex items-center justify-center text-2xl mb-2">{icon}</div>
     <div className="font-semibold">{name}</div>
     <div className="text-xs text-[color:var(--muted-foreground)]">{count} posts</div>
   </div>
@@ -48,10 +48,10 @@ export default function BlogPage() {
   ]
 
   const categories = [
-    { name: 'AI & Tech', count: 12, icon: '⚡' },
-    { name: 'Hiring Tips', count: 8, icon: '💡' },
-    { name: 'Diversity', count: 6, icon: '�' },
-    { name: 'Workforce', count: 10, icon: '👥' }
+    { name: 'AI & Tech', count: 12, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> },
+    { name: 'Hiring Tips', count: 8, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg> },
+    { name: 'Diversity', count: 6, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+    { name: 'Workforce', count: 10, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg> }
   ]
 
   return (
@@ -217,7 +217,7 @@ export default function BlogPage() {
               <ul className="space-y-2">
                 <li><a href="/contact" className="underline">Contact & Legal Info</a></li>
                 <li className="mt-2 flex flex-wrap items-center gap-2 md:gap-3">
-                  <a href="https://x.com/swipeit" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5">
+                  <a href="https://x.com/Swipeit_ai" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                       <path d="M5 4L19 20M19 4L5 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

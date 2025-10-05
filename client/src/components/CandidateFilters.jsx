@@ -199,7 +199,7 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
                 placeholder="Max"
                 value={filters.experienceMax}
                 onChange={(e) => updateFilter('experienceMax', e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                 min="0"
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

@@ -8,7 +8,7 @@ import { getCandidateData, getRecruiterData, getMatchDetails } from '@/api/detai
 
 function Avatar({ name, src }) {
   if (src) return <img src={src} alt={name} className="w-10 h-10 rounded-full object-cover" />
-  return <div className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold" style={{background: 'linear-gradient(135deg, var(--primary), var(--secondary))'}}>{String(name || 'U').charAt(0)}</div>
+  return <div className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold" style={{background: 'linear-gradient(135deg, #8a2be2, #ff69b4)'}}>{String(name || 'U').charAt(0)}</div>
 }
 
 // Module-level helper: strip eq. prefix
@@ -540,18 +540,6 @@ export default function Chat({ currentUser }) {
 
   return (
   <div className={`w-full md:rounded-lg shadow-md flex flex-col md:flex-row ${isRecruiter ? 'recruiter-glass' : 'bg-white'}`} style={{ height: `calc(100vh - ${headerOffset + 32}px)`, overflow: 'hidden' }}>
-      {/* Mobile Sidebar Toggle */}
-      <div className="md:hidden fixed top-4 left-4 z-30">
-          <button
-            onClick={() => setShowSidebar(true)}
-            className="w-10 h-10 btn-primary rounded-full shadow-lg flex items-center justify-center"
-            aria-label="Open conversations"
-          >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-        </button>
-      </div>
 
       {/* Left: conversations sidebar */}
       <aside className={`w-full md:w-80 border-r flex flex-col transition-all duration-300 ${
@@ -575,7 +563,7 @@ export default function Chat({ currentUser }) {
             <div className="text-xs md:text-sm" style={{ color: 'var(--muted-foreground)' }}>{currentUser?.first_name || 'You'}</div>
           </div>
           <div className="mb-3">
-            <input value={''} placeholder="Search conversations" className="w-full px-3 py-2 rounded text-sm" style={{ border: '1px solid var(--border)', background: 'transparent', color: 'var(--foreground)' }} />
+            <input value={''} placeholder="Search conversations" className="w-full px-3 py-2 rounded text-sm border-2 border-purple-300 hover:border-purple-400 focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-colors" style={{ background: 'white', color: 'var(--foreground)' }} />
           </div>
         </div>
 
@@ -588,9 +576,12 @@ export default function Chat({ currentUser }) {
                 setShowSidebar(false) // Close sidebar on mobile after selection
               }}
               className={`w-full text-left px-3 py-2 rounded-md mb-1 flex items-center gap-3 transition-colors ${
-                c.id === selectedId ? 'bg-[color:var(--card)]' : 'hover:bg-[color:var(--card)]/50'
+                c.id === selectedId ? '' : 'hover:bg-purple-50'
               }`}
-              style={{ border: '1px solid var(--border)' }}
+              style={{ 
+                border: c.id === selectedId ? '1px solid #8a2be2' : '1px solid var(--border)',
+                background: c.id === selectedId ? 'linear-gradient(135deg, rgba(138,43,226,0.1), rgba(255,105,180,0.1))' : 'transparent'
+              }}
             >
               <Avatar name={c.name} src={c.avatar} />
               <div className="flex-1 min-w-0">
@@ -603,30 +594,12 @@ export default function Chat({ currentUser }) {
             </button>
           ))}
         </div>
-
-        {!isCandidate && (
-          <div className="p-3 border-t" style={{ borderTopColor: 'var(--border)' }}>
-              <button
-                aria-label="New chat"
-                onClick={() => {
-                  const id = `c${Date.now()}`
-                  const n = { id, name: 'New chat', avatar: '', last: '', messages: [] }
-                  setConvos([n, ...convos])
-                  setSelectedId(id)
-                  setShowSidebar(false) // Close sidebar on mobile
-                }}
-                className="w-full py-3 rounded-md text-sm font-medium recruiter-cta"
-              >
-                + New chat
-              </button>
-          </div>
-        )}
       </aside>
 
       {/* Mobile sidebar backdrop */}
       {showSidebar && (
         <div
-          className="md:hidden fixed inset-0 bg-black/50 z-30"
+          className="md:hidden fixed inset-0 bg-white z-30"
           onClick={() => setShowSidebar(false)}
         />
       )}
@@ -637,17 +610,27 @@ export default function Chat({ currentUser }) {
         <>
           <div className="px-4 md:px-6 py-3 md:py-4 border-b flex items-center justify-between" style={{ background: 'var(--card)', borderBottomColor: 'var(--border)' }}>
             <div className="flex items-center gap-3">
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setShowSidebar(true)}
+                className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+                aria-label="Open conversations"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
               <Avatar name={current?.name} src={current?.avatar} />
               <div className="min-w-0 flex-1">
                 <div className="font-semibold text-sm md:text-base truncate" style={{ color: 'var(--foreground)' }}>{current?.name}</div>
           <div className="text-xs flex items-center gap-2" style={{ color: 'var(--muted-foreground)' }}>
-            <span style={{ width: 6, height: 6, borderRadius: 9999, background: 'var(--primary)', display: 'inline-block' }} />
+            <span style={{ width: 6, height: 6, borderRadius: 9999, background: '#8a2be2', display: 'inline-block' }} />
                   <span className="truncate">{current?.last || 'No recent messages'}</span>
                 </div>
               </div>
             </div>
             <div className="text-xs md:text-sm text-gray-500 flex items-center gap-2 flex-shrink-0">
-              <span style={{ width: 8, height: 8, borderRadius: 9999, background: 'var(--primary)', display: 'inline-block', boxShadow: isRecruiter ? '0 0 0 6px rgba(139,92,246,0.12)' : '0 0 0 3px rgba(13,148,136,0.12)' }} />
+              <span style={{ width: 8, height: 8, borderRadius: 9999, background: '#8a2be2', display: 'inline-block', boxShadow: '0 0 0 6px rgba(138,43,226,0.12)' }} />
               <span style={{ color: 'var(--foreground)' }}>Online</span>
             </div>
           </div>
@@ -670,8 +653,8 @@ export default function Chat({ currentUser }) {
                         style={{
                           wordBreak: 'break-word',
                           ...(m.fromMe ? {
-                            background: 'var(--primary)',
-                            color: 'var(--primary-foreground)',
+                            background: 'linear-gradient(135deg, #8a2be2, #ff69b4)',
+                            color: '#ffffff',
                             border: '1px solid rgba(255,255,255,0.06)'
                           } : {
                             background: 'var(--card)',
@@ -701,12 +684,13 @@ export default function Chat({ currentUser }) {
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); sendMessage() } }}
                 placeholder="Type a message..."
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 rounded-full border border-[color:var(--border)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] text-sm md:text-base"
+                className="flex-1 px-3 md:px-4 py-2 md:py-3 rounded-full border-2 border-purple-300 hover:border-purple-400 focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-colors text-sm md:text-base bg-white"
               />
                   <Button
                     onClick={sendMessage}
                     size="sm"
-                    className="px-4 md:px-6 py-2 md:py-3 text-sm md:text-base flex-shrink-0 btn-primary"
+                    className="px-4 md:px-6 py-2 md:py-3 text-sm md:text-base flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', color: '#ffffff' }}
                   >
                     Send
                   </Button>
@@ -722,13 +706,13 @@ export default function Chat({ currentUser }) {
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); sendMessage() } }}
                   placeholder="Type a message..."
-                  className="flex-1 px-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] text-sm"
+                  className="flex-1 px-4 py-3 rounded-full border-2 border-purple-300 hover:border-purple-400 focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-colors text-sm bg-white"
                 />
                 <Button
                   onClick={sendMessage}
                   size="sm"
                   className="w-12 h-12 rounded-full flex items-center justify-center"
-                  style={{ background: 'var(--primary)', color: 'var(--primary-foreground)' }}
+                  style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', color: '#ffffff' }}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7-7 7M5 5l7 7-7 7"/></svg>
                 </Button>
@@ -746,23 +730,7 @@ export default function Chat({ currentUser }) {
                 </svg>
               </div>
               <div className="text-lg md:text-2xl font-semibold" style={{ color: 'var(--foreground)' }}>No conversations yet</div>
-              <div className="text-sm md:text-base text-[color:var(--muted-foreground)] max-w-lg">There are no active chats here. {isCandidate ? 'Recruiters can message you — wait for an incoming message.' : "Start a new chat or wait for someone to message you."}</div>
-              {!isCandidate && (
-                <div className="mt-4">
-                  <button
-                    onClick={() => {
-                      const id = `c${Date.now()}`
-                      const n = { id, name: 'New chat', avatar: '', last: '', messages: [] }
-                      setConvos([n, ...convos])
-                      setSelectedId(id)
-                      setShowSidebar(false)
-                    }}
-                    className="px-4 py-2 rounded-md font-medium btn-primary"
-                  >
-                    Start new chat
-                  </button>
-                </div>
-              )}
+              <div className="text-sm md:text-base text-[color:var(--muted-foreground)] max-w-lg">There are no active chats here. {isCandidate ? 'Recruiters can message you — wait for an incoming message.' : "Wait for someone to message you."}</div>
             </div>
           </div>
         </div>

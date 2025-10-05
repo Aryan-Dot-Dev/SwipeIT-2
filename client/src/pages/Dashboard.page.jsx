@@ -1,6 +1,7 @@
 import { fetchAppliedJobs } from '@/api/candidate.api'
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router';
 import { getCurrentUser } from '@/utils/supabaseInstance'
 import { getAccessToken } from '@/utils/cookieInstance'
 import { myProfile, logout as apiLogout } from '@/api/auth.api'
@@ -70,6 +71,7 @@ function readCookie(name) {
 }
 
 const Dashboard = ({ userId: propUserId }) => {
+  const navigate = useNavigate()
   const [role, setRole] = useState(null)
   const [userId, setUserId] = useState(propUserId || null)
   const [currentUser, setCurrentUser] = useState(null)
@@ -85,7 +87,10 @@ const Dashboard = ({ userId: propUserId }) => {
     try {
       if (typeof window === 'undefined') return 'candidate'
       const v = localStorage.getItem('swipeit:dashboardView')
-      return v || 'candidate'
+      // If user just logged in (no previous view), default to candidate view for job recommendations
+      // Settings should only be shown when explicitly navigated to
+      if (!v || v === 'settings') return 'candidate'
+      return v
     } catch {
       return 'candidate'
     }
@@ -97,7 +102,7 @@ const Dashboard = ({ userId: propUserId }) => {
   const toastId = useRef(0)
   const [createJobOpen, setCreateJobOpen] = useState(false)
   const [showFiltersModal, setShowFiltersModal] = useState(false)
-  const [filters, setFilters] = useState({ keyword: '', location: '', industry: '', minSimilarity: 0 })
+  const [filters, setFilters] = useState({ keyword: '', location: '', industry: '', jobType: '', minSimilarity: 0 })
 
   // Helper: validate whether a particular view is allowed for the given role.
   // This prevents restoring a recruiter-only view for candidates (and vice versa).
@@ -686,10 +691,13 @@ const Dashboard = ({ userId: propUserId }) => {
       <div className="w-full flex-1 flex flex-col" style={{ perspective: 900 }}>
         {/* Header: clean, compact and responsive */}
         <header className="mb-2 flex-shrink-0" ref={(el) => { window.__dashboard_header_el = el }}>
-          <div className="flex items-center justify-between p-3 md:p-4 bg-white rounded-xl shadow-sm border border-transparent">
-            <div className="flex items-center gap-3 flex-shrink-0">
+          <div className={`flex items-center justify-between p-3 rounded-xl shadow-sm border border-transparent ${isRecruiter ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-white'}`}>
+            <div className="flex items-center justify-center gap-3 flex-shrink-0">
               <div>
-                <h1 className="text-lg md:text-xl font-semibold truncate" style={{ color: 'var(--foreground)' }}>
+                <h1 
+                  className={`text-lg md:text-xl font-semibold truncate mb-0 ${isRecruiter ? '!text-white' : 'text-gray-900'}`}
+                  style={isRecruiter ? { background: 'none', WebkitTextFillColor: 'white', color: 'white', marginBottom: 0 } : { marginBottom: 0 }}
+                >
                   Hello {headerName || 'there'}
                 </h1>
               </div>
@@ -760,32 +768,28 @@ const Dashboard = ({ userId: propUserId }) => {
                   <>
                     <button
                       onClick={() => setCurrentView('dashboard')}
-                      className={`px-3 md:px-4 py-1 md:py-2 rounded-full text-sm font-semibold transition-all ${currentView === 'dashboard' ? 'shadow-sm' : 'hover:bg-[color:var(--muted)]'}`}
-                      style={currentView === 'dashboard' ? { backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' } : { color: 'var(--muted-foreground)' }}
+                      className={`px-3 md:px-4 py-1 md:py-2 rounded-full text-sm font-semibold transition-all ${currentView === 'dashboard' ? 'bg-white text-purple-600 shadow-md' : 'text-white hover:bg-white/20'}`}
                       aria-pressed={currentView === 'dashboard'}
                     >
                       Dashboard
                     </button>
                     <button
                       onClick={() => setCurrentView('candidates')}
-                      className={`ml-2 px-3 md:px-4 py-1 md:py-2 rounded-full text-sm font-semibold transition-all ${currentView === 'candidates' ? 'shadow-sm' : 'hover:bg-[color:var(--muted)]'}`}
-                      style={currentView === 'candidates' ? { backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' } : { color: 'var(--muted-foreground)' }}
+                      className={`ml-2 px-3 md:px-4 py-1 md:py-2 rounded-full text-sm font-semibold transition-all ${currentView === 'candidates' ? 'bg-white text-purple-600 shadow-md' : 'text-white hover:bg-white/20'}`}
                       aria-pressed={currentView === 'candidates'}
                     >
                       Candidates
                     </button>
                     <button
                       onClick={() => setCurrentView('saved')}
-                      className={`ml-2 px-3 md:px-4 py-1 md:py-2 rounded-full text-sm font-semibold transition-all ${currentView === 'saved' ? 'shadow-sm' : 'hover:bg-[color:var(--muted)]'}`}
-                      style={currentView === 'saved' ? { backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' } : { color: 'var(--muted-foreground)' }}
+                      className={`ml-2 px-3 md:px-4 py-1 md:py-2 rounded-full text-sm font-semibold transition-all ${currentView === 'saved' ? 'bg-white text-purple-600 shadow-md' : 'text-white hover:bg-white/20'}`}
                       aria-pressed={currentView === 'saved'}
                     >
                       Saved
                     </button>
                     <button
                       onClick={() => setCurrentView('chat')}
-                      className={`ml-2 px-3 md:px-4 py-1 md:py-2 rounded-full text-sm font-semibold transition-all ${currentView === 'chat' ? 'shadow-sm' : 'hover:bg-[color:var(--muted)]'}`}
-                      style={currentView === 'chat' ? { backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' } : { color: 'var(--muted-foreground)' }}
+                      className={`ml-2 px-3 md:px-4 py-1 md:py-2 rounded-full text-sm font-semibold transition-all ${currentView === 'chat' ? 'bg-white text-purple-600 shadow-md' : 'text-white hover:bg-white/20'}`}
                       aria-pressed={currentView === 'chat'}
                     >
                       Chat
@@ -801,7 +805,8 @@ const Dashboard = ({ userId: propUserId }) => {
               {isRecruiter && (
                 <button
                   onClick={() => setCreateJobOpen(true)}
-                  className="hidden sm:flex ml-3 px-3 md:px-5 py-2 border border-green-600 text-green-700 font-semibold rounded-full bg-white hover:bg-green-50 hover:border-green-700 transition items-center gap-1 text-sm"
+                  className="hidden sm:flex ml-3 px-3 md:px-5 py-2 text-white font-semibold rounded-full transition items-center gap-1 text-sm"
+                  style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', boxShadow: '0 4px 15px rgba(138, 43, 226, 0.3)' }}
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14m7-7H5" />
@@ -814,7 +819,7 @@ const Dashboard = ({ userId: propUserId }) => {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setAvatarMenuOpen(s => !s)}
-                className="md:hidden p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 touch-manipulation"
+                className={`md:hidden p-2 rounded-full transition-colors duration-200 touch-manipulation ${isRecruiter ? 'hover:bg-white/20 text-white' : 'hover:bg-gray-100 text-gray-700'}`}
                 aria-label="Open menu"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -849,7 +854,7 @@ const Dashboard = ({ userId: propUserId }) => {
                 {avatarMenuOpen && (
                   <div className="hidden md:block absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden z-50">
                     <button onClick={() => { setCurrentView('settings'); setAvatarMenuOpen(false) }} className="w-full text-left px-4 py-2 hover:bg-gray-50">Settings</button>
-                    <button onClick={() => { setAttitudeFormOpen(true); setAvatarMenuOpen(false) }} className="w-full text-left px-4 py-2 hover:bg-gray-50">Attitude Form</button>
+                    <button onClick={() => { navigate(`/attitude-test?role=${isRecruiter ? 'recruiter' : 'candidate'}`); setAvatarMenuOpen(false) }} className="w-full text-left px-4 py-2 hover:bg-gray-50">Attitude Test</button>
                     <button onClick={() => { apiLogout(); setAvatarMenuOpen(false) }} className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-50">Logout</button>
                   </div>
                 )}
@@ -963,7 +968,8 @@ const Dashboard = ({ userId: propUserId }) => {
                             setCreateJobOpen(true)
                             setAvatarMenuOpen(false)
                           }}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-green-600 text-green-700 font-semibold rounded-lg bg-white hover:bg-green-50 hover:border-green-700 transition"
+                          className="w-full flex items-center gap-2 px-4 py-3 text-white font-semibold rounded-lg transition"
+                          style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', boxShadow: '0 4px 15px rgba(138, 43, 226, 0.3)' }}
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14m7-7H5" />
@@ -973,7 +979,7 @@ const Dashboard = ({ userId: propUserId }) => {
                       )}
 
                       <button onClick={() => { setCurrentView('settings'); setAvatarMenuOpen(false) }} className="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-lg">Settings</button>
-                      <button onClick={() => { setAttitudeFormOpen(true); setAvatarMenuOpen(false) }} className="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-lg">Attitude Form</button>
+                      <button onClick={() => { navigate(`/attitude-test?role=${isRecruiter ? 'recruiter' : 'candidate'}`); setAvatarMenuOpen(false) }} className="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-lg">Attitude Test</button>
                       <button onClick={() => { apiLogout(); setAvatarMenuOpen(false) }} className="w-full text-left px-4 py-3 text-red-600 hover:bg-gray-50 rounded-lg">Logout</button>
                     </div>
                   </div>
@@ -1061,7 +1067,7 @@ const Dashboard = ({ userId: propUserId }) => {
                     onClick={() => {
                       setShowFiltersModal(true);
                     }}
-                    className="flex items-center gap-3 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-medium transition-colors duration-200 touch-manipulation shadow-lg"
+                    className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full font-medium transition-colors duration-200 touch-manipulation shadow-lg"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -1085,11 +1091,11 @@ const Dashboard = ({ userId: propUserId }) => {
             onClick={() => setShowFiltersModal(false)}
           />
           {/* Modal */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-b from-white to-teal-50/50 rounded-t-2xl shadow-2xl border-t border-teal-100 max-h-[80vh] overflow-hidden">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-b from-white to-purple-50/30 rounded-t-2xl shadow-2xl border-t border-purple-100 max-h-[80vh] overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-teal-100 bg-gradient-to-r from-teal-50 to-teal-100 rounded-t-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-pink-100 bg-gradient-to-r from-purple-50 to-pink-50 rounded-t-2xl">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                   </svg>
@@ -1111,7 +1117,7 @@ const Dashboard = ({ userId: propUserId }) => {
               {/* Keywords */}
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                   </svg>
                   Keywords
@@ -1122,7 +1128,7 @@ const Dashboard = ({ userId: propUserId }) => {
                     placeholder="e.g. React, Python, Manager"
                     value={filters.keyword}
                     onChange={(e) => setFilters(f => ({ ...f, keyword: e.target.value }))}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                   />
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1135,7 +1141,7 @@ const Dashboard = ({ userId: propUserId }) => {
               {/* Location */}
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
@@ -1147,7 +1153,7 @@ const Dashboard = ({ userId: propUserId }) => {
                     placeholder="e.g. New York, Remote"
                     value={filters.location}
                     onChange={(e) => setFilters(f => ({ ...f, location: e.target.value }))}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                   />
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1161,7 +1167,7 @@ const Dashboard = ({ userId: propUserId }) => {
               {/* Industry */}
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                   Industry
@@ -1172,7 +1178,7 @@ const Dashboard = ({ userId: propUserId }) => {
                     placeholder="e.g. Technology, Finance"
                     value={filters.industry}
                     onChange={(e) => setFilters(f => ({ ...f, industry: e.target.value }))}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                   />
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1182,10 +1188,45 @@ const Dashboard = ({ userId: propUserId }) => {
                 </div>
               </div>
 
+              {/* Job Type */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <svg className="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8m0 0V4" />
+                  </svg>
+                  Job Type
+                </label>
+                <div className="relative">
+                  <select
+                    value={filters.jobType}
+                    onChange={(e) => setFilters(f => ({ ...f, jobType: e.target.value }))}
+                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 appearance-none cursor-pointer"
+                  >
+                    <option value="">All Job Types</option>
+                    <option value="full-time">Full Time</option>
+                    <option value="part-time">Part Time</option>
+                    <option value="contract">Contract</option>
+                    <option value="internship">Internship</option>
+                    <option value="remote">Remote</option>
+                    <option value="hybrid">Hybrid</option>
+                  </select>
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8m0 0V4" />
+                    </svg>
+                  </div>
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
               {/* Min Match % */}
               <div className="space-y-3">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                   Minimum Match
@@ -1197,11 +1238,11 @@ const Dashboard = ({ userId: propUserId }) => {
                     max="100"
                     value={filters.minSimilarity}
                     onChange={(e) => setFilters(f => ({ ...f, minSimilarity: e.target.value }))}
-                    className="w-full h-2 bg-gradient-to-r from-teal-200 to-teal-400 rounded-lg appearance-none cursor-pointer slider-thumb"
+                    className="w-full h-2 bg-gradient-to-r from-purple-300 to-pink-400 rounded-lg appearance-none cursor-pointer slider-thumb"
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-2">
                     <span className="font-medium">0%</span>
-                    <span className="font-semibold text-teal-600 bg-teal-50 px-2 py-1 rounded-full">{filters.minSimilarity}%</span>
+                    <span className="font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">{filters.minSimilarity}%</span>
                     <span className="font-medium">100%</span>
                   </div>
                 </div>
@@ -1211,7 +1252,7 @@ const Dashboard = ({ userId: propUserId }) => {
               <div className="flex gap-3 pt-4 border-t border-gray-200">
                 <button
                   onClick={() => {
-                    setFilters({ keyword: '', location: '', industry: '', minSimilarity: 0 })
+                    setFilters({ keyword: '', location: '', industry: '', jobType: '', minSimilarity: 0 })
                   }}
                   className="flex-1 py-3 px-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-xl font-medium hover:from-gray-200 hover:to-gray-300 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 touch-manipulation"
                 >
@@ -1224,7 +1265,7 @@ const Dashboard = ({ userId: propUserId }) => {
                 </button>
                 <button
                   onClick={() => setShowFiltersModal(false)}
-                  className="flex-1 py-3 px-4 bg-teal-600 text-white rounded-xl font-medium hover:bg-teal-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 touch-manipulation"
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 touch-manipulation"
                 >
                   <div className="flex items-center justify-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

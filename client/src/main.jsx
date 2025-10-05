@@ -19,6 +19,7 @@ import TermsPage from './pages/Terms.page';
 import PrivacyPage from './pages/Privacy.page';
 import AdvertisePage from './pages/Advertise.page';
 import ContactPage from './pages/Contact.page';
+import AttitudeTestPage from './pages/AttitudeTest.page';
 import { initSessionFromCookies } from '@/utils/supabaseInstance'
 
 async function bootstrap() {
@@ -46,6 +47,7 @@ async function bootstrap() {
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/advertise" element={<AdvertisePage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/attitude-test" element={<AttitudeTestPage />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>

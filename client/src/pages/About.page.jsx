@@ -27,10 +27,26 @@ const TeamMember = ({ name, role, desc }) => (
 export default function AboutPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const values = [
-    { title: 'Fair Hiring', desc: 'We eliminate bias from recruitment with AI that focuses on skills and attitude, not just keywords.', icon: '⚖️' },
-    { title: 'Speed & Efficiency', desc: 'Our swipe-based interface makes hiring faster, helping you find great matches in minutes.', icon: '⚡' },
-    { title: 'Transparency', desc: 'Clear processes and open communication ensure trust between candidates and recruiters.', icon: '�' },
-    { title: 'Innovation', desc: 'We leverage cutting-edge AI to revolutionize how companies connect with talent.', icon: '�' },
+    { 
+      title: 'Fair Hiring', 
+      desc: 'We eliminate bias from recruitment with AI that focuses on skills and attitude, not just keywords.', 
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" /></svg>
+    },
+    { 
+      title: 'Speed & Efficiency', 
+      desc: 'Our swipe-based interface makes hiring faster, helping you find great matches in minutes.', 
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+    },
+    { 
+      title: 'Transparency', 
+      desc: 'Clear processes and open communication ensure trust between candidates and recruiters.', 
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+    },
+    { 
+      title: 'Innovation', 
+      desc: 'We leverage cutting-edge AI to revolutionize how companies connect with talent.', 
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+    },
   ]
 
   const team = [
@@ -205,7 +221,7 @@ export default function AboutPage() {
               <ul className="space-y-2">
                 <li><a href="/contact" className="underline hover:text-[color:var(--foreground)] transition-colors">Contact & Legal Info</a></li>
                 <li className="mt-2 flex items-center gap-3">
-                  <a href="https://x.com/swipeit" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5 transition-colors">
+                  <a href="https://x.com/Swipeit_ai" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5 transition-colors">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                       <path d="M5 4L19 20M19 4L5 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

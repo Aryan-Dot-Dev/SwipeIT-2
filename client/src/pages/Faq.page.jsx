@@ -24,7 +24,7 @@ const FAQItem = ({ question, answer }) => {
 
 const CategoryCard = ({ title, count, icon }) => (
   <div className="p-3 md:p-4 bg-white/95 rounded-lg shadow text-center hover:shadow-md transition-shadow" style={{ borderColor: 'var(--border)' }}>
-    <div className="text-xl md:text-2xl mb-2">{icon}</div>
+    <div className="flex items-center justify-center text-xl md:text-2xl mb-2">{icon}</div>
     <div className="font-semibold text-sm md:text-base">{title}</div>
     <div className="text-xs md:text-sm text-[color:var(--muted-foreground)]">{count} questions</div>
   </div>
@@ -68,10 +68,10 @@ export default function FaqPage() {
   ]
 
   const categories = [
-    { title: 'Getting Started', count: 2, icon: '�' },
-    { title: 'Matching & AI', count: 3, icon: '⚡' },
-    { title: 'Privacy & Security', count: 2, icon: '🔒' },
-    { title: 'Pricing & Support', count: 2, icon: '�' }
+    { title: 'Getting Started', count: 2, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+    { title: 'Matching & AI', count: 3, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> },
+    { title: 'Privacy & Security', count: 2, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg> },
+    { title: 'Pricing & Support', count: 2, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg> }
   ]
 
   return (
@@ -237,7 +237,7 @@ export default function FaqPage() {
               <ul className="space-y-2">
                 <li><a href="/contact" className="underline">Contact & Legal Info</a></li>
                 <li className="mt-2 flex flex-wrap items-center gap-2 md:gap-3">
-                  <a href="https://x.com/swipeit" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5">
+                  <a href="https://x.com/Swipeit_ai" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                       <path d="M5 4L19 20M19 4L5 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

@@ -531,7 +531,7 @@ function SettingsPage() {
                                 </div>
                                     <div>
                                         {/* Prefer showing the recruiter's personal name as the main profile heading; company as subtitle */}
-                                        <h2 className="text-lg md:text-xl font-semibold">{recruiterSettings.recruiter_first_name || currentUser?.user_metadata?.name || recruiterSettings.company_name}</h2>
+                                        <h2 className="text-lg md:text-xl font-semibold" style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{recruiterSettings.recruiter_first_name || currentUser?.user_metadata?.name || recruiterSettings.company_name}</h2>
                                         <p className="text-sm md:text-sm" style={{ color: 'var(--muted-foreground)' }}>{recruiterSettings.company_name || recruiterSettings.company_website || currentUser?.email}</p>
                                         <div className="text-sm text-gray-600 mt-1">{recruiterSettings.company_location}</div>
                                     </div>
@@ -613,7 +613,7 @@ function SettingsPage() {
                                         }}
                                         onDrop={(e) => {
                                             e.preventDefault();
-                                            e.currentTarget.classList.remove('border-blue-400', 'bg-blue-50');
+                                            e.currentTarget.classList.remove('border-[color:var(--primary)]/30');
                                             const files = e.dataTransfer.files;
                                             if (files.length > 0 && files[0]) {
                                                 handleResumeUpload(files[0]);
@@ -721,52 +721,52 @@ function SettingsPage() {
                     <div className="bg-white/95 border rounded-lg shadow" style={{ borderColor: 'var(--border)' }}>
                         <div className="flex items-center justify-between p-4 border-b">
                             <div>
-                                <h3 className="text-lg font-semibold">Profile Settings</h3>
+                                <h3 className="text-lg font-semibold" style={isRecruiter ? { background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' } : {}}>Profile Settings</h3>
                                 <p className="text-sm text-gray-500">Edit your profile and preferences</p>
                             </div>
                             <div className="hidden md:block">
-                                <Button onClick={() => { if (isRecruiter) { handleSaveRecruiter() } else { handleSave() } }} disabled={saving} className="btn-primary">{saving ? 'Saving...' : (isRecruiter ? 'Save recruiter settings' : 'Save')}</Button>
+                                <Button onClick={() => { if (isRecruiter) { handleSaveRecruiter() } else { handleSave() } }} disabled={saving} className="btn-primary" style={isRecruiter ? { background: 'linear-gradient(135deg, #8a2be2, #ff69b4)' } : {}}>{saving ? 'Saving...' : (isRecruiter ? 'Save recruiter settings' : 'Save')}</Button>
                             </div>
                         </div>
 
                         {/* Conditional: recruiter vs candidate simplified and balanced */}
                         {isRecruiter ? (
-                            <form onSubmit={e => { e.preventDefault(); handleSaveRecruiter(e) }} className="p-4 sm:p-6 space-y-6">
+                            <form onSubmit={e => { e.preventDefault(); handleSaveRecruiter(e) }} className="p-4 sm:p-6 space-y-6 pb-24 md:pb-6">
                                 <section>
-                                    <h4 className="text-sm font-medium mb-2">Company</h4>
+                                    <h4 className="text-sm font-medium mb-2" style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Company</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <Label>Company name</Label>
+                                            <Label style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Company name</Label>
                                             <Input value={recruiterSettings.company_name} onChange={e => setRecruiterField('company_name', e.target.value)} />
                                         </div>
                                         <div>
-                                            <Label>Website</Label>
+                                            <Label style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Website</Label>
                                             <Input value={recruiterSettings.company_website} onChange={e => setRecruiterField('company_website', e.target.value)} />
                                         </div>
                                     </div>
                                 </section>
 
                                 <section>
-                                    <h4 className="text-sm font-medium mb-2">Contact</h4>
+                                    <h4 className="text-sm font-medium mb-2" style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Contact</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <Label>First name</Label>
+                                            <Label style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>First name</Label>
                                             <Input value={recruiterSettings.recruiter_first_name} onChange={e => setRecruiterField('recruiter_first_name', e.target.value)} />
                                         </div>
                                         <div>
-                                            <Label>Email</Label>
+                                            <Label style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Email</Label>
                                             <Input value={recruiterSettings.recruiter_email} onChange={e => setRecruiterField('recruiter_email', e.target.value)} />
                                         </div>
                                     </div>
                                 </section>
 
                                 <div className="flex items-center justify-end gap-2">
-                                    <Button className="btn-secondary" onClick={() => setRecruiterSettings(r => ({ ...r, company_name: '', company_website: '', company_industry: '', company_location: '', company_logo: '' }))}>Reset</Button>
-                                    <Button onClick={handleSaveRecruiter} className="btn-primary">{saving ? 'Saving...' : 'Save recruiter settings'}</Button>
+                                    <Button className="btn-primary" style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)' }} onClick={() => setRecruiterSettings(r => ({ ...r, company_name: '', company_website: '', company_industry: '', company_location: '', company_logo: '' }))}>Reset</Button>
+                                    <Button onClick={handleSaveRecruiter} className="btn-primary" style={{ background: 'linear-gradient(135deg, #8a2be2, #ff69b4)' }}>{saving ? 'Saving...' : 'Save recruiter settings'}</Button>
                                 </div>
                             </form>
                         ) : (
-                            <form onSubmit={e => { e.preventDefault(); handleSave(e) }} className="p-4 sm:p-6 space-y-6">
+                            <form onSubmit={e => { e.preventDefault(); handleSave(e) }} className="p-4 sm:p-6 space-y-6 pb-24 md:pb-6">
                                 <section>
                                     <h4 className="text-sm font-medium mb-2">Basic information</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -872,7 +872,7 @@ function SettingsPage() {
             {/* Mobile-only fixed save bar for touch devices */}
             <div className="fixed bottom-4 left-0 right-0 px-4 md:hidden z-50">
                 <div className="max-w-[1600px] mx-auto">
-                    <Button onClick={() => { if (isRecruiter) { handleSaveRecruiter() } else { handleSave() } }} disabled={saving} className="w-full py-3 btn-primary">{saving ? 'Saving...' : (isRecruiter ? 'Save recruiter settings' : 'Save')}</Button>
+                    <Button onClick={() => { if (isRecruiter) { handleSaveRecruiter() } else { handleSave() } }} disabled={saving} className="w-full py-3 btn-primary" style={isRecruiter ? { background: 'linear-gradient(135deg, #8a2be2, #ff69b4)' } : {}}>{saving ? 'Saving...' : (isRecruiter ? 'Save recruiter settings' : 'Save')}</Button>
                 </div>
             </div>
 
@@ -888,7 +888,7 @@ const SavedModal = ({ open = false }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/40" />
             <div className="relative z-10 bg-[color:var(--card)] rounded-lg p-6 w-full max-w-sm text-center shadow-2xl border" style={{ borderColor: 'var(--border)' }}>
-                <div className="text-4xl text-green-500">✓</div>
+                <svg className="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                 <h3 className="mt-2 text-lg font-semibold" style={{ color: 'var(--foreground)' }}>Profile saved</h3>
                 <p className="text-sm text-[color:var(--muted-foreground)] mt-1">Your profile changes were saved successfully.</p>
                 <div className="mt-4 flex items-center justify-center gap-2">

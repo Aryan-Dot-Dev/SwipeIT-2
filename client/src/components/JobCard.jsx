@@ -8,15 +8,31 @@ const safeText = v => {
   return String(v)
 }
 
+const formatSalary = (min, max) => {
+  if (!min && !max) return null
+  const formatNum = (num) => {
+    if (num >= 100000) return `${(num / 100000).toFixed(1)}L`
+    if (num >= 1000) return `${(num / 1000).toFixed(0)}K`
+    return num.toString()
+  }
+  if (min && max) return `₹${formatNum(min)} - ${formatNum(max)}`
+  if (min) return `₹${formatNum(min)}+`
+  return `Up to ₹${formatNum(max)}`
+}
+
 // Futuristic JobCard with glassmorphism and neon gradients
 const JobCard = ({ jobData, onLike, onReject }) => {
   const raw = jobData || {}
   const title = safeText(raw.title)
-  const company_name = safeText(raw.company_name || raw.company)
-  const company_location = safeText(raw.company_location || (raw.company && raw.company.location))
+  const company_name = safeText(raw.company?.name || raw.company_name || raw.company)
+  const company_location = safeText(raw.company?.location || raw.company_location || raw.location)
   const description = safeText(raw.description || raw.summary || raw.company?.description)
   const similarity = Number(raw.similarity) || 0
-  const company_industry = safeText(raw.company_industry || (raw.company && raw.company.industry))
+  const company_industry = safeText(raw.company?.industry || raw.company_industry)
+  const job_type = safeText(raw.job_type || raw.type)
+  const experience_min = raw.experience_min != null ? raw.experience_min : null
+  const salary_range = formatSalary(raw.salary_min, raw.salary_max)
+  const company_website = raw.company?.website
 
   const similarityPercentage = Number(similarity) ? Math.round(similarity * 100) : 0
 
@@ -73,20 +89,44 @@ const JobCard = ({ jobData, onLike, onReject }) => {
         {/* Title */}
         <div className="px-3 sm:px-4 py-2 sm:py-3 text-center bg-white/5 backdrop-blur-sm">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight truncate" style={{ color: 'var(--foreground)' }}>{title}</h2>
-          <div className="mt-1 text-xs sm:text-sm uppercase font-medium" style={{ color: 'var(--muted-foreground)' }}>{company_industry || 'General'}</div>
+          <div className="mt-2 flex items-center justify-center gap-2 flex-wrap">
+            <span className="text-xs sm:text-sm uppercase font-medium" style={{ color: 'var(--muted-foreground)' }}>{company_industry || 'General'}</span>
+            {job_type && (
+              <>
+                <span className="text-gray-400">•</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 capitalize">
+                  {job_type.replace('-', ' ')}
+                </span>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Meta grid */}
         <div className="px-3 sm:px-4 py-2 sm:py-3">
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <div className="p-2 sm:p-3 rounded-lg glass-panel text-center shadow-glass border border-white/20">
-                <div className="text-xs uppercase" style={{ color: 'var(--muted-foreground)' }}>Experience</div>
-              <div className="font-bold mt-1 text-sm sm:text-base" style={{ color: 'var(--foreground)' }}>5+ years</div>
+          <div className="flex flex-col">
+            {/* First row: Experience and Location side by side */}
+            <div className="grid grid-cols-2">
+              {experience_min != null && (
+                <div className="p-2 sm:p-3 rounded-lg glass-panel text-center shadow-glass border border-white/20">
+                  <div className="text-xs uppercase" style={{ color: 'var(--muted-foreground)' }}>Experience</div>
+                  <div className="font-bold mt-1 text-sm sm:text-base" style={{ color: 'var(--foreground)' }}>{experience_min}+ years</div>
+                </div>
+              )}
+              
+              <div className={`p-2 sm:p-3 rounded-lg glass-panel text-center shadow-glass border border-white/20 ${experience_min == null ? 'col-span-2' : ''}`}>
+                <div className="text-xs uppercase" style={{ color: 'var(--muted-foreground)' }}>Location</div>
+                <div className="font-bold mt-1 text-sm sm:text-base truncate" style={{ color: 'var(--foreground)' }}>{company_location || 'Remote'}</div>
+              </div>
             </div>
-            <div className="p-2 sm:p-3 rounded-lg glass-panel text-center shadow-glass border border-white/20">
-              <div className="text-xs uppercase" style={{ color: 'var(--muted-foreground)' }}>Location</div>
-              <div className="font-bold mt-1 text-sm sm:text-base" style={{ color: 'var(--foreground)' }}>{company_location || 'Remote'}</div>
-            </div>
+            
+            {/* Second row: Salary full width if available */}
+            {salary_range && (
+              <div className="p-2 sm:p-3 rounded-lg glass-panel text-center shadow-glass border border-white/20">
+                <div className="text-xs uppercase" style={{ color: 'var(--muted-foreground)' }}>Salary Range</div>
+                <div className="font-bold mt-1 text-sm sm:text-base" style={{ color: 'var(--foreground)' }}>{salary_range}</div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -106,7 +146,7 @@ const JobCard = ({ jobData, onLike, onReject }) => {
               onClick={() => onReject && onReject(jobData)}
               aria-label="reject"
             >
-              ✕
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
             </Motion.button>
 
           <Motion.button
@@ -116,7 +156,7 @@ const JobCard = ({ jobData, onLike, onReject }) => {
             onClick={() => onLike && onLike(jobData)}
             aria-label="like"
           >
-            ✓
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
           </Motion.button>
         </div>
   </Motion.div>

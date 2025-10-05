@@ -1,5 +1,24 @@
 import React, { useState } from 'react'
 
+// Icon mapping function
+const getIcon = (name) => {
+  const icons = {
+    briefcase: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8" /></svg>,
+    tag: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>,
+    document: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+    location: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
+    clock: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+    currency: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+    chart: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>,
+    clipboard: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>,
+    calendar: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
+    academic: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>,
+    tool: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
+    cog: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
+  };
+  return icons[name] || name;
+};
+
 const JOB_TYPES = [
   { value: 'full-time', label: 'Full-time' },
   { value: 'part-time', label: 'Part-time' },
@@ -27,7 +46,7 @@ const CURRENCIES = [
 const InputField = ({ label, error, required = false, children, icon }) => (
   <div className="space-y-2">
     <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-      {icon && <span className="text-gray-400">{icon}</span>}
+      {icon && <span className="text-gray-400">{getIcon(icon)}</span>}
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     {children}
@@ -43,7 +62,7 @@ const InputField = ({ label, error, required = false, children, icon }) => (
 const SectionHeader = ({ title, description, icon }) => (
   <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--secondary)] flex items-center justify-center text-white text-sm">
-      {icon}
+      {getIcon(icon)}
     </div>
     <div>
       <h4 className="text-lg font-semibold text-gray-900">{title}</h4>
@@ -169,11 +188,11 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
               <SectionHeader
                 title="Basic Information"
                 description="Tell candidates about the role and what they'll be doing"
-                icon="�"
+                icon="briefcase"
               />
 
               <div className="mt-6 space-y-6">
-                <InputField label="Job Title" error={errors.title} required icon="🏷️">
+                <InputField label="Job Title" error={errors.title} required icon="tag">
                   <input
                     type="text"
                     value={form.title}
@@ -185,7 +204,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
                   />
                 </InputField>
 
-                <InputField label="Job Description" error={errors.description} required icon="📝">
+                <InputField label="Job Description" error={errors.description} required icon="document">
                   <textarea
                     value={form.description}
                     onChange={(e) => update('description', e.target.value)}
@@ -198,7 +217,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
                 </InputField>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField label="Location" icon="📍">
+                  <InputField label="Location" icon="location">
                     <input
                       type="text"
                       value={form.location}
@@ -208,7 +227,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
                     />
                   </InputField>
 
-                  <InputField label="Job Type" icon="⏰">
+                  <InputField label="Job Type" icon="clock">
                     <select
                       value={form.job_type}
                       onChange={(e) => update('job_type', e.target.value)}
@@ -228,12 +247,12 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
               <SectionHeader
                 title="Compensation"
                 description="Set competitive salary ranges to attract top talent"
-                icon="�"
+                icon="currency"
               />
 
               <div className="mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <InputField label="Minimum Salary" error={errors.salary_min} icon="📈">
+                  <InputField label="Minimum Salary" error={errors.salary_min} icon="chart">
                     <input
                       type="number"
                       min="0"
@@ -246,7 +265,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
                     />
                   </InputField>
 
-                  <InputField label="Maximum Salary" error={errors.salary_max} icon="📊">
+                  <InputField label="Maximum Salary" error={errors.salary_max} icon="chart">
                     <input
                       type="number"
                       min="0"
@@ -259,7 +278,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
                     />
                   </InputField>
 
-                  <InputField label="Currency" icon="💱">
+                  <InputField label="Currency" icon="currency">
                     <select
                       value={form.currency}
                       onChange={(e) => update('currency', e.target.value)}
@@ -279,12 +298,12 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
               <SectionHeader
                 title="Requirements"
                 description="Specify what skills and experience candidates need"
-                icon="📋"
+                icon="clipboard"
               />
 
               <div className="mt-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField label="Minimum Experience (years)" error={errors.experience_min} icon="📅">
+                  <InputField label="Minimum Experience (years)" error={errors.experience_min} icon="calendar">
                     <input
                       type="number"
                       min="0"
@@ -297,7 +316,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
                     />
                   </InputField>
 
-                  <InputField label="Education Level" icon="🎓">
+                  <InputField label="Education Level" icon="academic">
                     <input
                       type="text"
                       value={form.education_level}
@@ -308,7 +327,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
                   </InputField>
                 </div>
 
-                <InputField label="Required Skills" icon="🛠️">
+                <InputField label="Required Skills" icon="tool">
                   <input
                     type="text"
                     value={form.required_skills}
@@ -331,12 +350,12 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
               <SectionHeader
                 title="Administrative"
                 description="Set posting details and deadlines"
-                icon="⚙️"
+                icon="cog"
               />
 
               <div className="mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField label="Application Deadline" icon="📅">
+                  <InputField label="Application Deadline" icon="calendar">
                     <input
                       type="date"
                       value={form.application_deadline}
@@ -346,7 +365,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
                     />
                   </InputField>
 
-                  <InputField label="Status" icon="📊">
+                  <InputField label="Status" icon="chart">
                     <select
                       value={form.status}
                       onChange={(e) => update('status', e.target.value)}

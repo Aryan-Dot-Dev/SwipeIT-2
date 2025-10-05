@@ -27,6 +27,9 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
   const [initialTabSet, setInitialTabSet] = useState(false)
   const [showSavedJobsModal, setShowSavedJobsModal] = useState(false)
   const [showMenuModal, setShowMenuModal] = useState(false)
+  const [jobs, setJobs] = useState([])
+  const [filteredJobs, setFilteredJobs] = useState([])
+  const [showSwipeHelper, setShowSwipeHelper] = useState(true)
 
   // Set initial tab based on prop
   React.useEffect(() => {
@@ -36,8 +39,6 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
       setInitialTabSet(true)
     }
   }, [initialTab, initialTabSet])
-  const [jobs, setJobs] = useState([])
-  const [filteredJobs, setFilteredJobs] = useState([])
 
   useEffect(() => {
     if (!userId) return
@@ -142,6 +143,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
     const kw = (filters.keyword || '').trim().toLowerCase()
     const loc = (filters.location || '').trim().toLowerCase()
     const ind = (filters.industry || '').trim().toLowerCase()
+    const jobType = (filters.jobType || '').trim().toLowerCase()
     const minSim = Number(filters.minSimilarity) || 0
 
     const out = (jobs || []).filter(j => {
@@ -152,6 +154,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
       }
       if (loc && j.company_location && !j.company_location.toLowerCase().includes(loc)) return false
       if (ind && j.company_industry && !j.company_industry.toLowerCase().includes(ind)) return false
+      if (jobType && j.job_type && !j.job_type.toLowerCase().includes(jobType)) return false
       return true
     })
 
@@ -252,6 +255,41 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                   </div>
                 </div>
 
+                {/* Job Type */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <svg className="w-4 h-4 text-[color:var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8m0 0V4" />
+                    </svg>
+                    Job Type
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={filters.jobType}
+                      onChange={(e) => setFilters(f => ({ ...f, jobType: e.target.value }))}
+                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 appearance-none cursor-pointer"
+                    >
+                      <option value="">All Job Types</option>
+                      <option value="full-time">Full Time</option>
+                      <option value="part-time">Part Time</option>
+                      <option value="contract">Contract</option>
+                      <option value="internship">Internship</option>
+                      <option value="remote">Remote</option>
+                      <option value="hybrid">Hybrid</option>
+                    </select>
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8m0 0V4" />
+                      </svg>
+                    </div>
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Min Match % */}
                 <div className="space-y-3">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
@@ -280,7 +318,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                 {/* Clear All Button */}
                 <button
                   onClick={() => {
-                    setFilters({ keyword: '', location: '', industry: '', minSimilarity: 0 })
+                    setFilters({ keyword: '', location: '', industry: '', jobType: '', minSimilarity: 0 })
                   }}
                   className="btn-secondary w-full py-3 px-4"
                 >
@@ -295,8 +333,40 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
             </div>
 
             {/* Job Cards Container - Center column */}
-            <div className="flex-1 relative md:px-6 px-4 py-4 overflow-hidden">
-              <JobStack
+            <div className="flex-1 relative md:px-6 px-4 overflow-hidden flex flex-col">
+              {/* Swipe Helper Instruction - Integrated at the top */}
+              {showSwipeHelper && filteredJobs.length > 0 && (
+                <div className="flex justify-center pt-4 pb-2 px-2">
+                  <div className="inline-flex items-center gap-3 px-4 md:px-6 py-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full shadow-md border-2 border-purple-200 animate-fade-in">
+                    <div className="flex items-center gap-2 text-xs md:text-sm font-semibold">
+                      <svg className="w-5 h-5 md:w-6 md:h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      <span className="text-red-600">Swipe left to reject</span>
+                    </div>
+                    <div className="h-8 w-px bg-gradient-to-b from-purple-300 to-pink-300"></div>
+                    <div className="flex items-center gap-2 text-xs md:text-sm font-semibold">
+                      <span className="text-green-600">Swipe right to accept</span>
+                      <svg className="w-5 h-5 md:w-6 md:h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                    <button
+                      onClick={() => setShowSwipeHelper(false)}
+                      className="ml-1 w-6 h-6 flex items-center justify-center rounded-full hover:bg-white/50 transition-all duration-200 flex-shrink-0"
+                      aria-label="Dismiss helper"
+                    >
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Job Stack with proper spacing */}
+              <div className="flex-1 pt-2">
+                <JobStack
                 initialJobs={filteredJobs}
                 onLike={async (job) => {
                   setSavedJobs(s => [job, ...s])
@@ -340,7 +410,9 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
                     console.error('fetchAppliedJobs failed', err)
                   }
                 }}
+                onDislike={(job) => console.log('dislike', job)}
               />
+              </div>
             </div>
 
             {/* Desktop Saved Jobs Sidebar */}

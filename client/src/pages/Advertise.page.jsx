@@ -10,7 +10,7 @@ const AdPackage = ({ title, description, features, price, popular }) => (
     <ul className="space-y-2 mb-4 md:mb-6">
       {features.map((feature, i) => (
         <li key={i} className={`text-xs md:text-sm flex items-center gap-2 ${popular ? 'text-white/90' : ''}`} style={popular ? {} : { color: 'var(--muted-foreground)' }}>
-          <span className="text-green-500">✓</span>
+          <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
           {feature}
         </li>
       ))}
@@ -59,7 +59,7 @@ export default function AdvertisePage() {
     {
       title: 'Targeted Reach',
       description: 'Reach qualified candidates actively searching for opportunities in your industry.',
-      icon: '🎯'
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
     },
     {
       title: 'Higher Visibility',
@@ -69,12 +69,12 @@ export default function AdvertisePage() {
     {
       title: 'Quality Leads',
       description: 'Connect with candidates who match your requirements through our AI matching.',
-      icon: '⭐'
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
     },
     {
       title: 'Brand Building',
       description: 'Showcase your company culture and values to attract top talent.',
-      icon: '🏢'
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
     }
   ]
 
@@ -247,7 +247,7 @@ export default function AdvertisePage() {
               <ul className="space-y-2">
                 <li><a href="/contact" className="underline hover:text-[color:var(--foreground)] transition-colors">Contact & Legal Info</a></li>
                 <li className="mt-2 flex items-center gap-3">
-                  <a href="https://x.com/swipeit" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5">
+                  <a href="https://x.com/Swipeit_ai" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                       <path d="M5 4L19 20M19 4L5 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

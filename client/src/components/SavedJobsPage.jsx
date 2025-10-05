@@ -96,7 +96,9 @@ function DetailsModal({ job, onClose }) {
 
               <div className="flex items-center gap-2">
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${job.status==='applied'?'bg-[color:var(--primary)]/10 text-[color:var(--primary)]':job.status==='shortlisted'?'bg-[color:var(--secondary)]/10 text-[color:var(--secondary)]':job.status==='rejected'?'bg-red-100 text-red-800':'bg-gray-100 text-gray-800'}`}>{safeText(job.status) || 'Applied'}</span>
-                <button onClick={onClose} aria-label="Close" className="p-2 rounded-md text-[color:var(--foreground)] hover:bg-[color:var(--muted)]/30">✕</button>
+                <button onClick={onClose} aria-label="Close" className="p-2 rounded-md text-[color:var(--foreground)] hover:bg-[color:var(--muted)]/30">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
               </div>
             </header>
 

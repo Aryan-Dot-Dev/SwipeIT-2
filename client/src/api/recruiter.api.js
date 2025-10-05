@@ -78,4 +78,21 @@ const getAllMyJobs = async() =>{
     return data;
 }
 
-export { createJobPosting, createJobPosting_V2, getAllMyJobs }
+const deleteJob = async(jobId) => {
+    try {
+        const { data, error } = await supabase.rpc('delete_job', {
+            job_id_input: jobId
+        })
+
+        if (error) {
+            throw new Error("Error deleting job: " + error.message)
+        }
+
+        return data;
+    } catch (err) {
+        console.error('Failed to delete job:', err)
+        throw err
+    }
+}
+
+export { createJobPosting, createJobPosting_V2, getAllMyJobs, deleteJob }

@@ -26,10 +26,26 @@ const Testimonial = ({ text, name, role }) => (
 export default function LandingPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const features = [
-    { title: 'Fast matching', desc: 'Swipe, shortlist and message — move from discovery to interview faster.', icon: '⚡' },
-    { title: 'Built-in chat', desc: 'Keep conversations neatly inside the app with message history and notifications.', icon: '💬' },
-    { title: 'Candidate profiles', desc: 'View skills, experience and quick previews to make faster decisions.', icon: '�' },
-    { title: 'Privacy-first', desc: 'We store only what you share and keep your hiring process private.', icon: '🔒' },
+    { 
+      title: 'Fast matching', 
+      desc: 'Swipe, shortlist and message — move from discovery to interview faster.', 
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+    },
+    { 
+      title: 'Built-in chat', 
+      desc: 'Keep conversations neatly inside the app with message history and notifications.', 
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+    },
+    { 
+      title: 'Candidate profiles', 
+      desc: 'View skills, experience and quick previews to make faster decisions.', 
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+    },
+    { 
+      title: 'Privacy-first', 
+      desc: 'We store only what you share and keep your hiring process private.', 
+      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+    },
   ]
 
   return (
@@ -201,7 +217,7 @@ export default function LandingPage() {
               <ul className="space-y-2">
                 <li><a href="/contact" className="underline hover:text-[color:var(--foreground)] transition-colors">Contact & Legal Info</a></li>
                 <li className="mt-2 flex items-center gap-3">
-                  <a href="https://x.com/swipeit" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5 transition-colors">
+                  <a href="https://x.com/Swipeit_ai" target="_blank" rel="noreferrer" aria-label="X (opens in new tab)" className="p-2 rounded hover:bg-white/5 transition-colors">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                       <path d="M5 4L19 20M19 4L5 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
