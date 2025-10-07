@@ -68,14 +68,14 @@ const JobCard = ({ jobData, onLike, onReject }) => {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto px-2 sm:px-0">
+    <div className="w-full mx-auto px-1 sm:px-2">
       <Motion.div
         key={jobData?.id}
         initial="initial"
         animate="animate"
         exit={(jobData?.id ?? 0) % 2 === 0 ? 'like' : 'reject'}
         variants={cardVariants}
-        className="select-none touch-action-none relative z-10 cursor-grab w-full glass-panel rounded-2xl shadow-2xl overflow-hidden border border-white/20 bg-white/95 backdrop-blur-md min-h-[600px] sm:min-h-[550px]"
+        className="select-none touch-action-none relative z-10 cursor-grab w-full glass-panel rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl overflow-hidden border border-white/20 bg-white/95 backdrop-blur-md h-[calc(100vh-280px)] sm:h-[calc(100vh-220px)] md:h-[calc(100vh-180px)] lg:h-[calc(100vh-140px)] max-h-[520px] sm:max-h-[580px] md:max-h-[650px] flex flex-col"
         drag="x"
         dragElastic={0.12}
         onDragEnd={handleDragEnd}
@@ -83,50 +83,50 @@ const JobCard = ({ jobData, onLike, onReject }) => {
         whileTap={{ scale: 0.98, cursor: 'grabbing' }}
       >
         {/* Compact Header - All key info in 2-3 lines */}
-        <div className="p-4 border-b border-gray-100">
-          <div className="flex items-start gap-3">
+        <div className="p-3 sm:p-4 border-b border-gray-100 flex-shrink-0">
+          <div className="flex items-start gap-2 sm:gap-3">
             {/* Company Avatar */}
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg flex-shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg sm:rounded-xl flex items-center justify-center text-white text-lg sm:text-xl font-bold shadow-lg flex-shrink-0">
               {String(company_name || '').charAt(0) || 'C'}
             </div>
 
             {/* Info Section */}
             <div className="flex-1 min-w-0">
               {/* Row 1: Job Title */}
-              <h2 className="text-lg font-bold text-gray-900 break-words line-clamp-1">
+              <h2 className="text-base sm:text-lg font-bold text-gray-900 break-words line-clamp-1">
                 {title}
               </h2>
 
               {/* Row 2: Company, Location, Match */}
-              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="text-sm font-medium text-gray-700 break-words">
+              <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 flex-wrap">
+                <span className="text-xs sm:text-sm font-medium text-gray-700 break-words">
                   {company_name}
                 </span>
-                <span className="text-gray-400">•</span>
-                <span className="text-sm text-gray-600">
+                <span className="text-gray-400 text-xs sm:text-sm">•</span>
+                <span className="text-xs sm:text-sm text-gray-600">
                   {company_location || 'Remote'}
                 </span>
-                <span className="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm">
+                <span className="ml-auto inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm">
                   {similarityPercentage}% Match
                 </span>
               </div>
 
               {/* Row 3: Meta info */}
-              <div className="flex items-center gap-2 mt-1.5 flex-wrap text-xs text-gray-600">
+              <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5 flex-wrap text-[10px] sm:text-xs text-gray-600">
                 {job_type && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-medium capitalize">
+                  <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-medium capitalize text-[10px] sm:text-xs">
                     {job_type.replace('-', ' ')}
                   </span>
                 )}
                 {experience_min != null && (
                   <>
                     <span className="text-gray-400">•</span>
-                    <span>{experience_min}+ yrs exp</span>
+                    <span className="text-[10px] sm:text-xs">{experience_min}+ yrs exp</span>
                   </>
                 )}
                 <>
                   <span className="text-gray-400">•</span>
-                  <span className={`font-medium ${salary_range ? 'text-green-600' : 'text-gray-500'}`}>
+                  <span className={`font-medium text-[10px] sm:text-xs ${salary_range ? 'text-green-600' : 'text-gray-500'}`}>
                     {salary_range || 'Unpaid'}
                   </span>
                 </>
@@ -136,19 +136,19 @@ const JobCard = ({ jobData, onLike, onReject }) => {
         </div>
 
         {/* Description - Maximized Space */}
-        <div className="p-4">
-          <div className="text-xs font-semibold mb-2 uppercase tracking-wide text-gray-500">Job Description</div>
-          <div className="h-64 sm:h-56 overflow-y-auto pr-2 text-sm leading-relaxed custom-scrollbar p-3 rounded-lg bg-gray-50 border border-gray-100 text-gray-700">
+        <div className="flex-1 overflow-hidden flex flex-col p-3 sm:p-4">
+          <div className="text-[10px] sm:text-xs font-semibold mb-1.5 sm:mb-2 uppercase tracking-wide text-gray-500 flex-shrink-0">Job Description</div>
+          <div className="flex-1 overflow-y-auto pr-2 text-xs sm:text-sm leading-relaxed custom-scrollbar p-2 sm:p-3 rounded-lg bg-gray-50 border border-gray-100 text-gray-700">
             {description || 'No description provided.'}
           </div>
         </div>
 
         {/* Premium Action Buttons */}
-        <div className="grid grid-cols-2 gap-3 p-4 pt-0">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 p-3 sm:p-4 pt-0 flex-shrink-0">
           <Motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="py-2.5 px-4 rounded-lg text-sm font-semibold text-red-600 bg-white border-2 border-red-200 hover:border-red-300 hover:bg-red-50 shadow-sm transition-all duration-200"
+            className="py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg text-xs sm:text-sm font-semibold text-red-600 bg-white border-2 border-red-200 hover:border-red-300 hover:bg-red-50 shadow-sm transition-all duration-200"
             onClick={() => onReject && onReject(jobData)}
             aria-label="reject"
           >
@@ -158,7 +158,7 @@ const JobCard = ({ jobData, onLike, onReject }) => {
           <Motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="py-2.5 px-4 rounded-lg text-sm font-semibold text-green-600 bg-white border-2 border-green-200 hover:border-green-300 hover:bg-green-50 shadow-sm transition-all duration-200"
+            className="py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg text-xs sm:text-sm font-semibold text-green-600 bg-white border-2 border-green-200 hover:border-green-300 hover:bg-green-50 shadow-sm transition-all duration-200"
             onClick={() => onLike && onLike(jobData)}
             aria-label="like"
           >

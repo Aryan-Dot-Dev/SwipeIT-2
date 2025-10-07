@@ -577,7 +577,6 @@ function SettingsPage() {
                                 <label className="inline-flex items-center px-3 py-2 rounded-lg text-sm cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium transition-colors border border-gray-300">
                                     <input 
                                         type="file" 
-                                        accept=".jpg,.jpeg,.png" 
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];
                                             if (file) handleProfilePictureUpload(file);

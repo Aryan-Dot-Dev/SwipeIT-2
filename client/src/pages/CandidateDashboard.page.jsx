@@ -180,7 +180,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
   return (
     <div className="w-full overflow-x-hidden flex flex-col min-h-screen" data-candidate-dashboard>
       {/* Main Content Area - Full screen like Tinder */}
-      <main className="flex-1 relative md:flex-col flex flex-col pb-6">
+      <main className="flex-1 relative md:flex-col flex flex-col pb-2 md:pb-4 lg:pb-6">
         {activeTab === 'jobs' ? (
           /* Desktop: Three-column layout | Mobile: Single-column with fixed filter button */
           <div className="flex-1 flex md:flex-row flex-col relative">
@@ -378,11 +378,11 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
             </div>
 
             {/* Job Cards Container - Center column */}
-            <div className="flex-1 relative md:px-6 px-4 overflow-hidden flex flex-col">
+            <div className="flex-1 relative md:px-6 px-2 overflow-hidden flex flex-col">
               {/* Swipe Helper Instruction - Integrated at the top */}
               {showSwipeHelper && filteredJobs.length > 0 && (
-                <div className="flex justify-center pt-4 pb-2 px-2">
-                  <div className="inline-flex items-center gap-3 px-4 md:px-6 py-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full shadow-md border-2 border-purple-200 animate-fade-in">
+                <div className="flex justify-center pt-2 pb-1 sm:pt-3 sm:pb-2 md:pt-4 md:pb-2 px-2">
+                  <div className="inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full shadow-md border-2 border-purple-200 animate-fade-in">
                     <div className="flex items-center gap-2 text-xs md:text-sm font-semibold">
                       <svg className="w-5 h-5 md:w-6 md:h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -410,7 +410,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
               )}
               
               {/* Job Stack with proper spacing */}
-              <div className="flex-1 pt-2">
+              <div className="flex-1 pt-1 sm:pt-2">
                 <JobStack
                 initialJobs={filteredJobs}
                 onLike={async (job) => {

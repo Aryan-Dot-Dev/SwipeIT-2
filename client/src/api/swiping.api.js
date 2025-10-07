@@ -61,3 +61,14 @@ export const updateJobStatus = async (jobId, newStatus) => {
     if (error) throw error
     return data
 }
+
+export const getAnonymousUserIds = async () => {
+    const { data, error } = await supabase.rpc('get_anonymous_user_ids', {}, {
+        headers: {
+            Authorization: `Bearer ${getAccessToken()}`
+        }
+    })
+
+    if (error) throw error
+    return data || []
+}

@@ -9,7 +9,7 @@ import Footer from '@/components/Footer'
 
 import { startConversation, checkConversationExists } from '@/api/chatting.api'
 import { getAllMyJobs, deleteJob } from '@/api/recruiter.api.js'
-import { swipeRecruiter, addAnonymousCandidate, updateJobStatus } from '@/api/swiping.api'
+import { swipeRecruiter, addAnonymousCandidate, updateJobStatus, getAnonymousUserIds } from '@/api/swiping.api'
 
 const ChatButton = ({ candidate }) => {
   const [conversationExists, setConversationExists] = useState(false)
@@ -97,6 +97,7 @@ const RecruiterDashboard = ({ view = 'candidates', onFilterButtonClick }) => {
   const [savedLoading, setSavedLoading] = useState(false)
   const [savedQuery, setSavedQuery] = useState('')
   const [anonymousMode, setAnonymousMode] = useState(false)
+  const [anonymousUserIds, setAnonymousUserIds] = useState([])
   const [jobs, setJobs] = useState([])
   const [jobsLoading, setJobsLoading] = useState(false)
   const [jobsSearchQuery, setJobsSearchQuery] = useState('')
@@ -142,6 +143,16 @@ const RecruiterDashboard = ({ view = 'candidates', onFilterButtonClick }) => {
           const resp = await getRecruiterShortlisted()
           if (!mounted) return
           setSaved(Array.isArray(resp) ? resp : [])
+          
+          // Fetch anonymous user IDs
+          try {
+            const anonymousIds = await getAnonymousUserIds()
+            if (!mounted) return
+            setAnonymousUserIds(Array.isArray(anonymousIds) ? anonymousIds.map(item => item.user_id) : [])
+          } catch (err) {
+            console.error('Failed to fetch anonymous user IDs:', err)
+            setAnonymousUserIds([])
+          }
         } catch (err) {
           console.error('#sym:getRecruiterShortlisted failed', err)
         } finally { if (mounted) setSavedLoading(false) }
@@ -385,7 +396,7 @@ const RecruiterDashboard = ({ view = 'candidates', onFilterButtonClick }) => {
             )}
 
             {/* Candidate Stack */}
-            <div className="flex-1 relative pt-2">
+            <div className="flex-1 relative pt-2 pb-20 md:pb-2">
               <CandidateStack
                 initialCandidates={filteredCandidates}
                 onShortlist={async (c) => {
@@ -491,30 +502,43 @@ const RecruiterDashboard = ({ view = 'candidates', onFilterButtonClick }) => {
 
           <div className="grid grid-cols-1 gap-3">
             {saved.length === 0 && !savedLoading && <div className="text-sm text-gray-500">No shortlisted candidates yet.</div>}
-            {saved.map((s) => (
-              <div key={s.application_id || s.id || JSON.stringify(s)} className="p-3 bg-white rounded shadow-sm border">
-                <div className="flex items-center gap-3">
-                  <img src={s.candidate_profile_img || s.profile_img} alt={s.candidate_name || s.name} className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover" />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <div className="font-semibold">{s.candidate_name || s.name || 'Candidate'}</div>
-                      {s.candidate_profile?.similarity !== null && s.candidate_profile?.similarity !== undefined && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[color:var(--primary)]/10 text-[color:var(--primary)]">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          {Math.round(s.candidate_profile.similarity > 1 ? s.candidate_profile.similarity : s.candidate_profile.similarity * 100)}%
-                        </span>
-                      )}
+            {saved.map((s) => {
+              const candidateUserId = s.user_id || s.candidate_id || s.id
+              const isAnonymous = anonymousUserIds.includes(candidateUserId)
+              
+              return (
+                <div key={s.application_id || s.id || JSON.stringify(s)} className="p-3 bg-white rounded shadow-sm border">
+                  <div className="flex items-center gap-3">
+                    <img src={s.candidate_profile_img || s.profile_img} alt={s.candidate_name || s.name} className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover" />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="font-semibold">{s.candidate_name || s.name || 'Candidate'}</div>
+                        {isAnonymous && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                            Shortlisted Anonymously
+                          </span>
+                        )}
+                        {s.candidate_profile?.similarity !== null && s.candidate_profile?.similarity !== undefined && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[color:var(--primary)]/10 text-[color:var(--primary)]">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {Math.round(s.candidate_profile.similarity > 1 ? s.candidate_profile.similarity : s.candidate_profile.similarity * 100)}%
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-500">{s.job_title || s.position || ''} {s.company_name ? `• ${s.company_name}` : ''}</div>
                     </div>
-                    <div className="text-sm text-gray-500">{s.job_title || s.position || ''} {s.company_name ? `• ${s.company_name}` : ''}</div>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <ChatButton candidate={s} />
+                    <div className="flex-shrink-0">
+                      <ChatButton candidate={s} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {savedLoading && <div className="text-sm text-gray-500 mt-2">Loading…</div>}
@@ -526,34 +550,34 @@ const RecruiterDashboard = ({ view = 'candidates', onFilterButtonClick }) => {
           {/* Overview Metrics - show 2x2 on mobile/tablet, 4 on large */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {/* Total Jobs Card */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border recruiter-glass">
+            <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border recruiter-glass">
               <div className="flex items-center justify-between h-full">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="p-3 rounded-lg recruiter-cta flex-shrink-0">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <div className="p-2 sm:p-3 rounded-lg recruiter-cta flex-shrink-0">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
-                  <div className="flex flex-col justify-center min-w-0">
-                    <p className="text-sm font-medium text-gray-600 whitespace-nowrap">Total Jobs</p>
-                    <p className="text-2xl font-bold text-gray-900 truncate">{jobs.length}</p>
+                  <div className="flex flex-col justify-center min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Jobs</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{jobs.length}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Total Applications Card */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border recruiter-glass">
+            <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border recruiter-glass">
               <div className="flex items-center justify-between h-full">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="p-3 rounded-lg recruiter-cta flex-shrink-0">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <div className="p-2 sm:p-3 rounded-lg recruiter-cta flex-shrink-0">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <div className="flex flex-col justify-center min-w-0">
-                    <p className="text-sm font-medium text-gray-600 whitespace-nowrap">Total Applications</p>
-                    <p className="text-2xl font-bold text-gray-900 truncate">
+                  <div className="flex flex-col justify-center min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Applications</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                       {jobs.reduce((sum, job) => sum + (job.application_counts?.applied || 0), 0)}
                     </p>
                   </div>
@@ -562,17 +586,17 @@ const RecruiterDashboard = ({ view = 'candidates', onFilterButtonClick }) => {
             </div>
 
             {/* Shortlisted Card */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border recruiter-glass">
+            <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border recruiter-glass">
               <div className="flex items-center justify-between h-full">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="p-3 rounded-lg recruiter-cta flex-shrink-0">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <div className="p-2 sm:p-3 rounded-lg recruiter-cta flex-shrink-0">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                     </svg>
                   </div>
-                  <div className="flex flex-col justify-center min-w-0">
-                    <p className="text-sm font-medium text-gray-600 whitespace-nowrap">Shortlisted</p>
-                    <p className="text-2xl font-bold text-gray-900 truncate">
+                  <div className="flex flex-col justify-center min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Shortlisted</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                       {jobs.reduce((sum, job) => sum + (job.application_counts?.shortlisted || 0), 0)}
                     </p>
                   </div>
@@ -581,17 +605,17 @@ const RecruiterDashboard = ({ view = 'candidates', onFilterButtonClick }) => {
             </div>
 
             {/* Total Likes Card */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border recruiter-glass">
+            <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border recruiter-glass">
               <div className="flex items-center justify-between h-full">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="p-3 rounded-lg recruiter-cta flex-shrink-0">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <div className="p-2 sm:p-3 rounded-lg recruiter-cta flex-shrink-0">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                   </div>
-                  <div className="flex flex-col justify-center min-w-0">
-                    <p className="text-sm font-medium text-gray-600 whitespace-nowrap">Total Likes</p>
-                    <p className="text-2xl font-bold text-gray-900 truncate">
+                  <div className="flex flex-col justify-center min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Likes</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                       {jobs.reduce((sum, job) => sum + (job.swipe_stats?.likes || 0), 0)}
                     </p>
                   </div>

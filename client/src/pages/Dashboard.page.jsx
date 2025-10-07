@@ -1060,22 +1060,26 @@ const Dashboard = ({ userId: propUserId }) => {
 
         {/* Recruiter Mobile Filter Button - Sticky Bottom */}
         {isRecruiter && currentView === 'candidates' && recruiterFilterHandler && (
-          <button
-            onClick={() => recruiterFilterHandler()}
-            className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white/20 whitespace-nowrap z-[9999]"
-          >
-            🔍 Filter Candidates
-          </button>
+          <div className="md:hidden sticky bottom-0 left-0 right-0 z-[9999] pointer-events-none pb-4" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}>
+            <button
+              onClick={() => recruiterFilterHandler()}
+              className="mx-auto block px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white/20 whitespace-nowrap pointer-events-auto"
+            >
+              🔍 Filter Candidates
+            </button>
+          </div>
         )}
 
         {/* Candidate Mobile Filter Button - Sticky Bottom */}
         {(!isRecruiter && currentView === 'candidate') && (
-          <button
-            onClick={() => setShowFiltersModal(true)}
-            className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white/20 whitespace-nowrap z-[9999]"
-          >
-            🔍 Filter Jobs
-          </button>
+          <div className="md:hidden sticky bottom-0 left-0 right-0 z-[9999] pointer-events-none pb-4" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}>
+            <button
+              onClick={() => setShowFiltersModal(true)}
+              className="mx-auto block px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white/20 whitespace-nowrap pointer-events-auto"
+            >
+              🔍 Filter Jobs
+            </button>
+          </div>
         )}
       </div>
 

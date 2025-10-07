@@ -368,39 +368,49 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
         </div>
       </Motion.div>
       {showDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowDetails(false)} />
-          <div className="relative glass-panel max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
-            <div className="flex items-start justify-between">
-              <h3 className="text-xl font-semibold">{safe(c.candidate_profile?.name || name)}</h3>
-              <button onClick={() => setShowDetails(false)} className="text-white hover:text-gray-300">×</button>
+          <div className="relative glass-panel w-full max-w-[98vw] sm:max-w-5xl lg:max-w-6xl xl:max-w-7xl h-[90vh] flex flex-col rounded-2xl shadow-2xl">
+            {/* Fixed Header */}
+            <div className="flex items-start justify-between p-4 sm:p-6 border-b border-white/10 flex-shrink-0">
+              <h3 className="text-lg sm:text-xl font-semibold">{safe(c.candidate_profile?.name || name)}</h3>
+              <button 
+                onClick={() => setShowDetails(false)} 
+                className="text-white hover:text-gray-300 text-2xl sm:text-3xl leading-none p-1 -mr-1"
+                aria-label="Close"
+              >
+                ×
+              </button>
             </div>
+            
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 pt-0 pb-6 sm:pb-8">
             <div className="mt-4 space-y-4 text-sm text-[color:var(--foreground)]">
               {c.candidate_profile ? (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="min-w-0">
                     <div className="font-medium">Email</div>
-                    <div className="text-[color:var(--muted-foreground)]">{safe(c.candidate_profile.email)}</div>
+                    <div className="text-[color:var(--muted-foreground)] break-words overflow-wrap-anywhere">{safe(c.candidate_profile.email)}</div>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="font-medium">Phone</div>
-                    <div className="text-[color:var(--muted-foreground)]">{safe(c.candidate_profile.phone)}</div>
+                    <div className="text-[color:var(--muted-foreground)] break-words">{safe(c.candidate_profile.phone)}</div>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="font-medium">Location</div>
-                    <div className="text-[color:var(--muted-foreground)]">{safe(c.candidate_profile.city)}, {safe(c.candidate_profile.state)}, {safe(c.candidate_profile.country)}</div>
+                    <div className="text-[color:var(--muted-foreground)] break-words">{safe(c.candidate_profile.city)}, {safe(c.candidate_profile.state)}, {safe(c.candidate_profile.country)}</div>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="font-medium">Experience</div>
                     <div className="text-[color:var(--muted-foreground)]">{safe(c.candidate_profile.experience_years)} years</div>
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1 sm:col-span-2">
                     <div className="font-medium">Bio</div>
-                    <div className="text-[color:var(--muted-foreground)]">{safe(c.candidate_profile.bio)}</div>
+                    <div className="text-[color:var(--muted-foreground)] break-words">{safe(c.candidate_profile.bio)}</div>
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1 sm:col-span-2">
                     <div className="font-medium">Skills</div>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {(Array.isArray(c.candidate_profile.skills) ? c.candidate_profile.skills : []).map((s, i) => (
@@ -409,13 +419,15 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
                     </div>
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1 sm:col-span-2">
                     <div className="font-medium">Attitude Score</div>
                     <div className="mt-3">
                       {c.candidate_profile.attitude_score ? (
-                        <div className="flex items-center gap-4">
-                          <AttitudeRadar data={c.candidate_profile.attitude_score} size={220} levels={4} />
-                          <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                          <div className="flex-shrink-0 mx-auto sm:mx-0">
+                            <AttitudeRadar data={c.candidate_profile.attitude_score} size={200} levels={4} />
+                          </div>
+                          <div className="flex-1 w-full min-w-0">
                             <div className="grid grid-cols-2 gap-2">
                               {Object.entries(c.candidate_profile.attitude_score).map(([trait, val]) => (
                                 <div key={trait} className="flex items-center justify-between px-3 py-2 bg-white/10 rounded backdrop-blur-sm">
@@ -433,7 +445,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
                   </div>
 
                   {c.candidate_profile.resumes && (
-                    <div className="col-span-2">
+                    <div className="col-span-1 sm:col-span-2">
                       <div className="font-medium">Resumes</div>
                       <pre className="text-xs text-[color:var(--muted-foreground)] overflow-x-auto bg-white/10 p-2 rounded mt-1 backdrop-blur-sm">{JSON.stringify(c.candidate_profile.resumes, null, 2)}</pre>
                     </div>
@@ -442,6 +454,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
               ) : (
                 <div className="text-[color:var(--muted-foreground)]">No profile details available.</div>
               )}
+              </div>
             </div>
           </div>
         </div>
