@@ -115,29 +115,29 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
         <div className="relative z-10 glass-panel overflow-hidden">
           {/* Premium compact header */}
           <div className="relative bg-gradient-to-br from-[color:var(--primary)]/20 via-[color:var(--primary)]/10 to-transparent backdrop-blur-sm border-b border-white/10">
-            <div className="px-5 py-4">
+            <div className="px-4 sm:px-5 py-3 sm:py-4">
               {/* Top row: Avatar and Info */}
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-3 sm:gap-4">
                 {/* Avatar */}
-                <div className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center bg-white/10 overflow-hidden border border-white/20 shadow-lg backdrop-blur-sm">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex-shrink-0 flex items-center justify-center bg-white/10 overflow-hidden border border-white/20 shadow-lg backdrop-blur-sm">
                   {avatar ? (
                     <img src={avatar} alt={name} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="text-2xl font-bold text-[color:var(--primary-foreground)]">
+                    <div className="text-xl sm:text-2xl font-bold text-[color:var(--primary-foreground)]">
                       {String(name || 'U').charAt(0)}
                     </div>
                   )}
                 </div>
 
                 {/* Compact Info - Full width on mobile */}
-                <div className="flex-1 min-w-0 pr-2">
-                  <h3 className="text-base sm:text-lg font-semibold text-[color:var(--primary-foreground)] break-words">
+                <div className="flex-1 min-w-0 pr-1 sm:pr-2">
+                  <h3 className="text-sm sm:text-lg font-semibold text-[color:var(--primary-foreground)] break-words leading-snug">
                     {anonymous ? 'Anonymous candidate' : name}
                   </h3>
-                  <div className="text-xs text-[color:var(--muted-foreground)] mt-0.5 break-words">
+                  <div className="text-[11px] sm:text-xs text-[color:var(--muted-foreground)] mt-0.5 break-words">
                     {!anonymous ? email : 'Profile summary only'}
                   </div>
-                  <div className="flex items-center gap-2 mt-1.5 text-xs flex-wrap">
+                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5 text-[11px] sm:text-xs flex-wrap">
                     {c.candidate_profile?.similarity !== null && c.candidate_profile?.similarity !== undefined && (
                       <>
                         <span className="inline-flex items-center gap-1 font-semibold text-[color:var(--primary)]">
@@ -208,7 +208,7 @@ const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, ano
               </div>
 
               {/* Mobile action buttons row - Only shown on mobile and small tablets */}
-              <div className="flex md:hidden items-center justify-end gap-2 mt-3">
+              <div className="flex md:hidden items-center justify-end gap-2 mt-2.5">
                 <button
                   onClick={() => { setShowDetails(true); onView && onView(c) }}
                   className="w-9 h-9 rounded-lg bg-white hover:bg-white/90 border border-white/30 flex items-center justify-center transition-all hover:scale-105 shadow-md"

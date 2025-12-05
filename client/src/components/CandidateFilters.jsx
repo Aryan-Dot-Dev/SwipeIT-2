@@ -10,8 +10,6 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
     minMatchPercentage: 0
   })
 
-  const [availableSkills, setAvailableSkills] = useState([])
-  const [availableLocations, setAvailableLocations] = useState([])
   const [availableJobTitles, setAvailableJobTitles] = useState([])
 
   // Extract unique values from candidates for filter options
@@ -43,8 +41,6 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
       }
     })
 
-    setAvailableSkills(Array.from(skills).sort())
-    setAvailableLocations(Array.from(locations).sort())
     setAvailableJobTitles(Array.from(jobTitles).sort())
   }, [candidates])
 
@@ -83,7 +79,7 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
   )
 
   return (
-    <div className="space-y-6 overflow-x-hidden">
+    <div className="space-y-5 sm:space-y-6 overflow-x-hidden">
       {/* Header with icon */}
       <div className="flex flex-col gap-3 pb-3" style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="flex items-center gap-3 min-w-0">
@@ -119,7 +115,7 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6">
         {/* Skills Filter */}
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
@@ -138,7 +134,7 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
                   e.target.value = ''
                 }
               }}
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+              className="w-full pl-10 pr-4 py-2.5 sm:py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +177,7 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
                 placeholder="Min"
                 value={filters.experienceMin}
                 onChange={(e) => updateFilter('experienceMin', e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+                className="w-full pl-10 pr-4 py-2.5 sm:py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
                 min="0"
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -223,7 +219,7 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
               placeholder="e.g., New York, Remote, etc."
               value={filters.location}
               onChange={(e) => updateFilter('location', e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
+              className="w-full pl-10 pr-4 py-2.5 sm:py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 placeholder-gray-400"
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +242,7 @@ const CandidateFilters = ({ candidates = [], onFiltersChange, anonymousMode = fa
             <select
               value={filters.jobTitle}
               onChange={(e) => updateFilter('jobTitle', e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200"
+                className="w-full pl-10 pr-4 py-2.5 sm:py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200"
             >
               <option value="">Any job title</option>
               {availableJobTitles.map(title => (

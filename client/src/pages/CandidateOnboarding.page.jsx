@@ -5,6 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { Button } from "@/components/ui/button"
 import { generateCandidateEmbeddingText } from '@/lib/embeddings'
+import { generateGeminiEmbeddings } from '@/lib/geminiEmbeddings'
 import { getCurrentUser } from '@/utils/supabaseInstance'
 import { uploadResume, uploadPfp } from '@/api/storage.api.js'
 // Import worker files as resolved asset URLs so Vite can provide a valid worker script URL.
@@ -348,14 +349,11 @@ export default function CandidateOnboarding() {
 
       let embeddingResult = null;
       try {
-        const embMod = await import('@/api/embeddings.api.js');
-        embeddingResult = await embMod.createEmbedding({ text: embeddingText });
-        console.log('createEmbedding returned:', embeddingResult);
-        const vector = embeddingResult?.data?.[0]?.embedding ?? null;
-        if (vector) {
-          embeddingResult.vector = vector;
+        const vector = await generateGeminiEmbeddings(embeddingText);
+        if (vector && vector.length) {
+          embeddingResult = { vector };
         }
-        console.debug('Embedding result (with vector if present):', embeddingResult);
+        console.debug('Gemini embedding vector length:', Array.isArray(vector) ? vector.length : 0);
       } catch (e) {
         console.warn('Embedding request failed', e);
       }

@@ -18,7 +18,7 @@ import AttitudeForm from '@/components/AttitudeForm'
 import JobPostingForm from '@/components/JobPostingForm'
 import { updateAttitudeScore } from '@/api/onboarding.api'
 import { generateJobEmbeddingText } from '@/lib/embeddings'
-import { createEmbedding } from '@/api/embeddings.api.js'
+import { generateGeminiEmbeddings } from '@/lib/geminiEmbeddings'
 import { createJobPosting_V2 as createJobPosting } from '@/api/recruiter.api.js'
 // SimpleTransition: small wrapper that applies a CSS fade+slide when children change
 const SimpleTransition = ({ children }) => {
@@ -596,11 +596,9 @@ const Dashboard = ({ userId: propUserId }) => {
       try {
         // Generate embedding text from jobData
         const text = generateJobEmbeddingText(payload)
-        // Generate the 768-dim embedding
-  const response = await createEmbedding({ text })
-  console.debug('createEmbedding raw response:', response)
-        const embedding = response?.data?.[0]?.embedding
-        if (!embedding) throw new Error('Failed to generate embedding')
+          // Generate the embedding via Gemini
+          const embedding = await generateGeminiEmbeddings(text)
+          if (!embedding || embedding.length === 0) throw new Error('Failed to generate embedding')
         // Add embedding to payload
         const updatedPayload = { ...payload, embedding }
         // Call the API

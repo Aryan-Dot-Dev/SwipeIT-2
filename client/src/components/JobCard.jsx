@@ -75,7 +75,7 @@ const JobCard = ({ jobData, onLike, onReject }) => {
         animate="animate"
         exit={(jobData?.id ?? 0) % 2 === 0 ? 'like' : 'reject'}
         variants={cardVariants}
-        className="select-none touch-action-none relative z-10 cursor-grab w-full glass-panel rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl overflow-hidden border border-white/20 bg-white/95 backdrop-blur-md h-[calc(100vh-280px)] sm:h-[calc(100vh-220px)] md:h-[calc(100vh-180px)] lg:h-[calc(100vh-140px)] max-h-[520px] sm:max-h-[580px] md:max-h-[650px] flex flex-col"
+        className="select-none touch-action-none relative z-10 cursor-grab w-full glass-panel rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl overflow-hidden border border-white/20 bg-white/95 backdrop-blur-md h-[calc(100vh-220px)] sm:h-[calc(100vh-200px)] md:h-[calc(100vh-180px)] lg:h-[calc(100vh-140px)] max-h-[520px] sm:max-h-[580px] md:max-h-[650px] flex flex-col"
         drag="x"
         dragElastic={0.12}
         onDragEnd={handleDragEnd}
@@ -136,15 +136,15 @@ const JobCard = ({ jobData, onLike, onReject }) => {
         </div>
 
         {/* Description - Maximized Space */}
-        <div className="flex-1 overflow-hidden flex flex-col p-3 sm:p-4">
-          <div className="text-[10px] sm:text-xs font-semibold mb-1.5 sm:mb-2 uppercase tracking-wide text-gray-500 flex-shrink-0">Job Description</div>
-          <div className="flex-1 overflow-y-auto pr-2 text-xs sm:text-sm leading-relaxed custom-scrollbar p-2 sm:p-3 rounded-lg bg-gray-50 border border-gray-100 text-gray-700">
+        <div className="flex-1 overflow-hidden flex flex-col p-3 sm:p-4 gap-1">
+          <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-gray-500 flex-shrink-0">Job Description</div>
+          <div className="flex-1 overflow-y-auto pr-1.5 sm:pr-2 text-xs sm:text-sm leading-relaxed custom-scrollbar p-2 sm:p-3 rounded-lg bg-gray-50 border border-gray-100 text-gray-700">
             {description || 'No description provided.'}
           </div>
         </div>
 
         {/* Premium Action Buttons */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 p-3 sm:p-4 pt-0 flex-shrink-0">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 p-3 sm:p-4 pt-1 flex-shrink-0">
           <Motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

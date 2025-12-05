@@ -554,7 +554,7 @@ const CandidateDashboard = ({ userId, currentUser, savedJobs, setSavedJobs, onOp
           <div className="flex-1 md:px-6 px-4 py-4 overflow-auto">
             <div className="md:max-w-4xl md:mx-auto h-full">
               <div className="bg-white rounded-2xl shadow-lg p-6 min-h-full overflow-y-auto">
-                <ResumeDetails resume={resumeObj} />
+                <ResumeDetails resume={resumeObj} candidateId={currentUser?.id} />
               </div>
             </div>
           </div>

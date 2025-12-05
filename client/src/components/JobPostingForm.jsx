@@ -151,21 +151,19 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
 
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-10" onClick={onClose} />
 
-      <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 w-full max-w-5xl max-h-[95vh] overflow-hidden z-20">
+      <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 w-full max-w-xl md:max-w-5xl max-h-[95vh] overflow-hidden z-20">
         {/* Header */}
-  <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gradient-to-r from-[color:var(--primary)]/10 to-[color:var(--secondary)]/10">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--secondary)] flex items-center justify-center text-white">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V8a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8" />
-              </svg>
+        <div className="flex items-center justify-between p-5 md:p-6 border-b border-gray-100 bg-white md:bg-gradient-to-r md:from-[color:var(--primary)]/10 md:to-[color:var(--secondary)]/10">
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[color:var(--primary)] text-white flex items-center justify-center font-semibold shadow-sm">
+              <span className="text-sm md:text-base">Job</span>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Create Job Posting</h3>
-              <p className="text-sm text-gray-600 mt-0.5">Fill in the details to attract the best candidates</p>
+              <h3 className="text-lg md:text-xl font-bold text-gray-900">Create Job Posting</h3>
+              <p className="text-xs md:text-sm text-gray-600 mt-0.5">Keep it brief on mobile—add details later.</p>
             </div>
           </div>
           <button
@@ -181,201 +179,357 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
         </div>
 
         {/* Form */}
-        <form id="job-posting-form" onSubmit={handleSubmit} className="p-6 overflow-y-auto max-h-[calc(95vh-200px)] pb-32">
-          <div className="space-y-8">
-            {/* Basic Information */}
-            <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
-              <SectionHeader
-                title="Basic Information"
-                description="Tell candidates about the role and what they'll be doing"
-                icon="briefcase"
-              />
+        <form id="job-posting-form" onSubmit={handleSubmit} className="p-5 md:p-6 overflow-y-auto max-h-[calc(95vh-180px)] pb-28 md:pb-32 space-y-8">
+          {/* Mobile essentials */}
+          <div className="md:hidden space-y-4">
+            <div className="bg-gray-50 rounded-2xl border border-gray-100 p-4 space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-800">Job Title <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => update('title', e.target.value)}
+                  className={`w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] ${
+                    errors.title ? 'border-red-300 focus:border-red-400 focus:ring-red-200' : 'border-gray-200'
+                  }`}
+                  placeholder="Senior Software Engineer"
+                />
+                {errors.title && <p className="text-xs text-red-600">{errors.title}</p>}
+              </div>
 
-              <div className="mt-6 space-y-6">
-                <InputField label="Job Title" error={errors.title} required icon="tag">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-800">Description <span className="text-red-500">*</span></label>
+                <textarea
+                  value={form.description}
+                  onChange={(e) => update('description', e.target.value)}
+                  rows={4}
+                  className={`w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] resize-none ${
+                    errors.description ? 'border-red-300 focus:border-red-400 focus:ring-red-200' : 'border-gray-200'
+                  }`}
+                  placeholder="Role summary and key responsibilities"
+                />
+                {errors.description && <p className="text-xs text-red-600">{errors.description}</p>}
+              </div>
+
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-800">Location</label>
                   <input
                     type="text"
-                    value={form.title}
-                    onChange={(e) => update('title', e.target.value)}
-                    className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white ${
-                      errors.title ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                    placeholder="e.g. Senior Software Engineer"
+                    value={form.location}
+                    onChange={(e) => update('location', e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                    placeholder="e.g. Remote or City, Country"
                   />
-                </InputField>
-
-                <InputField label="Job Description" error={errors.description} required icon="document">
-                  <textarea
-                    value={form.description}
-                    onChange={(e) => update('description', e.target.value)}
-                    rows={6}
-                    className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 resize-none bg-white ${
-                      errors.description ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                    placeholder="Describe the role, responsibilities, and what makes this opportunity exciting..."
-                  />
-                </InputField>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField label="Location" icon="location">
-                    <input
-                      type="text"
-                      value={form.location}
-                      onChange={(e) => update('location', e.target.value)}
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
-                      placeholder="e.g. New York, NY / Remote"
-                    />
-                  </InputField>
-
-                  <InputField label="Job Type" icon="clock">
-                    <select
-                      value={form.job_type}
-                      onChange={(e) => update('job_type', e.target.value)}
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
-                    >
-                      {JOB_TYPES.map(type => (
-                        <option key={type.value} value={type.value}>{type.label}</option>
-                      ))}
-                    </select>
-                  </InputField>
                 </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-800">Job Type</label>
+                  <select
+                    value={form.job_type}
+                    onChange={(e) => update('job_type', e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                  >
+                    {JOB_TYPES.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-800">Salary Range (optional)</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.salary_min}
+                    onChange={(e) => update('salary_min', e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                    placeholder="Min"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.salary_max}
+                    onChange={(e) => update('salary_max', e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                    placeholder="Max"
+                  />
+                </div>
+                <select
+                  value={form.currency}
+                  onChange={(e) => update('currency', e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                >
+                  {CURRENCIES.map(currency => (
+                    <option key={currency.value} value={currency.value}>{currency.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-800">Required Skills</label>
+                <input
+                  type="text"
+                  value={form.required_skills}
+                  onChange={(e) => update('required_skills', e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                  placeholder="Comma separated"
+                />
               </div>
             </div>
 
-            {/* Compensation */}
-            <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
-              <SectionHeader
-                title="Compensation"
-                description="Set competitive salary ranges to attract top talent"
-                icon="currency"
-              />
-
-              <div className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <InputField label="Minimum Salary" error={errors.salary_min} icon="chart">
-                    <input
-                      type="number"
-                      min="0"
-                      value={form.salary_min}
-                      onChange={(e) => update('salary_min', e.target.value)}
-                      className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white ${
-                        errors.salary_min ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      placeholder="50000"
-                    />
-                  </InputField>
-
-                  <InputField label="Maximum Salary" error={errors.salary_max} icon="chart">
-                    <input
-                      type="number"
-                      min="0"
-                      value={form.salary_max}
-                      onChange={(e) => update('salary_max', e.target.value)}
-                      className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white ${
-                        errors.salary_max ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      placeholder="80000"
-                    />
-                  </InputField>
-
-                  <InputField label="Currency" icon="currency">
-                    <select
-                      value={form.currency}
-                      onChange={(e) => update('currency', e.target.value)}
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
-                    >
-                      {CURRENCIES.map(currency => (
-                        <option key={currency.value} value={currency.value}>{currency.label}</option>
-                      ))}
-                    </select>
-                  </InputField>
-                </div>
-              </div>
-            </div>
-
-            {/* Requirements */}
-            <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
-              <SectionHeader
-                title="Requirements"
-                description="Specify what skills and experience candidates need"
-                icon="clipboard"
-              />
-
-              <div className="mt-6 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField label="Minimum Experience (years)" error={errors.experience_min} icon="calendar">
-                    <input
-                      type="number"
-                      min="0"
-                      value={form.experience_min}
-                      onChange={(e) => update('experience_min', e.target.value)}
-                      className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white ${
-                        errors.experience_min ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      placeholder="2"
-                    />
-                  </InputField>
-
-                  <InputField label="Education Level" icon="academic">
-                    <input
-                      type="text"
-                      value={form.education_level}
-                      onChange={(e) => update('education_level', e.target.value)}
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
-                      placeholder="e.g. Bachelor's Degree"
-                    />
-                  </InputField>
+            <details className="bg-white border border-gray-200 rounded-2xl p-4">
+              <summary className="text-sm font-semibold text-gray-800 cursor-pointer">More options</summary>
+              <div className="pt-4 space-y-3 text-sm text-gray-700">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-800">Min Experience (years)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.experience_min}
+                    onChange={(e) => update('experience_min', e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                    placeholder="2"
+                  />
                 </div>
 
-                <InputField label="Required Skills" icon="tool">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-800">Education Level</label>
                   <input
                     type="text"
-                    value={form.required_skills}
-                    onChange={(e) => update('required_skills', e.target.value)}
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
-                    placeholder="React, Node.js, TypeScript, AWS"
+                    value={form.education_level}
+                    onChange={(e) => update('education_level', e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                    placeholder="e.g. Bachelor's"
                   />
-                  <p className="text-sm text-gray-500 mt-2 flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                    Separate skills with commas
-                  </p>
-                </InputField>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-800">Application Deadline</label>
+                  <input
+                    type="date"
+                    value={form.application_deadline}
+                    onChange={(e) => update('application_deadline', e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-800">Status</label>
+                  <select
+                    value={form.status}
+                    onChange={(e) => update('status', e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[color:var(--primary)]/40 focus:border-[color:var(--primary)] border-gray-200"
+                  >
+                    {STATUSES.map(status => (
+                      <option key={status.value} value={status.value}>{status.label}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
+            </details>
+          </div>
 
-            {/* Administrative */}
-            <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
-              <SectionHeader
-                title="Administrative"
-                description="Set posting details and deadlines"
-                icon="cog"
-              />
+          {/* Desktop layout (unchanged richness) */}
+          <div className="hidden md:block">
+            <div className="space-y-8">
+              {/* Basic Information */}
+              <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
+                <SectionHeader
+                  title="Basic Information"
+                  description="Tell candidates about the role and what they'll be doing"
+                  icon="briefcase"
+                />
 
-              <div className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField label="Application Deadline" icon="calendar">
+                <div className="mt-6 space-y-6">
+                  <InputField label="Job Title" error={errors.title} required icon="tag">
                     <input
-                      type="date"
-                      value={form.application_deadline}
-                      onChange={(e) => update('application_deadline', e.target.value)}
-                      min={new Date().toISOString().split('T')[0]}
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
+                      type="text"
+                      value={form.title}
+                      onChange={(e) => update('title', e.target.value)}
+                      className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white ${
+                        errors.title ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      placeholder="e.g. Senior Software Engineer"
                     />
                   </InputField>
 
-                  <InputField label="Status" icon="chart">
-                    <select
-                      value={form.status}
-                      onChange={(e) => update('status', e.target.value)}
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
-                    >
-                      {STATUSES.map(status => (
-                        <option key={status.value} value={status.value}>{status.label}</option>
-                      ))}
-                    </select>
+                  <InputField label="Job Description" error={errors.description} required icon="document">
+                    <textarea
+                      value={form.description}
+                      onChange={(e) => update('description', e.target.value)}
+                      rows={6}
+                      className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 resize-none bg-white ${
+                        errors.description ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      placeholder="Describe the role, responsibilities, and what makes this opportunity exciting..."
+                    />
                   </InputField>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InputField label="Location" icon="location">
+                      <input
+                        type="text"
+                        value={form.location}
+                        onChange={(e) => update('location', e.target.value)}
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
+                        placeholder="e.g. New York, NY / Remote"
+                      />
+                    </InputField>
+
+                    <InputField label="Job Type" icon="clock">
+                      <select
+                        value={form.job_type}
+                        onChange={(e) => update('job_type', e.target.value)}
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
+                      >
+                        {JOB_TYPES.map(type => (
+                          <option key={type.value} value={type.value}>{type.label}</option>
+                        ))}
+                      </select>
+                    </InputField>
+                  </div>
+                </div>
+              </div>
+
+              {/* Compensation */}
+              <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
+                <SectionHeader
+                  title="Compensation"
+                  description="Set competitive salary ranges to attract top talent"
+                  icon="currency"
+                />
+
+                <div className="mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <InputField label="Minimum Salary" error={errors.salary_min} icon="chart">
+                      <input
+                        type="number"
+                        min="0"
+                        value={form.salary_min}
+                        onChange={(e) => update('salary_min', e.target.value)}
+                        className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white ${
+                          errors.salary_min ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        placeholder="50000"
+                      />
+                    </InputField>
+
+                    <InputField label="Maximum Salary" error={errors.salary_max} icon="chart">
+                      <input
+                        type="number"
+                        min="0"
+                        value={form.salary_max}
+                        onChange={(e) => update('salary_max', e.target.value)}
+                        className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white ${
+                          errors.salary_max ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        placeholder="80000"
+                      />
+                    </InputField>
+
+                    <InputField label="Currency" icon="currency">
+                      <select
+                        value={form.currency}
+                        onChange={(e) => update('currency', e.target.value)}
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
+                      >
+                        {CURRENCIES.map(currency => (
+                          <option key={currency.value} value={currency.value}>{currency.label}</option>
+                        ))}
+                      </select>
+                    </InputField>
+                  </div>
+                </div>
+              </div>
+
+              {/* Requirements */}
+              <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
+                <SectionHeader
+                  title="Requirements"
+                  description="Specify what skills and experience candidates need"
+                  icon="clipboard"
+                />
+
+                <div className="mt-6 space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InputField label="Minimum Experience (years)" error={errors.experience_min} icon="calendar">
+                      <input
+                        type="number"
+                        min="0"
+                        value={form.experience_min}
+                        onChange={(e) => update('experience_min', e.target.value)}
+                        className={`w-full border-2 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white ${
+                          errors.experience_min ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        placeholder="2"
+                      />
+                    </InputField>
+
+                    <InputField label="Education Level" icon="academic">
+                      <input
+                        type="text"
+                        value={form.education_level}
+                        onChange={(e) => update('education_level', e.target.value)}
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
+                        placeholder="e.g. Bachelor's Degree"
+                      />
+                    </InputField>
+                  </div>
+
+                  <InputField label="Required Skills" icon="tool">
+                    <input
+                      type="text"
+                      value={form.required_skills}
+                      onChange={(e) => update('required_skills', e.target.value)}
+                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
+                      placeholder="React, Node.js, TypeScript, AWS"
+                    />
+                    <p className="text-sm text-gray-500 mt-2 flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                      Separate skills with commas
+                    </p>
+                  </InputField>
+                </div>
+              </div>
+
+              {/* Administrative */}
+              <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
+                <SectionHeader
+                  title="Administrative"
+                  description="Set posting details and deadlines"
+                  icon="cog"
+                />
+
+                <div className="mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InputField label="Application Deadline" icon="calendar">
+                      <input
+                        type="date"
+                        value={form.application_deadline}
+                        onChange={(e) => update('application_deadline', e.target.value)}
+                        min={new Date().toISOString().split('T')[0]}
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
+                      />
+                    </InputField>
+
+                    <InputField label="Status" icon="chart">
+                      <select
+                        value={form.status}
+                        onChange={(e) => update('status', e.target.value)}
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 bg-white hover:border-gray-300"
+                      >
+                        {STATUSES.map(status => (
+                          <option key={status.value} value={status.value}>{status.label}</option>
+                        ))}
+                      </select>
+                    </InputField>
+                  </div>
                 </div>
               </div>
             </div>
@@ -383,15 +537,15 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
         </form>
 
         {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 flex items-center justify-between p-6 border-t border-gray-100 bg-white/95 backdrop-blur-sm">
-          <p className="text-sm text-gray-600 flex items-center gap-1">
+        <div className="absolute bottom-0 left-0 right-0 z-30 flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-5 md:p-6 border-t border-gray-100 bg-white/95 backdrop-blur-sm">
+          <p className="text-xs md:text-sm text-gray-600 flex items-center gap-1">
             <span className="text-red-500">*</span> Required fields
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium text-gray-700"
+              className="px-4 py-2.5 md:px-6 md:py-2.5 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium text-gray-700"
               disabled={submitting}
             >
               Cancel
@@ -401,7 +555,7 @@ const JobPostingForm = ({ recruiterId = null, onClose = () => {}, onSubmit = () 
               form="job-posting-form"
               onClick={handleSubmit}
               disabled={submitting}
-              className="px-6 py-2.5 bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--secondary)] text-white rounded-xl hover:from-[color:var(--primary)]/90 hover:to-[color:var(--secondary)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center gap-2 shadow-lg hover:shadow-xl"
+              className="px-4 py-2.5 md:px-6 md:py-2.5 bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--secondary)] text-white rounded-xl hover:from-[color:var(--primary)]/90 hover:to-[color:var(--secondary)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center gap-2 shadow-lg hover:shadow-xl"
             >
               {submitting && (
                 <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">

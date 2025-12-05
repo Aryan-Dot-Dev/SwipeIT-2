@@ -4,65 +4,82 @@ import { Button } from '@/components/ui/button'
 import DemoSwipeCard from '@/components/DemoSwipeCard'
 
 const Feature = ({ title, desc, icon }) => (
-  <div className="p-4 md:p-6 glass-panel hover:scale-105 transition-all">
+  <div className="p-4 md:p-6 rounded-2xl border border-[color:var(--border)]/70 bg-white/80 backdrop-blur-xl shadow-[0_12px_40px_-18px_rgba(0,0,0,0.35)] hover:shadow-[0_14px_48px_-16px_rgba(138,43,226,0.35)] transition-all">
     <div className="flex items-start gap-3 md:gap-4">
-      <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center bg-gradient-to-r from-pink-500 to-purple-500 text-white flex-shrink-0">{icon}</div>
+      <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#ff66c4] via-[#b07bff] to-[#6f3bd8] text-white flex-shrink-0 shadow-lg shadow-[#b07bff]/30">
+        {icon}
+      </div>
       <div className="min-w-0">
-        <div className="font-semibold text-sm md:text-base">{title}</div>
-        <div className="text-xs md:text-sm text-[color:var(--muted-foreground)] mt-1">{desc}</div>
+        <div className="font-semibold text-sm md:text-base leading-snug text-[color:var(--foreground)]">{title}</div>
+        <div className="text-xs md:text-sm text-[color:var(--muted-foreground)] mt-1 leading-relaxed">{desc}</div>
       </div>
     </div>
   </div>
 )
 
-const Testimonial = ({ text, name, role }) => (
-  <div className="p-3 md:p-4 glass-panel hover:scale-105 transition-all">
-    <div className="text-xs md:text-sm text-[color:var(--muted-foreground)]">"{text}"</div>
-    <div className="mt-2 md:mt-3 font-medium text-sm md:text-base">{name}</div>
-    <div className="text-xs text-[color:var(--muted-foreground)]">{role}</div>
+const StepCard = ({ step, title, desc }) => (
+  <div className="flex items-start gap-3 p-3 sm:p-4 rounded-2xl border border-[color:var(--border)] bg-white/80 backdrop-blur-md shadow-sm">
+    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[color:var(--primary)] text-[color:var(--primary-foreground)] font-semibold flex items-center justify-center">
+      {step}
+    </div>
+    <div className="min-w-0">
+      <div className="font-semibold text-sm sm:text-base text-[color:var(--foreground)]">{title}</div>
+      <p className="text-xs sm:text-sm text-[color:var(--muted-foreground)] leading-relaxed">{desc}</p>
+    </div>
   </div>
 )
 
 export default function LandingPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const features = [
-    { 
-      title: 'Fast matching', 
-      desc: 'Swipe, shortlist and message — move from discovery to interview faster.', 
-      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+    {
+      title: 'Instant candidate signal',
+      desc: 'AI-written quick summaries and match scores so you know who to talk to first.',
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
     },
-    { 
-      title: 'Built-in chat', 
-      desc: 'Keep conversations neatly inside the app with message history and notifications.', 
-      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+    {
+      title: 'Chat built-in',
+      desc: 'Keep every conversation in one place with read receipts and notifications.',
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
     },
-    { 
-      title: 'Candidate profiles', 
-      desc: 'View skills, experience and quick previews to make faster decisions.', 
-      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+    {
+      title: 'Structured profiles',
+      desc: 'Skills, experience, and resumes in a compact, swipe-friendly layout.',
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
     },
-    { 
-      title: 'Privacy-first', 
-      desc: 'We store only what you share and keep your hiring process private.', 
-      icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-    },
+    {
+      title: 'Privacy-first',
+      desc: 'Data stays with you. No public listings—just focused, private matching.',
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+    }
+  ]
+
+  const steps = [
+    { step: '01', title: 'Create a space', desc: 'Spin up your hiring workspace, invite teammates, and set preferences.' },
+    { step: '02', title: 'Load roles & resumes', desc: 'Post roles in minutes or drag in resumes—our AI maps them instantly.' },
+    { step: '03', title: 'Swipe & chat', desc: 'Prioritized stacks, quick shortlist, and built-in chat to move faster.' }
   ]
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="w-full py-4 md:py-6">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-[#f7f2ff] to-white relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="absolute -top-32 -left-20 w-80 h-80 bg-[#ff66c4]/25 blur-3xl rounded-full"></div>
+        <div className="absolute top-10 right-[-60px] w-96 h-96 bg-[#8a2be2]/20 blur-3xl rounded-full"></div>
+        <div className="absolute bottom-[-80px] left-10 w-72 h-72 bg-[#b07bff]/18 blur-3xl rounded-full"></div>
+      </div>
+      <header className="w-full py-3 md:py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center gap-2 md:gap-3">
-              <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-12 h-12 md:w-16 md:h-16 object-contain" />
+              <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-10 h-10 md:w-14 md:h-14 object-contain" />
               <span className="sr-only">SwipeIT</span>
             </a>
             <nav className="hidden md:flex items-center gap-4">
               <a href="#features" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Features</a>
+              <a href="#how" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">How it works</a>
               <a href="/login" className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">Log in</a>
               <a href="/signup"><button className="btn-primary text-sm px-4 py-2">Sign up</button></a>
             </nav>
-            {/* Mobile menu button */}
             <div className="md:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -87,17 +104,13 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Mobile Navigation Menu Popup */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          {/* Menu */}
           <div className="absolute top-20 right-4 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden animate-in slide-in-from-top-2 duration-300">
-            {/* Close Button */}
             <button
               onClick={() => setIsMobileMenuOpen(false)}
               className="absolute top-3 right-3 z-10 p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all duration-200 active:scale-95"
@@ -110,10 +123,17 @@ export default function LandingPage() {
             <nav className="flex flex-col py-2 pt-10">
               <a
                 href="#features"
-                className="text-base py-3 px-6 text-green-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-95"
+                className="text-base py-3 px-6 text-[color:var(--primary)] hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-95"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Features
+              </a>
+              <a
+                href="#how"
+                className="text-base py-3 px-6 text-[color:var(--primary)] hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-95"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                How it works
               </a>
               <div className="border-t border-[color:var(--border)] my-2"></div>
               <div className="px-6 pb-2">
@@ -130,54 +150,121 @@ export default function LandingPage() {
       )}
 
       <main className="flex-1">
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center py-6 md:py-10">
-          <div className="order-1 lg:order-1">
-            <div className="text-6xl text-gray-600 font-extrabold tracking-tight" style={{ color: 'var(--foreground)' }}>SwipeIt</div>
-            <div className="inline-flex items-center gap-2 md:gap-3 px-3 py-1 rounded-full bg-[color:var(--card)] text-green-600 text-xs md:text-sm font-medium">New · Designed for modern hiring</div>
-            <h1 className="mt-4 md:mt-6 text-3xl md:text-4xl lg:text-5xl leading-tight font-extrabold" style={{ color: 'var(--foreground)' }}>Hire faster. Interview smarter.</h1>
-            <p className="mt-3 md:mt-4 text-base md:text-lg text-[color:var(--muted-foreground)] max-w-xl">SwipeIT combines a fast candidate discovery workflow with built-in messaging and lightweight profiles — so hiring teams can focus on talking to great people, not managing tools.</p>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center py-6 md:py-10">
+          <div className="order-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/70 shadow-sm text-[11px] sm:text-xs font-medium text-[color:var(--foreground)] border border-[color:var(--border)]">
+              Premium talent workspace
+            </div>
+            <h1 className="mt-3 md:mt-5 text-3xl sm:text-4xl md:text-5xl leading-tight font-extrabold text-[color:var(--foreground)]">
+              Swipe faster. Decide faster. Stay in the flow.
+            </h1>
+            <p className="mt-3 md:mt-4 text-sm sm:text-base md:text-lg text-[color:var(--muted-foreground)] max-w-xl leading-relaxed">
+              Pink-and-purple glass UI, AI summaries, and built-in chat keep hiring teams moving without the tab maze.
+            </p>
 
-            <div className="mt-6 md:mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4">
-              <a href="/signup" className="w-full sm:w-auto"><button className="btn-primary w-full sm:w-auto text-lg px-8 py-4">Create account — it's free</button></a>
-              <a href="/login" className="text-sm text-[color:var(--muted-foreground)]">Or <span className="underline">sign in</span> to continue</a>
+            <div className="mt-5 md:mt-7 flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4">
+              <a href="/signup" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-white shadow-[0_10px_30px_-12px_rgba(255,102,196,0.7)] transition-transform active:scale-95" style={{ background: 'linear-gradient(135deg,#ff66c4,#b07bff 50%,#6f3bd8)' }}>
+                  Start free
+                </button>
+              </a>
+              <a href="/login" className="text-sm text-[color:var(--muted-foreground)]">Already have an account? <span className="underline">Sign in</span></a>
             </div>
 
-          
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-[color:var(--foreground)] max-w-lg">
+              <div className="p-3 rounded-2xl bg-white/70 border border-[color:var(--border)] shadow-sm">
+                <div className="text-[12px] text-[color:var(--muted-foreground)]">What you get</div>
+                <div className="text-sm font-semibold">Private swipe stacks, AI summaries, built-in chat.</div>
+              </div>
+              <div className="p-3 rounded-2xl bg-white/70 border border-[color:var(--border)] shadow-sm">
+                <div className="text-[12px] text-[color:var(--muted-foreground)]">No hype</div>
+                <div className="text-sm font-semibold">Straightforward workflows without vanity claims.</div>
+              </div>
+            </div>
           </div>
 
-          <div className="order-2 lg:order-2 flex items-center justify-center">
-            <div className="w-full max-w-sm md:max-w-lg p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-xl md:shadow-2xl bg-white relative overflow-hidden" style={{ borderColor: 'var(--border)' }}>
-              <DemoSwipeCard onSwipe={(dir) => console.log('Demo card swiped', dir)} />
+          <div className="order-2 flex items-center justify-center">
+            <div className="w-full max-w-sm md:max-w-lg p-[1px] rounded-2xl md:rounded-3xl bg-gradient-to-br from-[#ff66c4] via-[#b07bff] to-[#6f3bd8] shadow-[0_14px_40px_-16px_rgba(111,59,216,0.55)]">
+              <div className="p-3 sm:p-4 md:p-6 rounded-[1.05rem] md:rounded-[1.35rem] bg-white/95 backdrop-blur-xl border border-[color:var(--border)]">
+                <DemoSwipeCard onSwipe={(dir) => console.log('Demo card swiped', dir)} />
+              </div>
             </div>
           </div>
         </section>
 
         <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-6 md:py-8">
-          <h3 className="text-xl md:text-2xl font-semibold text-center lg:text-left" style={{ color: 'var(--foreground)' }}>Features</h3>
-          <p className="text-[color:var(--muted-foreground)] mt-2 text-center lg:text-left max-w-2xl">Everything you need to run an efficient hiring process — nothing you don't.</p>
-          <div className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <h3 className="text-xl md:text-2xl font-semibold text-[color:var(--foreground)]">A calmer hiring surface</h3>
+              <p className="text-[color:var(--muted-foreground)] mt-2 text-sm sm:text-base max-w-2xl">Everything critical above the fold, so you can move from screening to chat without tab chaos.</p>
+            </div>
+          </div>
+          <div className="mt-5 md:mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-5">
             {features.map((f, i) => <Feature key={i} {...f} />)}
           </div>
         </section>
 
-        <section id="stats" className="bg-[color:var(--card)] py-6 md:py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 text-center">
-            {/* Stats removed - placeholder content */}
+        <section id="how" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-6 md:py-8 grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 items-center">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[color:var(--card)] text-[11px] sm:text-xs font-medium text-[color:var(--foreground)] border border-[color:var(--border)]">How it works</div>
+            <h3 className="text-2xl md:text-3xl font-semibold text-[color:var(--foreground)]">From resume to conversation in three steps.</h3>
+            <p className="text-[color:var(--muted-foreground)] text-sm sm:text-base max-w-xl">Keep stakeholders aligned with a single flow that highlights signal, not noise.</p>
+            <div className="space-y-3 sm:space-y-4 mt-3">
+              {steps.map((s) => <StepCard key={s.step} {...s} />)}
+            </div>
+          </div>
+          <div className="bg-white/85 backdrop-blur-md rounded-3xl border border-[color:var(--border)] shadow-[0_14px_50px_-20px_rgba(111,59,216,0.5)] p-4 sm:p-6 lg:p-8 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--secondary)] flex items-center justify-center text-white font-bold">AI</div>
+              <div>
+                <div className="text-sm text-[color:var(--muted-foreground)]">Signal preview</div>
+                <div className="text-lg font-semibold text-[color:var(--foreground)]">What hiring teams see first</div>
+              </div>
+            </div>
+            <div className="space-y-2 text-sm text-[color:var(--foreground)]">
+              <div className="p-3 rounded-2xl bg-[color:var(--card)] border border-[color:var(--border)]">AI-generated summary of the profile (skills, impact, preferences).</div>
+              <div className="p-3 rounded-2xl bg-white border border-[color:var(--border)]">Match scoring, availability, and location surfaced together.</div>
+              <div className="p-3 rounded-2xl bg-white border border-[color:var(--border)]">Key skills and links so you can decide in seconds.</div>
+            </div>
           </div>
         </section>
 
-        <section id="testimonials" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-6 md:py-8">
-          {/* Testimonials section removed - contained fake customer reviews */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-6 md:py-8 grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          <div className="p-5 sm:p-6 rounded-3xl border border-[color:var(--border)] bg-white/85 backdrop-blur-md shadow-lg space-y-3">
+            <div className="text-[11px] sm:text-xs uppercase tracking-wide text-[color:var(--muted-foreground)]">For recruiters</div>
+            <h4 className="text-xl font-semibold text-[color:var(--foreground)]">Pipeline clarity without extra tabs.</h4>
+            <ul className="space-y-2 text-sm text-[color:var(--muted-foreground)]">
+              <li>• Single inbox for candidates and hiring managers.</li>
+              <li>• AI summaries, resume links, and quick shortlist actions.</li>
+              <li>• Share shortlists with stakeholders in one click.</li>
+            </ul>
+            <Button className="w-full sm:w-auto">Open recruiter view</Button>
+          </div>
+          <div className="p-5 sm:p-6 rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)]/90 backdrop-blur-md shadow-lg space-y-3">
+            <div className="text-[11px] sm:text-xs uppercase tracking-wide text-[color:var(--muted-foreground)]">For candidates</div>
+            <h4 className="text-xl font-semibold text-[color:var(--foreground)]">Human, fast, and transparent.</h4>
+            <ul className="space-y-2 text-sm text-[color:var(--muted-foreground)]">
+              <li>• Clean swipe experience with clear status updates.</li>
+              <li>• Built-in chat—no lost email threads.</li>
+              <li>• Privacy-first: share only what you choose.</li>
+            </ul>
+            <Button className="w-full sm:w-auto" variant="outline">Try candidate flow</Button>
+          </div>
         </section>
 
         <section className="py-6 md:py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--secondary)] rounded-xl p-6 md:p-8 text-white flex flex-col lg:flex-row items-center justify-between gap-4">
-            <div className="text-center lg:text-left">
-              <div className="text-lg md:text-xl font-semibold">Ready to hire smarter?</div>
-              <div className="mt-1 text-sm md:text-base">Start a free account and discover better matches in minutes.</div>
-            </div>
-            <div className="flex-shrink-0">
-              <a href="/signup"><Button className="w-full lg:w-auto text-white bg-white/20 hover:bg-white/30 border-white/30" style={{ background: 'transparent' }}>Create free account</Button></a>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6">
+            <div className="relative overflow-hidden rounded-2xl p-[1px] bg-gradient-to-r from-[#ff66c4] via-[#b07bff] to-[#6f3bd8] shadow-[0_18px_60px_-24px_rgba(111,59,216,0.55)]">
+              <div className="relative rounded-[1.1rem] bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--secondary)] p-5 sm:p-6 md:p-8 text-white flex flex-col lg:flex-row items-center justify-between gap-4">
+                <div className="text-center lg:text-left space-y-1">
+                  <div className="text-lg md:text-xl font-semibold leading-tight">Ready to hire smarter?</div>
+                  <div className="text-sm md:text-base opacity-90">Start free today. Bring your team when you’re ready.</div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto justify-center">
+                  <a href="/signup"><Button className="w-full lg:w-auto text-white bg-white/15 hover:bg-white/25 border-white/30">Create free account</Button></a>
+                  <a href="/login"><Button className="w-full lg:w-auto bg-white text-[color:var(--primary)] hover:bg-white/90">Log in</Button></a>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -189,7 +276,6 @@ export default function LandingPage() {
             <div className="sm:col-span-2 lg:col-span-1">
               <div className="mb-3"><img src="/logo_bg_removed.png" alt="SwipeIT" className="w-28 object-contain" /></div>
               <div>© {new Date().getFullYear()} SwipeIT — simple hiring</div>
-              <div className="mt-3">SwipeIt ai</div>
               <div className="text-xs mt-1">Support: <a href="mailto:team@swipeit.in" className="underline hover:text-[color:var(--foreground)] transition-colors">team@swipeit.in</a></div>
               <div className="text-xs">Phone: <a href="tel:+916302728603" className="underline hover:text-[color:var(--foreground)] transition-colors">+91 63027 28603</a></div>
             </div>

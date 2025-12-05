@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createEmbedding } from '@/api/embeddings.api'
+import { generateGeminiEmbeddings } from '@/lib/geminiEmbeddings'
 import { createOrUpdateCompany, upsertRecruiterProfile } from '@/api/onboarding.api'
 import { createJobPosting } from '@/api/recruiter.api'
 import { getCurrentUser } from '@/utils/supabaseInstance'
@@ -155,15 +155,8 @@ export default function RecruiterOnboarding() {
       const jobText = `${data.job_title || ''}\n\n${data.job_description || ''}`.trim()
       let embedding = null
       if (jobText) {
-        const embResp = await createEmbedding({ text: jobText })
-        // try common response shapes
-        if (embResp && Array.isArray(embResp.data) && embResp.data[0]?.embedding) {
-          embedding = embResp.data[0].embedding
-        } else if (embResp && embResp.data?.[0]?.vector) {
-          embedding = embResp.data[0].vector
-        } else if (embResp && embResp.embedding) {
-          embedding = embResp.embedding
-        }
+        const vector = await generateGeminiEmbeddings(jobText)
+        if (vector && vector.length) embedding = vector
       }
 
       // 2) Determine current user id and session info (try supabase then localStorage fallback)

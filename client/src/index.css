@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -48,6 +48,7 @@ html, body, #root {
 }
 
 :root {
+  font-family: 'Manrope', 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --radius: 1rem; /* 2xl radius */
   /* Refined Futuristic Theme: subtle neon gradients */
   --background: #f0f0ff; /* soft lavender fallback */
@@ -122,12 +123,17 @@ html, body, #root {
     border-color: var(--border);
     outline-color: var(--ring);
     outline-offset: 2px;
+    font-family: inherit;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   body {
     background: radial-gradient(circle at 50% 50%, #f0f0ff 0%, #e6e6fa 50%, #d1d1ff 100%);
     background-attachment: fixed;
     color: var(--foreground);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: inherit;
     margin: 0;
     padding: 0;
     position: relative;

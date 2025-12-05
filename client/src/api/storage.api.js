@@ -377,3 +377,51 @@ async function uploadResume(file, userId) {
 }
 
 export { uploadPfp, uploadResume, uploadUserFile }
+
+// Re-run AI analysis for an existing resume URL and persist the updated report
+export async function rescanResume({ candidateId, resumeUrl, resumeId } = {}) {
+    if (!resumeUrl) throw new Error('resumeUrl is required for rescanning');
+
+    // Extract text from the existing resume file
+    const extractedText = await extractTextFromPDF(resumeUrl);
+
+    let aiReport = null;
+    try {
+        const aiResponse = await callGemini('analyze_resume', extractedText);
+        aiReport = {
+            extracted_text_length: extractedText.length,
+            analysis_timestamp: new Date().toISOString(),
+            structured_data: aiResponse.structured_data || {},
+            detailed_analysis: aiResponse.detailed_analysis || {},
+            raw_response: aiResponse,
+            success: true,
+        };
+    } catch (err) {
+        aiReport = {
+            error: `AI analysis failed: ${err.message}`,
+            extracted_text_length: extractedText.length,
+            analysis_timestamp: new Date().toISOString(),
+            success: false,
+        };
+    }
+
+    // Persist the refreshed analysis; prefer candidate_id conflict, but include resume id when available
+    try {
+        if (candidateId || resumeId) {
+            const resumeRecord = {
+                ...(resumeId ? { id: resumeId } : {}),
+                candidate_id: candidateId || null,
+                file_url: resumeUrl,
+                ai_report: aiReport,
+                status: 'active',
+            };
+            await supabase
+                .from('resumes')
+                .upsert(resumeRecord, { onConflict: ['candidate_id'] });
+        }
+    } catch (dbErr) {
+        console.warn('rescanResume upsert warning:', dbErr);
+    }
+
+    return aiReport;
+}

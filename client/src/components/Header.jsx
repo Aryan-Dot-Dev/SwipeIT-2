@@ -55,12 +55,12 @@ const Header = ({
   const navItems = navigation.length > 0 ? navigation : getNavigationByUserType();
 
   return (
-    <header className="w-full py-3 md:py-4 lg:py-6 overflow-x-hidden bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="flex items-center justify-between min-w-0">
+    <header className="w-full py-2.5 md:py-4 lg:py-6 overflow-x-hidden bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between min-w-0 gap-2">
           {/* Logo/Brand Section */}
-          <a href="/" className="flex items-center gap-3 flex-shrink-0">
-            <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 object-contain" />
+          <a href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain" />
             <span className="sr-only">SwipeIT</span>
           </a>
 
@@ -111,7 +111,7 @@ const Header = ({
           </nav>
 
           {/* Mobile/Tablet Action Buttons */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             {/* Filter Button - Only for candidates */}
             {showFilters && userType === 'candidate' && (
               <button
@@ -152,7 +152,7 @@ const Header = ({
               }}
             />
             {/* Menu */}
-            <div className="absolute top-16 left-2 right-2 sm:left-4 sm:right-4 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-in slide-in-from-top-2 duration-300 max-h-[calc(100vh-5rem)] overflow-y-auto">
+            <div className="absolute top-14 left-2 right-2 sm:left-4 sm:right-4 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-in slide-in-from-top-2 duration-300 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
               {/* Close Button */}
               <button
                 onClick={() => {
@@ -169,7 +169,7 @@ const Header = ({
 
               {/* User Info Section - For Dashboard Users */}
               {(userType === 'candidate' || userType === 'recruiter') && (
-                <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-[color:var(--primary)]/10 to-[color:var(--secondary)]/10">
+                <div className="p-5 border-b border-gray-200 bg-gradient-to-r from-[color:var(--primary)]/10 to-[color:var(--secondary)]/10">
                   <div className="flex items-center gap-4">
                     {userAvatar ? (
                       <img src={userAvatar} alt={userName} className="w-12 h-12 rounded-full border-2 border-white shadow-sm" />
@@ -188,7 +188,7 @@ const Header = ({
 
               {/* Logo Section - For Guest Users */}
               {userType === 'guest' && (
-                <div className="flex items-center justify-center p-6 border-b border-gray-200">
+                <div className="flex items-center justify-center p-5 border-b border-gray-200">
                   <div className="flex items-center gap-3">
                     <img src="/logo_bg_removed.png" alt="SwipeIT" className="w-12 h-12 object-contain" />
                     <div className="text-lg font-semibold text-gray-900">SwipeIT</div>
@@ -197,13 +197,13 @@ const Header = ({
               )}
 
               {/* Navigation Menu */}
-              <nav className="flex flex-col py-4">
+              <nav className="flex flex-col py-3">
                 {navItems.map((item, index) => (
                   item.isButton ? (
                     <div key={index} className="px-6 pb-3">
                       <Button
                         size="sm"
-                        className="w-full text-white font-medium transition-all duration-200 active:scale-95 py-3 text-base touch-manipulation"
+                        className="w-full text-white font-medium transition-all duration-200 active:scale-95 py-2.5 text-sm touch-manipulation"
                         style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}
                         onClick={() => {
                           handleMenuToggle();
@@ -217,7 +217,7 @@ const Header = ({
                     <a
                       key={index}
                       href={item.href}
-                      className="text-base py-4 px-6 text-gray-700 hover:bg-gray-50 transition-all duration-200 active:scale-95 touch-manipulation block relative"
+                      className="text-sm py-3 px-6 text-gray-700 hover:bg-gray-50 transition-all duration-200 active:scale-95 touch-manipulation block relative"
                       style={{ '--hover-color': 'var(--primary)' }}
                       onClick={() => {
                         handleMenuToggle();
@@ -238,7 +238,7 @@ const Header = ({
               {/* Quick Actions for Dashboard Users */}
               {(userType === 'candidate' || userType === 'recruiter') && (
                 <div className="border-t border-gray-200 p-4">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2.5">
                     {userType === 'candidate' ? (
                       <>
                         <button
