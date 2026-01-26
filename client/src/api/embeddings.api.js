@@ -7,11 +7,11 @@ const EMBEDDING_SERVER = import.meta.env.VITE_LOCAL_EMBEDDING_URL || 'http://loc
 const EMBEDDING_API_KEY = import.meta.env.VITE_LOCAL_EMBEDDING_API_KEY || 'not-needed-for-local';
 
 // Hugging Face inference configuration (optional). If present, we'll call HF instead of local.
-const HUGGINGFACE_API_KEY = import.meta.env.HUGGINGFACE_API_KEY || import.meta.env.VITE_HF_API_KEY || null;
+const VITE_HUGGINGFACE_API_KEY = import.meta.env.VITE_HUGGINGFACE_API_KEY || import.meta.env.VITE_HF_API_KEY || null;
 const HUGGINGFACE_MODEL = import.meta.env.VITE_HUGGINGFACE_MODEL || 'BAAI/bge-base-en-v1.5';
 
 // NVIDIA embeddings integration (optional). If present, we'll call NVIDIA's integrate API.
-const NVIDIA_API_KEY = import.meta.env.NVIDIA_API_KEY || null;
+const VITE_NVIDIA_API_KEY = import.meta.env.VITE_NVIDIA_API_KEY || null;
 const NVIDIA_MODEL = import.meta.env.VITE_NVIDIA_MODEL || 'nvidia/llama-3.2-nv-embedqa-1b-v2';
 const NVIDIA_ENDPOINT = import.meta.env.VITE_NVIDIA_ENDPOINT || 'https://integrate.api.nvidia.com/v1/embeddings';
 
@@ -22,7 +22,7 @@ const NVIDIA_ENDPOINT = import.meta.env.VITE_NVIDIA_ENDPOINT || 'https://integra
 export async function createEmbedding({ text, model = 'intfloat/e5-large-v2', encoding_format = 'float' } = {}) {
   if (!text) return null;
   // If an NVIDIA API key is provided, use the NVIDIA embeddings API first.
-  if (NVIDIA_API_KEY) {
+  if (VITE_NVIDIA_API_KEY) {
     try {
       const url = NVIDIA_ENDPOINT
       const payload = {
@@ -37,7 +37,7 @@ export async function createEmbedding({ text, model = 'intfloat/e5-large-v2', en
       const res = await fetch(url, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${NVIDIA_API_KEY}`,
+          Authorization: `Bearer ${VITE_NVIDIA_API_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -68,7 +68,7 @@ export async function createEmbedding({ text, model = 'intfloat/e5-large-v2', en
   }
 
   // If a Hugging Face API key is provided, use the HF Inference API.
-  if (HUGGINGFACE_API_KEY) {
+  if (VITE_HUGGINGFACE_API_KEY) {
     try {
       const hfUrl = `https://api-inference.huggingface.co/models/${encodeURIComponent(HUGGINGFACE_MODEL)}`;
 
@@ -76,7 +76,7 @@ export async function createEmbedding({ text, model = 'intfloat/e5-large-v2', en
       const res = await fetch(hfUrl, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${HUGGINGFACE_API_KEY}`,
+          Authorization: `Bearer ${VITE_HUGGINGFACE_API_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ inputs: text }),
@@ -119,7 +119,7 @@ export async function createEmbedding({ text, model = 'intfloat/e5-large-v2', en
             const ar = await fetch(hfUrl, {
               method: 'POST',
               headers: {
-                Authorization: `Bearer ${HUGGINGFACE_API_KEY}`,
+                Authorization: `Bearer ${VITE_HUGGINGFACE_API_KEY}`,
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify(p),

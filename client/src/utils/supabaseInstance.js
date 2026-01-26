@@ -1,11 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = "https://guzggqrlaexecpzyesxm.supabase.co";
-const SUPABASE_ANON_KEY = import.meta.env.SUPABASE_ANON_KEY;
+const VITE_SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const VITE_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
-export { SUPABASE_ANON_KEY };
+console.log("Supabase URL:", import.meta.env);
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+
+export { VITE_SUPABASE_ANON_KEY };
+
+const supabase = createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, {
 	auth: {
 		// Try to initialize auth from cookies if available (access_token/refresh_token)
 		// We don't want to read cookies synchronously in SSR – this is purely client-side.

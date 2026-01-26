@@ -9,7 +9,7 @@ export async function getJobRecommendations(userId, limit = 10) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-        //   "apikey": import.meta.env.SUPABASE_ANON_KEY // or your anon/public key
+        //   "apikey": import.meta.env.VITE_SUPABASE_ANON_KEY // or your anon/public key
         },
         body: JSON.stringify({
           candidate_uuid: userId,

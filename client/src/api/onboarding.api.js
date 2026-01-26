@@ -30,7 +30,7 @@ export async function updateCandidateProfile(payload) {
         const headers = {
             'Content-Type': 'application/json',
             ...(access_token ? { Authorization: `Bearer ${access_token}` } : {}),
-            ...(import.meta.env.SUPABASE_ANON_KEY ? { apikey: import.meta.env.SUPABASE_ANON_KEY } : {}),
+            ...(import.meta.env.VITE_SUPABASE_ANON_KEY ? { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY } : {}),
         };
 
         // Validate presence of required fields before calling the Edge Function
@@ -91,7 +91,7 @@ export async function uploadRecruiterProfile(user_id, company, contact, designat
         const headers = {
             'Content-Type': 'application/json',
             ...(access_token ? { Authorization: `Bearer ${access_token}` } : {}),
-            ...(import.meta.env.SUPABASE_ANON_KEY ? { apikey: import.meta.env.SUPABASE_ANON_KEY } : {}),
+            ...(import.meta.env.VITE_SUPABASE_ANON_KEY ? { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY } : {}),
         };
 
         const url = `${REMOTE_FUNCTIONS_URL}/recruiter_profile`;
@@ -124,7 +124,7 @@ export async function uploadRecruiterJobs(user_id, job_openings, embedding, comp
         const headers = {
             'Content-Type': 'application/json',
             ...(access_token ? { Authorization: `Bearer ${access_token}` } : {}),
-            ...(import.meta.env.SUPABASE_ANON_KEY ? { apikey: import.meta.env.SUPABASE_ANON_KEY } : {}),
+            ...(import.meta.env.VITE_SUPABASE_ANON_KEY ? { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY } : {}),
         };
 
         const url = `${REMOTE_FUNCTIONS_URL}/recruiter_jobs`;
@@ -161,7 +161,7 @@ export async function uploadRecruiterProfileSingle(profileData) {
         const headers = {
             'Content-Type': 'application/json',
             ...(access_token ? { Authorization: `Bearer ${access_token}` } : {}),
-            ...(import.meta.env.SUPABASE_ANON_KEY ? { apikey: import.meta.env.SUPABASE_ANON_KEY } : {}),
+            ...(import.meta.env.VITE_SUPABASE_ANON_KEY ? { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY } : {}),
         };
 
         const url = `${REMOTE_FUNCTIONS_URL}/recruiter_profile`;
@@ -195,7 +195,7 @@ export async function uploadRecruiterJobsSingle(jobData) {
         const headers = {
             'Content-Type': 'application/json',
             ...(access_token ? { Authorization: `Bearer ${access_token}` } : {}),
-            ...(import.meta.env.SUPABASE_ANON_KEY ? { apikey: import.meta.env.SUPABASE_ANON_KEY } : {}),
+            ...(import.meta.env.VITE_SUPABASE_ANON_KEY ? { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY } : {}),
         };
 
         const url = `${REMOTE_FUNCTIONS_URL}/recruiter_jobs`;
@@ -229,7 +229,7 @@ export async function createOrUpdateCompany(company) {
         const headers = {
             'Content-Type': 'application/json',
             // ...(access_token ? { Authorization: `Bearer ${access_token}` } : {}),
-            // ...(import.meta.env.SUPABASE_ANON_KEY ? { apikey: import.meta.env.SUPABASE_ANON_KEY } : {}),
+            // ...(import.meta.env.VITE_SUPABASE_ANON_KEY ? { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY } : {}),
         };
 
         const url = `${REMOTE_FUNCTIONS_URL}/company_profile`;
@@ -262,7 +262,7 @@ export async function upsertRecruiterProfile(user_id, recruiterData) {
         const headers = {
             'Content-Type': 'application/json',
             // ...(access_token ? { Authorization: `Bearer ${access_token}` } : {}),
-            // ...(import.meta.env.SUPABASE_ANON_KEY ? { apikey: import.meta.env.SUPABASE_ANON_KEY } : {}),
+            // ...(import.meta.env.VITE_SUPABASE_ANON_KEY ? { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY } : {}),
         };
 
         const url = `${REMOTE_FUNCTIONS_URL}/recruiter_profile`;
@@ -296,7 +296,7 @@ export async function createJobPosting(jobData) {
         const headers = {
             'Content-Type': 'application/json',
             // ...(access_token ? { Authorization: `Bearer ${access_token}` } : {}),
-            // ...(import.meta.env.SUPABASE_ANON_KEY ? { apikey: import.meta.env.SUPABASE_ANON_KEY } : {}),
+            // ...(import.meta.env.VITE_SUPABASE_ANON_KEY ? { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY } : {}),
         };
 
         const url = `${REMOTE_FUNCTIONS_URL}/recruiter_jobs`;

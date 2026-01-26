@@ -1,4 +1,4 @@
-# .
+# SwipeIt Ai
 
 A modern React application with Progressive Web App (PWA) capabilities built with Vite.
 
