@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_KEY = import.meta.env.GEMINI_API_KEY;
 const GEMINI_EMBEDDING_MODEL = "gemini-embedding-001";
 
 let embeddingModel;
@@ -10,7 +10,7 @@ if (GEMINI_API_KEY) {
   generativeAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 } else {
   console.warn(
-    "VITE_GEMINI_API_KEY is not set. Gemini embedding calls will fail until the key is provided."
+    "GEMINI_API_KEY is not set. Gemini embedding calls will fail until the key is provided."
   );
 }
 

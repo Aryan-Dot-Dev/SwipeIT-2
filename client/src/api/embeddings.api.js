@@ -7,11 +7,11 @@ const EMBEDDING_SERVER = import.meta.env.VITE_LOCAL_EMBEDDING_URL || 'http://loc
 const EMBEDDING_API_KEY = import.meta.env.VITE_LOCAL_EMBEDDING_API_KEY || 'not-needed-for-local';
 
 // Hugging Face inference configuration (optional). If present, we'll call HF instead of local.
-const HUGGINGFACE_API_KEY = import.meta.env.VITE_HUGGINGFACE_API_KEY || import.meta.env.VITE_HF_API_KEY || null;
+const HUGGINGFACE_API_KEY = import.meta.env.HUGGINGFACE_API_KEY || import.meta.env.VITE_HF_API_KEY || null;
 const HUGGINGFACE_MODEL = import.meta.env.VITE_HUGGINGFACE_MODEL || 'BAAI/bge-base-en-v1.5';
 
 // NVIDIA embeddings integration (optional). If present, we'll call NVIDIA's integrate API.
-const NVIDIA_API_KEY = import.meta.env.VITE_NVIDIA_API_KEY || null;
+const NVIDIA_API_KEY = import.meta.env.NVIDIA_API_KEY || null;
 const NVIDIA_MODEL = import.meta.env.VITE_NVIDIA_MODEL || 'nvidia/llama-3.2-nv-embedqa-1b-v2';
 const NVIDIA_ENDPOINT = import.meta.env.VITE_NVIDIA_ENDPOINT || 'https://integrate.api.nvidia.com/v1/embeddings';
 
