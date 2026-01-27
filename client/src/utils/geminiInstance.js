@@ -1,6 +1,6 @@
 // Gemini API instance with prompt dictionary
-const VITE_GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'your-api-key-here'; // Use VITE_ prefix for Vite environment variables
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + VITE_GEMINI_API_KEY;
+const VITE_GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || ''; // Use VITE_ prefix for Vite environment variables
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=' + VITE_GEMINI_API_KEY;
 
 // Dictionary of prompts
 const PROMPTS = {
