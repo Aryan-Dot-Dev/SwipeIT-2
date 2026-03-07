@@ -1,0 +1,136 @@
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { useForm } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
+// import api from "@/lib/api"
+import { signup, sendOtp } from "../api/auth.api"
+import { LoadingSpinner } from '@/components/LoadingSpinner'
+
+const schema = yup.object({
+    name: yup.string().required("Name is required"),
+    email: yup.string().email("Enter a valid email").required("Email is required"),
+    password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+    confirmPassword: yup.string().oneOf([yup.ref("password")], "Passwords must match").required("Confirm your password"),
+    role: yup.string().oneOf(["recruiter", "candidate"], "Select a role").required("Role is required")
+}).required()
+
+export function SignupForm({
+    className,
+    ...props
+}) {
+    const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
+    const [serverError, setServerError] = useState("")
+
+    const { register, handleSubmit, watch, formState: { errors } } = useForm({
+        resolver: yupResolver(schema)
+    })
+    const roleValue = watch("role")
+
+    const onSubmit = async (data) => {
+        setServerError("")
+        setLoading(true)
+        try {
+            const res = await signup(data.email, data.password, data.role, data.name)
+            if (!res) {
+                setServerError("Signup failed")
+            } else if (res.error) {
+                setServerError(res.error)
+            } else if (res.session || res.user) {
+                // Email confirmation required — redirect to verify page
+                // (if email confirmation is disabled in Supabase, res.session exists and we go straight to onboarding after verify)
+                try {
+                    if (data.role) localStorage.setItem('onboarding_role', data.role)
+                    if (data.name) localStorage.setItem('signup_name', data.name)
+                    if (data.email) localStorage.setItem('signup_email', data.email)
+                } catch { /* ignore */ }
+
+                // Fire welcome email (best-effort, non-blocking)
+                try {
+                    const token = res.session?.access_token
+                    fetch("https://guzggqrlaexecpzyesxm.supabase.co/functions/v1/send-welcome-email", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+                        },
+                        body: JSON.stringify({ email: data.email, name: data.name }),
+                    }).catch(() => { })
+                } catch { /* ignore */ }
+
+                // Send signup OTP via Brevo (replaces Supabase built-in SMTP)
+                try { sendOtp(data.email, 'signup').catch(() => {}) } catch { /* ignore */ }
+
+                navigate(`/verify-email?email=${encodeURIComponent(data.email)}&role=${encodeURIComponent(data.role)}&name=${encodeURIComponent(data.name)}`)
+
+            } else if (res.profile) {
+                navigate("/login")
+            } else {
+                navigate("/login")
+            }
+        } catch (error) {
+            setServerError("Signup failed", error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
+    return (
+        <div className="glass-panel w-full">
+            <form onSubmit={handleSubmit(onSubmit)} className={cn("flex flex-col gap-4 p-4 sm:p-6", className)} {...props}>
+                <div className="flex flex-col items-center gap-2 text-center">
+                    <h1 className="text-2xl font-bold">Create your account</h1>
+                    <p className="text-muted-foreground text-sm text-balance">Enter your details below to sign up</p>
+                </div>
+                <div className="grid gap-4">
+                    <div className="grid gap-3">
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" type="text" placeholder="Your full name" {...register("name")} aria-invalid={!!errors.name} />
+                        {errors.name && <p className="text-sm text-red-400 microcopy">{errors.name.message}</p>}
+                    </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" placeholder="m@example.com" {...register("email")} aria-invalid={!!errors.email} />
+                        {errors.email && <p className="text-sm text-red-400 microcopy">{errors.email.message}</p>}
+                    </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="password">Password</Label>
+                        <Input id="password" type="password" placeholder="Create a password" {...register("password")} aria-invalid={!!errors.password} />
+                        {errors.password && <p className="text-sm text-red-400 microcopy">{errors.password.message}</p>}
+                    </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="confirm-password">Confirm Password</Label>
+                        <Input id="confirm-password" type="password" placeholder="Confirm your password" {...register("confirmPassword")} aria-invalid={!!errors.confirmPassword} />
+                        {errors.confirmPassword && <p className="text-sm text-red-400 microcopy">{errors.confirmPassword.message}</p>}
+                    </div>
+                    <div className="grid gap-3">
+                        <Label className="mb-1">Proceed as</Label>
+                        <div className="flex gap-2">
+                            <label className={["cursor-pointer flex-1 rounded-md py-2 px-4 text-center border", roleValue === 'recruiter' ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white border-pink-500' : 'bg-transparent text-white border-white/30 hover:bg-white/10'].join(' ')}>
+                                <input type="radio" {...register("role")} value="recruiter" className="sr-only" />
+                                Recruiter
+                            </label>
+                            <label className={["cursor-pointer flex-1 rounded-md py-2 px-4 text-center border", roleValue === 'candidate' ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white border-pink-500' : 'bg-transparent text-white border-white/30 hover:bg-white/10'].join(' ')}>
+                                <input type="radio" {...register("role")} value="candidate" className="sr-only" />
+                                Candidate
+                            </label>
+                        </div>
+                        {errors.role && <p className="text-sm text-red-400 microcopy">{errors.role.message}</p>}
+                    </div>
+                    {serverError && <div className="text-sm text-red-400 microcopy">{serverError}</div>}
+                    <Button type="submit" className="w-full" disabled={loading}>{loading ? <span className="flex items-center gap-2 justify-center"><LoadingSpinner size="sm" text="" /> Signing up...</span> : "Sign Up"}</Button>
+                </div>
+                <div className="text-center text-sm">
+                    Already have an account?{" "}
+                    <Link to="/login" className="underline underline-offset-4 text-pink-400 hover:text-pink-300">Login</Link>
+                </div>
+            </form>
+        </div>
+    )
+}

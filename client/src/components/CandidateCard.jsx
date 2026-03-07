@@ -1,0 +1,576 @@
+import React, { useRef, useState } from 'react'
+import { callGemini } from '@/utils/geminiInstance'
+import { motion as Motion, useMotionValue, useTransform, useAnimation } from 'framer-motion'
+import { Share2 } from 'lucide-react'
+import AttitudeRadar from './AttitudeRadar'
+
+const SHARE_BASE =
+  typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? 'https://swipe-it-2.vercel.app'
+    : window?.location?.origin || 'http://localhost:5173'
+
+
+const safe = v => {
+  if (v == null) return ''
+  if (typeof v === 'string') return v
+  if (typeof v === 'number') return String(v)
+  if (typeof v === 'object') {
+    // Extract string properties from objects to avoid rendering objects directly
+    const str = v.name || v.title || v.company_name || v.location || ''
+    return typeof str === 'string' ? str : ''
+  }
+  return String(v)
+}
+
+const CandidateCard = ({ candidate, onShortlist, onReject, onView, onGemini, anonymous = false }) => {
+  const c = candidate || {}
+  const name = safe(c.candidate_profile.name || c.name || c.full_name)
+  // const email = safe(c.candidate_profile.email)
+  const avatar = safe(c.candidate_profile_img)
+  const notes = safe(c.candidate_profile.bio);
+  const jobTitle = safe(c.job_title || c.title);
+  const skills = Array.isArray(c?.candidate_profile?.skills)
+    ? c.candidate_profile.skills
+    : Array.isArray(c?.skills)
+      ? c.skills
+      : []
+  // const attitudeScore = safe(c.candidate_profile.attitude_score)
+  const company = safe(c.company_name || (c.company?.name) || (typeof c.company === 'string' ? c.company : null)) || 'Company'
+  const status = safe(c.application_status)
+  // const notes = safe(c.profile_summary || c.summary || c.bio)
+  const fmt = d => {
+    try { return d ? new Date(d).toLocaleDateString() : '' } catch { return '' }
+  }
+  const appliedAt = fmt(c.applied_at || c.appliedAt)
+  const email = safe(c.candidate_profile.email || c.email)
+
+  // helper to find a usable resume URL (first match)
+  const findResumeUrl = (candidateRecord) => {
+    const r = candidateRecord?.candidate_profile?.resume || null
+    if (!r) return null
+    if (typeof r === 'string' && r.length > 5) return r
+    if (Array.isArray(r)) {
+      for (const item of r) {
+        if (!item) continue
+        if (typeof item === 'string' && item.length > 5) return item
+        if (item.url) return item.url
+        if (item.file_url) return item.file_url
+        if (item.public_url) return item.public_url
+        if (item.path && typeof item.path === 'string' && item.path.startsWith('http')) return item.path
+      }
+      return null
+    }
+    if (typeof r === 'object') {
+      return r.url || r.file_url || r.public_url || (typeof r.path === 'string' && r.path.startsWith('http') ? r.path : null)
+    }
+    return null
+  }
+
+  const resumeUrl = findResumeUrl(c)
+
+  // drag / swipe behavior
+  const x = useMotionValue(0)
+  const rotate = useTransform(x, [-300, 300], [-12, 12])
+  const cardRef = useRef(null)
+  const controls = useAnimation()
+  const [isSwiped, setIsSwiped] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
+  const [geminiLoading, setGeminiLoading] = useState(false)
+  const [geminiSummary, setGeminiSummary] = useState(null)
+  const [showGeminiModal, setShowGeminiModal] = useState(false)
+  const [shareToast, setShareToast] = useState(false)
+
+  // swipe overlay opacities
+  const likeOpacity = useTransform(x, [30, 120], [0, 1])
+  const rejectOpacity = useTransform(x, [-120, -30], [1, 0])
+
+  const handleShare = async (e) => {
+    e.stopPropagation()
+    const candidateId = c.candidate_id || c.id || null
+    const url = candidateId ? `${SHARE_BASE}/candidate/${candidateId}` : SHARE_BASE
+    const shareData = {
+      title: `${name || 'Candidate'} on SwipeIt`,
+      text: `Check out this candidate profile on SwipeIt`,
+      url,
+    }
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData)
+      } else {
+        await navigator.clipboard.writeText(url)
+        setShareToast(true)
+        setTimeout(() => setShareToast(false), 2200)
+      }
+    } catch (_) {
+      try {
+        await navigator.clipboard.writeText(url)
+        setShareToast(true)
+        setTimeout(() => setShareToast(false), 2200)
+      } catch (__) { }
+    }
+  }
+
+
+  // reset swipe state when candidate changes
+  React.useEffect(() => {
+    setIsSwiped(false)
+    try { controls.set({ x: 0, rotate: 0, opacity: 1 }) } catch { /* ignore */ }
+  }, [candidate, controls])
+
+  const handleDragEnd = async (e, info) => {
+    const offset = info.offset.x || 0
+    // threshold for swipe (distance only)
+    const likeThreshold = 120
+
+    // If user moved past threshold horizontally, animate off-screen immediately
+    if (offset > likeThreshold && !isSwiped) {
+      setIsSwiped(true)
+      await controls.start({ x: 1000, rotate: 30, opacity: 0, transition: { duration: 0.28 } })
+      onShortlist && onShortlist(c)
+      return
+    }
+
+    if (offset < -likeThreshold && !isSwiped) {
+      setIsSwiped(true)
+      await controls.start({ x: -1000, rotate: -30, opacity: 0, transition: { duration: 0.28 } })
+      onReject && onReject(c)
+      return
+    }
+
+    // not past threshold: spring back to center
+    await controls.start({ x: 0, rotate: 0, opacity: 1, transition: { type: 'spring', stiffness: 400, damping: 30 } })
+  }
+
+  return (
+    <div className="flex justify-center px-2">
+      <Motion.div
+        ref={cardRef}
+        animate={controls}
+        style={{ x, rotate }}
+        drag={isSwiped ? false : "x"}
+        onDragEnd={handleDragEnd}
+        className="w-full max-w-[380px] md:max-w-[460px] lg:max-w-[520px] cursor-grab"
+      >
+        <div className="relative z-10 glass-panel overflow-hidden">
+          {/* ── LIKE stamp overlay ── */}
+          <Motion.div
+            style={{ opacity: likeOpacity }}
+            className="absolute inset-0 z-20 pointer-events-none rounded-2xl bg-green-500/10 flex items-start"
+          >
+            <div className="border-4 border-green-500 rounded-xl px-4 py-1 rotate-[-22deg] mt-6 ml-6">
+              <span className="text-green-600 font-black text-2xl tracking-widest uppercase">Like</span>
+            </div>
+          </Motion.div>
+
+          {/* ── NOPE stamp overlay ── */}
+          <Motion.div
+            style={{ opacity: rejectOpacity }}
+            className="absolute inset-0 z-20 pointer-events-none rounded-2xl bg-red-500/10 flex items-start justify-end"
+          >
+            <div className="border-4 border-red-500 rounded-xl px-4 py-1 rotate-[22deg] mt-6 mr-6">
+              <span className="text-red-600 font-black text-2xl tracking-widest uppercase">Nope</span>
+            </div>
+          </Motion.div>
+
+          {/* Share toast */}
+          {shareToast && (
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 bg-gray-900 text-white text-xs font-medium px-4 py-2 rounded-full shadow-lg animate-fade-in">
+              Link copied!
+            </div>
+          )}
+
+          {/* Premium compact header */}
+          <div className="relative backdrop-blur-sm border-b border-white/10" style={{ background: 'linear-gradient(135deg, rgba(154,140,242,0.15), rgba(110,215,165,0.08), transparent)' }}>
+            <div className="px-4 sm:px-5 py-3 sm:py-4">
+              {/* Top row: Avatar and Info */}
+              <div className="flex items-start gap-3 sm:gap-4">
+                {/* Avatar */}
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex-shrink-0 flex items-center justify-center bg-white/10 overflow-hidden border border-white/20 shadow-lg backdrop-blur-sm">
+                  {avatar ? (
+                    <img src={avatar} alt={name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="text-xl sm:text-2xl font-bold text-[color:var(--primary-foreground)]">
+                      {String(name || 'U').charAt(0)}
+                    </div>
+                  )}
+                </div>
+
+                {/* Compact Info - Full width on mobile */}
+                <div className="flex-1 min-w-0 pr-1 sm:pr-2">
+                  <h3 className="text-sm sm:text-lg font-semibold text-[color:var(--primary-foreground)] break-words leading-snug">
+                    {anonymous ? 'Anonymous candidate' : name}
+                  </h3>
+                  <div className="text-[11px] sm:text-xs text-[color:var(--muted-foreground)] mt-0.5 break-words">
+                    {!anonymous ? email : 'Profile summary only'}
+                  </div>
+                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5 text-[11px] sm:text-xs flex-wrap">
+                    {c.candidate_profile?.similarity !== null && c.candidate_profile?.similarity !== undefined && (
+                      <>
+                        <span className="inline-flex items-center gap-1 font-semibold text-[#9A8CF2]">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          {Math.round(c.candidate_profile.similarity > 1 ? c.candidate_profile.similarity : c.candidate_profile.similarity * 100)}% Match
+                        </span>
+                        <span className="h-3 w-px bg-white/30" />
+                      </>
+                    )}
+                    <span className="text-[color:var(--muted-foreground)]">
+                      {status || 'New'}
+                    </span>
+                    {appliedAt && (
+                      <>
+                        <span className="h-3 w-px bg-white/30" />
+                        <span className="text-[color:var(--muted-foreground)]">{appliedAt}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action buttons - Hidden on mobile, shown on md and larger screens */}
+                <div className="hidden md:flex items-center gap-2 flex-shrink-0">
+                  {/* Share button */}
+                  <button
+                    onClick={handleShare}
+                    className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center border border-white/20 shadow-sm hover:scale-105 transition-all backdrop-blur-sm"
+                    aria-label="Share profile"
+                    title="Share this candidate"
+                  >
+                    <Share2 className="w-4 h-4 text-white" />
+                  </button>
+
+                  {/* View Details Icon */}
+                  <button
+                    onClick={() => { setShowDetails(true); onView && onView(c) }}
+                    className="w-9 h-9 rounded-lg bg-white hover:bg-white/90 border border-white/30 flex items-center justify-center transition-all hover:scale-105 shadow-md group"
+                    aria-label="View details"
+                    title="View full details"
+                  >
+                    <svg className="w-4 h-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.269 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+
+                  {/* Gemini AI button */}
+                  <button
+                    aria-label="Ask AI"
+                    title="Get AI insights"
+                    onClick={async (e) => {
+                      e.stopPropagation()
+                      if (geminiLoading) return
+                      try {
+                        setGeminiLoading(true)
+                        try {
+                          window.dispatchEvent(new CustomEvent('#sym:openGemini', { detail: { candidate: c } }))
+                        } catch { /* ignore */ }
+                        onGemini && onGemini(c)
+                        const summary = await callGemini('summarize_profile', c)
+                        setGeminiSummary(summary)
+                        setShowGeminiModal(true)
+                      } catch (err) {
+                        console.error('Gemini summary failed', err)
+                        setGeminiSummary('AI summary failed. Please try again.')
+                        setShowGeminiModal(true)
+                      } finally {
+                        setGeminiLoading(false)
+                      }
+                    }}
+                    className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 p-2 flex items-center justify-center border border-white/20 shadow-sm hover:scale-105 transition-all backdrop-blur-sm"
+                  >
+                    <img src="/help.png" alt="AI" className="w-full h-full object-contain" loading="lazy" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex md:hidden items-center justify-end gap-2 mt-2.5">
+                {/* Mobile share */}
+                <button
+                  onClick={handleShare}
+                  className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center border border-white/20 shadow-sm hover:scale-105 transition-all backdrop-blur-sm"
+                  aria-label="Share profile"
+                >
+                  <Share2 className="w-4 h-4 text-white" />
+                </button>
+
+                <button
+                  onClick={() => { setShowDetails(true); onView && onView(c) }}
+                  className="w-9 h-9 rounded-lg bg-white hover:bg-white/90 border border-white/30 flex items-center justify-center transition-all hover:scale-105 shadow-md"
+                  aria-label="View details"
+                  title="View full details"
+                >
+                  <svg className="w-4 h-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.269 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+
+                <button
+                  aria-label="Ask AI"
+                  title="Get AI insights"
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    if (geminiLoading) return
+                    try {
+                      setGeminiLoading(true)
+                      try {
+                        window.dispatchEvent(new CustomEvent('#sym:openGemini', { detail: { candidate: c } }))
+                      } catch { /* ignore */ }
+                      onGemini && onGemini(c)
+                      const summary = await callGemini('summarize_profile', c)
+                      setGeminiSummary(summary)
+                      setShowGeminiModal(true)
+                    } catch (err) {
+                      console.error('Gemini summary failed', err)
+                      setGeminiSummary('AI summary failed. Please try again.')
+                      setShowGeminiModal(true)
+                    } finally {
+                      setGeminiLoading(false)
+                    }
+                  }}
+                  className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 p-2 flex items-center justify-center border border-white/20 shadow-sm hover:scale-105 transition-all backdrop-blur-sm"
+                >
+                  <img src="/help.png" alt="AI" className="w-full h-full object-contain" loading="lazy" />
+                </button>
+              </div>
+            </div>
+
+            {/* Remove the absolute positioned AI button that was causing overlap */}
+            <div className="absolute top-4 right-5 z-20 hidden">
+              <button
+                aria-label="Ask AI"
+                title="Get AI insights"
+                onClick={async (e) => {
+                  e.stopPropagation()
+                  if (geminiLoading) return
+                  try {
+                    setGeminiLoading(true)
+                    try {
+                      window.dispatchEvent(new CustomEvent('#sym:openGemini', { detail: { candidate: c } }))
+                    } catch { /* ignore */ }
+                    onGemini && onGemini(c)
+                    const summary = await callGemini('summarize_profile', c)
+                    setGeminiSummary(summary)
+                    setShowGeminiModal(true)
+                  } catch (err) {
+                    console.error('Gemini summary failed', err)
+                    setGeminiSummary('AI summary failed. Please try again.')
+                    setShowGeminiModal(true)
+                  } finally {
+                    setGeminiLoading(false)
+                  }
+                }}
+                className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 p-2 flex items-center justify-center border border-white/20 shadow-sm hover:scale-105 transition-all backdrop-blur-sm"
+              >
+                <img src="/help.png" alt="AI" className="w-full h-full object-contain" loading="lazy" />
+              </button>
+            </div>
+          </div>
+
+          {/* Body: Description focus */}
+          <div className="px-5 py-5">
+            <div className="text-xs text-[color:var(--muted-foreground)] mb-3">
+              <strong className="text-[color:var(--foreground)]">{jobTitle}</strong> at <strong className="text-[color:var(--foreground)]">{company}</strong>
+            </div>
+
+            {/* Large description area */}
+            <div className="text-sm leading-relaxed text-[color:var(--foreground)] h-40 overflow-y-auto pr-2 custom-scrollbar whitespace-pre-wrap break-words">
+              {notes || 'No profile summary available.'}
+            </div>
+
+            {/* Skills */}
+            {skills && skills.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {skills.map((skill, index) => (
+                  <div
+                    key={index}
+                    className="px-2.5 py-1 rounded-lg text-xs font-medium border"
+                    style={{ background: 'rgba(154,140,242,0.1)', color: '#9A8CF2', borderColor: 'rgba(154,140,242,0.2)' }}
+                  >
+                    {skill}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Premium action buttons */}
+          <div className="px-5 pb-5 pt-2 border-t border-white/5">
+            <div className="flex items-center justify-center gap-3">
+              {/* Reject Button */}
+              <button
+                onClick={() => onReject && onReject(c)}
+                className="flex-1 max-w-[140px] px-4 py-2.5 rounded-xl bg-gradient-to-br from-red-500/90 to-red-600/90 hover:from-red-500 hover:to-red-600 text-white font-medium text-sm shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 border border-red-400/20"
+                aria-label="Reject"
+              >
+                <span className="inline-flex items-center justify-center gap-2">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  Reject
+                </span>
+              </button>
+
+              {/* Resume Button */}
+              <button
+                onClick={() => {
+                  if (!resumeUrl) return
+                  try { window.open(resumeUrl, '_blank', 'noopener,noreferrer') } catch { window.location.href = resumeUrl }
+                }}
+                disabled={!resumeUrl}
+                title={resumeUrl ? 'View resume' : 'No resume available'}
+                className={`flex-1 max-w-[140px] px-4 py-2.5 rounded-xl font-medium text-sm shadow-lg transition-all border ${resumeUrl
+                  ? 'bg-white hover:bg-white/90 text-black border-white/20 hover:scale-105 active:scale-95'
+                  : 'bg-white/20 text-gray-400 border-white/10 cursor-not-allowed'
+                  }`}
+                aria-label="View resume"
+              >
+                <span className="inline-flex items-center justify-center gap-2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Resume
+                </span>
+              </button>
+
+              {/* Shortlist Button */}
+              <button
+                onClick={() => onShortlist && onShortlist(c)}
+                className="flex-1 max-w-[140px] px-4 py-2.5 rounded-xl text-white font-medium text-sm shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 border border-green-400/20"
+                style={{ background: 'linear-gradient(135deg, #6ED7A5, #3DBE8A)' }}
+                aria-label="Shortlist"
+              >
+                <span className="inline-flex items-center justify-center gap-2">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Shortlist
+                </span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </Motion.div>
+      {showDetails && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowDetails(false)} />
+          <div className="relative glass-panel w-full max-w-[98vw] sm:max-w-5xl lg:max-w-6xl xl:max-w-7xl h-[90vh] flex flex-col rounded-2xl shadow-2xl">
+            {/* Fixed Header */}
+            <div className="flex items-start justify-between p-4 sm:p-6 border-b border-white/10 flex-shrink-0">
+              <h3 className="text-lg sm:text-xl font-semibold">{safe(c.candidate_profile?.name || name)}</h3>
+              <button
+                onClick={() => setShowDetails(false)}
+                className="text-white hover:text-gray-300 text-2xl sm:text-3xl leading-none p-1 -mr-1"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 pt-0 pb-6 sm:pb-8">
+              <div className="mt-4 space-y-4 text-sm text-[color:var(--foreground)]">
+                {c.candidate_profile ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="min-w-0">
+                      <div className="font-medium">Email</div>
+                      <div className="text-[color:var(--muted-foreground)] break-words overflow-wrap-anywhere">{safe(c.candidate_profile.email)}</div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-medium">Phone</div>
+                      <div className="text-[color:var(--muted-foreground)] break-words">{safe(c.candidate_profile.phone)}</div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-medium">Location</div>
+                      <div className="text-[color:var(--muted-foreground)] break-words">{safe(c.candidate_profile.city)}, {safe(c.candidate_profile.state)}, {safe(c.candidate_profile.country)}</div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-medium">Experience</div>
+                      <div className="text-[color:var(--muted-foreground)]">{safe(c.candidate_profile.experience_years)} years</div>
+                    </div>
+
+                    <div className="col-span-1 sm:col-span-2">
+                      <div className="font-medium">Bio</div>
+                      <div className="text-[color:var(--muted-foreground)] break-words">{safe(c.candidate_profile.bio)}</div>
+                    </div>
+
+                    <div className="col-span-1 sm:col-span-2">
+                      <div className="font-medium">Skills</div>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {(Array.isArray(c.candidate_profile.skills) ? c.candidate_profile.skills : []).map((s, i) => (
+                          <div key={i} className="text-xs px-2 py-1 rounded-full bg-white/10 border border-white/20 text-white backdrop-blur-sm">{s}</div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="col-span-1 sm:col-span-2">
+                      <div className="font-medium">Attitude Score</div>
+                      <div className="mt-3">
+                        {c.candidate_profile.attitude_score ? (
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            <div className="flex-shrink-0 mx-auto sm:mx-0">
+                              <AttitudeRadar data={c.candidate_profile.attitude_score} size={200} levels={4} />
+                            </div>
+                            <div className="flex-1 w-full min-w-0">
+                              <div className="grid grid-cols-2 gap-2">
+                                {Object.entries(c.candidate_profile.attitude_score).map(([trait, val]) => (
+                                  <div key={trait} className="flex items-center justify-between px-3 py-2 bg-white/10 rounded backdrop-blur-sm">
+                                    <span className="text-xs text-[color:var(--muted-foreground)]">{trait}</span>
+                                    <span className="font-medium">{val}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-sm text-gray-500">No attitude data</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {c.candidate_profile.resumes && (
+                      <div className="col-span-1 sm:col-span-2">
+                        <div className="font-medium">Resumes</div>
+                        <pre className="text-xs text-[color:var(--muted-foreground)] overflow-x-auto bg-white/10 p-2 rounded mt-1 backdrop-blur-sm">{JSON.stringify(c.candidate_profile.resumes, null, 2)}</pre>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-[color:var(--muted-foreground)]">No profile details available.</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showGeminiModal && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => !geminiLoading && setShowGeminiModal(false)} />
+          <div className="relative glass-panel max-w-md w-full p-4">
+            <div className="flex items-start justify-between">
+              <h4 className="text-lg font-semibold">AI Summary</h4>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setShowGeminiModal(false)} className="text-white hover:text-gray-300" disabled={geminiLoading}>×</button>
+              </div>
+            </div>
+            <div className="mt-3 text-sm text-[color:var(--foreground)] max-h-48 overflow-y-auto">
+              {geminiLoading ? (
+                <div className="flex flex-col items-center justify-center py-8 gap-3">
+                  <div className="w-10 h-10 rounded-full animate-spin" style={{ border: '3px solid #E4DFF5', borderTopColor: '#9A8CF2' }} />
+                  <p className="text-[#6E6B86] text-xs">AI is analysing the candidate profile…</p>
+                </div>
+              ) : geminiSummary ? (
+                <div className="whitespace-pre-wrap">{geminiSummary}</div>
+              ) : (
+                <div className="text-[color:var(--muted-foreground)]">No summary available.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default CandidateCard

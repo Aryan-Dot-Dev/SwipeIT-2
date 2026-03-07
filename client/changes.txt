@@ -1,0 +1,94 @@
+1. shareable links for job cards and In recruiter profile  candidate profiles sharing -> react web share library looks good
+
+
+2. Swipe animation changes -> Current swipe animation is weird i want to improve it's look and feel.
+
+3  "Apply on Company Site" Button on each job card by adding field for that link in  Recruiter job creation time by adding a field in db with optional field so that i will not impact other records in db.
+
+4. UI changes like color changes to suit better to this application requirement. Logo newer one already new one is there and its bg_removed_new version use them if possible can you generate white_bg_removed version of logo_new.jpeg, I want to improve buttons styling and all use good icons from lucide-react or react-icons where ever needed. Better use shadcn components for good ui.
+
+5. Mobile responsiveness and home page text changes.
+
+The following is the home page text:
+“Where Talent Meets Opportunity — One Swipe at a Time.”
+
+⸻
+
+A New Way to Get Hired
+
+Hiring today is broken.
+Great candidates are rejected by keyword filters, and recruiters spend hours searching through resumes that don’t truly show potential.
+
+SwipeIt changes that.
+
+SwipeIt is a mobile-first hiring platform where candidates and recruiters discover each other through a two-way swipe experience — fast, fair, and human.
+
+⸻
+
+Why SwipeIt Is Different
+
+Discover Opportunities — Even If You Didn’t Apply
+
+On SwipeIt, talent doesn’t have to chase jobs.
+Recruiters swipe through candidate profiles and can discover your skills even if you never applied.
+
+When both sides swipe right, it’s a match — turning hiring into a mutual connection, not a one-sided application.
+
+Just like meaningful connections in social apps, the match feels personal, intentional, and exciting.
+
+⸻
+
+Hire for Attitude, Not Just Skills
+
+Skills can be learned.
+Attitude defines success.
+
+SwipeIt introduces attitude-based matching, where candidates and companies connect based on shared traits and work values.
+
+Interactive attitude graphs visualize compatibility, helping both sides see how well they align before even speaking.
+
+⸻
+
+AI Resume Intelligence
+
+Your resume should do more than list experiences.
+
+SwipeIt’s AI analyzes profiles to reveal:
+	•	Your core strengths
+	•	Areas for improvement
+	•	Your unique competitive advantage
+	•	Your personal value proposition
+
+Candidates gain deeper self-insight, while recruiters quickly understand what makes someone stand out.
+
+⸻
+
+Unbiased Hiring Mode
+
+Bias has no place in hiring.
+
+SwipeIt provides a Blind Hiring Toggle that hides personal information such as:
+	•	Name
+	•	Age
+	•	Gender
+	•	Demographic details
+
+Recruiters focus only on skills, attitude, and potential — creating a fairer hiring environment for everyone.
+
+⸻
+
+The Result
+	•	Faster hiring
+	•	Better matches
+	•	Fair opportunities
+	•	A more human hiring experience
+
+SwipeIt turns recruitment into connection.
+
+Tagline-
+
+Swipe. Match. Get Hired.
+
+
+6. OTP based login -> Supabase db using mobile number or email. and email notifications 
+swipe to right accepted
